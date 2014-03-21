@@ -11,8 +11,8 @@ public class Ogre extends Personnage{
 	protected int vitesseMouvement;
 	protected Image image;
 	
-	public Ogre(int vie, int force, String nom, int vitesseMouvement) {
-		super(vie, force, nom);
+	public Ogre(String nom, int vie, int force, int vitesseMouvement) {
+		super(nom, force, vie);
 		this.vitesseMouvement = vitesseMouvement;
 	}
 

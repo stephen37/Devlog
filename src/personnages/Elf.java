@@ -11,8 +11,8 @@ public class Elf extends Personnage {
 	protected int vitesseMouvement;
 	protected Image image;
 	
-	public Elf(int vie, int force, String nom, int vitesseMouvement) {
-		super(vie, force, nom);
+	public Elf(String nom, int vie, int force, int vitesseMouvement) {
+		super(nom, force, vie);
 		this.vitesseMouvement = vitesseMouvement;
 	}
 

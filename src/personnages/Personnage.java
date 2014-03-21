@@ -12,11 +12,11 @@ public abstract class Personnage {
 	protected String nom;
 	
 	/**
-	 * @param vie
-	 * @param force
 	 * @param nom
+	 * @param force
+	 * @param vie
 	 */
-	public Personnage(int vie, int force, String nom) {
+	public Personnage(String nom, int force, int vie) {
 		super();
 		this.vie = vie;
 		this.force = force;

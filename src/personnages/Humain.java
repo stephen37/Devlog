@@ -10,8 +10,8 @@ public class Humain extends Personnage {
 	protected int vitesseMouvement;
 	protected Image image;
 
-	public Humain(int vie, int force, String nom, int vitesseMouvement) {
-		super(vie, force, nom);
+	public Humain(String nom, int vie, int force, int vitesseMouvement) {
+		super(nom, force, vie);
 		this.vitesseMouvement = vitesseMouvement;
 	}
 
