@@ -10,17 +10,22 @@ public abstract class Personnage {
 	protected int vie;
 	protected int force;
 	protected String nom;
+	protected String race;
+	protected int vitesseMouvement;
 	
 	/**
 	 * @param nom
+	 * @param race
 	 * @param force
-	 * @param vie
+	 * @param vitesseMouvement
 	 */
-	public Personnage(String nom, int force, int vie) {
+	public Personnage(String nom,String race, int force, int vitesseMouvement) {
 		super();
-		this.vie = vie;
+		this.vie = 100;
 		this.force = force;
+		this.race = race;
 		this.nom = nom;
+		this.vitesseMouvement = vitesseMouvement;
 	}
 
 	public boolean equals(Object o) {
@@ -42,6 +47,10 @@ public abstract class Personnage {
 
 	public String getNom() {
 		return nom;
+	}
+	
+	public int getVitesse () {
+		return vitesseMouvement;
 	}
 	
 

@@ -1,35 +1,40 @@
 package labyrinthe;
 
-import java.awt.Dimension;
+import gestionnaire.Gestionnaire;
+import gestionnaire.gui.AddPersonnageDialogUI;
+import gestionnaire.gui.GestionnaireUI;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import gestionnaire.gui.AddPersonnageDialogUI;
-import gestionnaire.gui.GestionnaireUI;
-import gestionnaire.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 @SuppressWarnings("serial")
-public class LabyrintheEditeur extends JFrame {
+public class AtelierUI extends JFrame {
 
 	private Dimension dimensionJDialog = new Dimension(400, 400);
 	private JPanel container;
-	private JList listLabyrinthe;
+	private JList listPerso;
 	private DefaultListModel lmodel;
 	private JButton ajouter, supprimer, ouvrir;
-	Gestionnaire gestionnaire = new Gestionnaire();
+	private Gestionnaire gestionnaire = new Gestionnaire();
+	private GestionnaireUI gui;
 
-	public LabyrintheEditeur() {
+	public AtelierUI() {
 		init();
 
 		initEditeurLabyrinthe();
@@ -38,7 +43,7 @@ public class LabyrintheEditeur extends JFrame {
 
 	public void init() {
 
-		this.setTitle("Editeur de labyrinthe");
+		this.setTitle("Atelier");
 		this.setSize(dimensionJDialog);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
@@ -52,8 +57,8 @@ public class LabyrintheEditeur extends JFrame {
 
 	public void initEditeurLabyrinthe() {
 		lmodel = new DefaultListModel();
-		listLabyrinthe = new JList(lmodel);
-		JScrollPane scrollPane = new JScrollPane(listLabyrinthe);
+		listPerso = new JList(lmodel);
+		JScrollPane scrollPane = new JScrollPane(listPerso);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.getContentPane().add(scrollPane);
 		ajouter = new JButton("+");
@@ -82,9 +87,29 @@ public class LabyrintheEditeur extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new AddPersonnageDialogUI(LabyrintheEditeur.this, gestionnaire, "dsdq");
+			new AddPersonnageDialogUI(AtelierUI.this, gestionnaire, "dsdq");
 		}
 
+	}
+
+	class OuvrirListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser filechooser = new JFileChooser(".");
+			filechooser.setFileFilter(new FileNameExtensionFilter(
+					"Gestionnaire", "save"));
+			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				try {
+					File file = filechooser.getSelectedFile();
+					gestionnaire.chargerPersonnage(file.getAbsolutePath());
+				} catch (Exception ex) {
+					Logger.getLogger(GestionnaireUI.class.getName()).log(
+							Level.SEVERE, null, ex);
+				}
+			}
+
+//			gui.initPersonnageIntoList();
+		}
 	}
 
 }

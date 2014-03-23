@@ -2,6 +2,7 @@ package gestionnaire;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -23,16 +24,18 @@ public class Gestionnaire implements Serializable {
 		personnages = new ArrayList<Personnage>();
 	}
 
-	public boolean ajouterPersonnage(String nom, int point_vie, int point_force) {
-		return personnages.add(new Personnage(nom, point_vie, point_force) {
+	
+	public boolean ajouterPersonnage(String nom,String race,  final int pointForce, final int vitesse) {
+		return personnages.add(new Personnage(nom, race, pointForce, vitesse) {
 			@Override
 			public String toBase() {
-				throw new UnsupportedOperationException("Not supported yet.");
+				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse;
+//				throw new UnsupportedOperationException("Not supported yet.");
 			}
 
 			@Override
 			public void setImage() {
-				throw new UnsupportedOperationException("Not supported yet.");
+//				throw new UnsupportedOperationException("Not supported yet.");
 
 			}
 		});
@@ -51,82 +54,22 @@ public class Gestionnaire implements Serializable {
 		String[] tab = ligne.split("\t");
 		if (tab[0].equals("Humain")) {
 			String nom = tab[1];
-			int vie = Integer.parseInt(tab[2]);
+			// int vie = Integer.parseInt(tab[2]);
 			int force = Integer.parseInt(tab[3]);
 			int vitesse = Integer.parseInt(tab[4]);
-			return new Humain(nom, vie, force, vitesse);
+			return new Humain(nom,"Humain", force, vitesse);
 		} else if (tab[0].equals("Elf")) {
 			String nom = tab[1];
-			int vie = Integer.parseInt(tab[2]);
+			// int vie = Integer.parseInt(tab[2]);
 			int force = Integer.parseInt(tab[3]);
 			int vitesse = Integer.parseInt(tab[4]);
-			return new Elf(nom, vie, force, vitesse);
+			return new Elf(nom,"Elf", force, vitesse);
 		} else {
 			String nom = tab[1];
-			int vie = Integer.parseInt(tab[2]);
-			int force = Integer.parseInt(tab[3]);
-			int vitesse = Integer.parseInt(tab[4]);
-			return new Ogre(nom, vie, force, vitesse);
-		}
-
-	}
-
-	public Personnage creerPersonnage() throws Exception {
-
-		String type = "";
-		InputStream input = System.in;
-		BufferedReader buff = new BufferedReader(new InputStreamReader(input));
-		while (!(type.equals("Humain") || (type.equals("Elf") || (type
-				.equals("Ogre"))))) {
-			System.out
-					.println("indiquez le type de personnage (Humain, Elf ou Ogre): ");
-			type = buff.readLine();
-		}
-		System.out.println("indiquez le nom ");
-		String nom = buff.readLine();
-
-		boolean boucle = true;
-		int vie = 0;
-		while (boucle) {
-			boucle = false;
-			System.out.println("indiquez les points de vie ");
-			try {
-				vie = Integer.parseInt(buff.readLine());
-			} catch (Exception e) {
-				boucle = true;
-			}
-		}
-
-		boucle = true;
-		int force = 0;
-		while (boucle) {
-			boucle = false;
-			System.out.println("indiquez les points de force ");
-			try {
-				force = Integer.parseInt(buff.readLine());
-			} catch (Exception e) {
-				boucle = true;
-			}
-		}
-
-		boucle = true;
-		int vitesse = 0;
-		while (boucle) {
-			boucle = false;
-			System.out.println("indiquez la vitesse de mouvement ");
-			try {
-				vitesse = Integer.parseInt(buff.readLine());
-			} catch (Exception e) {
-				boucle = true;
-			}
-		}
-
-		if (type.equals("Humain")) {
-			return new Humain(nom, vie, force, vitesse);
-		} else if (type.equals("Ogre")) {
-			return new Ogre(nom, vie, force, vitesse);
-		}else {
-			return new Elf(nom, vie, force, vitesse);
+			// int vie = Integer.parseInt(tab[2]);
+			int force = Integer.parseInt(tab[2]);
+			int vitesse = Integer.parseInt(tab[3]);
+			return new Ogre(nom,"Ogre", force, vitesse);
 		}
 
 	}
@@ -136,19 +79,13 @@ public class Gestionnaire implements Serializable {
 		boolean continu = true;
 		while (continu) {
 			continu = false;
-			Personnage ajout = creerPersonnage();
-			boolean existe = false;
-			for (Personnage personnage : personnages) {
-				if (ajout.equals(personnage)) {
-					existe = true;
-				}
-			}
-			if (!existe) {
-				personnages.add(ajout);
-			} else {
-				System.out.println("Le personnage existe déjà!");
-			}
-
+			/*
+			 * Personnage ajout = creerPersonnage(); boolean existe = false for
+			 * (Personnage personnage : personnages) { if
+			 * (ajout.equals(personnage)) { existe = true; } } if (!existe) {
+			 * personnages.add(ajout); } else {
+			 * System.out.println("Le personnage existe déjà!"); }
+			 */
 			boolean boucle = true;
 			while (boucle) {
 				System.out
@@ -168,9 +105,10 @@ public class Gestionnaire implements Serializable {
 		return personnages;
 	}
 
-	public void addToFile(ArrayList<Personnage> personnages) throws Exception {
-		BufferedWriter buffer = new BufferedWriter(new FileWriter(
-				"personnages.txt"));
+	public void addToFile(ArrayList<Personnage> personnages, File file) throws Exception {
+//		BufferedWriter buffer = new BufferedWriter(new FileWriter(
+//				"personnages.txt"));
+		BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
 		for (Personnage l : personnages) {
 			buffer.write(l.toBase() + "\n");
 		}

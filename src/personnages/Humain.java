@@ -7,12 +7,10 @@ import javax.imageio.ImageIO;
 
 public class Humain extends Personnage {
 
-	protected int vitesseMouvement;
 	protected Image image;
 
-	public Humain(String nom, int vie, int force, int vitesseMouvement) {
-		super(nom, force, vie);
-		this.vitesseMouvement = vitesseMouvement;
+	public Humain(String nom,String race,  int force, int vitesseMouvement) {
+		super(nom, "Humain", force, vitesseMouvement);
 	}
 
 	@Override

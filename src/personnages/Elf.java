@@ -8,12 +8,10 @@ import javax.imageio.ImageIO;
 
 public class Elf extends Personnage {
 
-	protected int vitesseMouvement;
 	protected Image image;
 	
-	public Elf(String nom, int vie, int force, int vitesseMouvement) {
-		super(nom, force, vie);
-		this.vitesseMouvement = vitesseMouvement;
+	public Elf(String nom, String race,int force, int vitesseMouvement) {
+		super(nom,"Elf", force, vitesseMouvement);
 	}
 
 	@Override

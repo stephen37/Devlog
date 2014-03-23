@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +38,9 @@ import personnages.Personnage;
 public class GestionnaireUI extends JFrame {
 	Gestionnaire gestionnaire;
 	JList<Personnage> listPerso;
-	DefaultListModel lmodel;
+	DefaultListModel<Personnage> lmodel;
 	JPanel contentPane;
+	File file;
 	
 	public GestionnaireUI() {
 		init();
@@ -107,7 +109,7 @@ public class GestionnaireUI extends JFrame {
 						"Gestionnaire", "save"));
 				if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					try {
-						File file = filechooser.getSelectedFile();
+						file = filechooser.getSelectedFile();
 						gestionnaire.chargerPersonnage(file.getAbsolutePath());
 					} catch (Exception ex) {
 						Logger.getLogger(GestionnaireUI.class.getName()).log(
@@ -123,7 +125,7 @@ public class GestionnaireUI extends JFrame {
 		/* Sauvegarder un gestionnaire existant */
 		JMenuItem menuSave = new JMenuItem("Sauvegarder...");
 		menu.add(menuSave);
-		class MenuSauvegarderAL implements ActionListener {
+	class MenuSauvegarderAL implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if (GestionnaireUI.this.gestionnaire != null) {
 					JFileChooser filechooser = new JFileChooser(".") {

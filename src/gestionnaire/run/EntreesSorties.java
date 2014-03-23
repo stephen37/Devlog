@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 public class EntreesSorties {
 
@@ -24,65 +23,13 @@ public class EntreesSorties {
 		}
 	}
 
-	private static int lireEntier() {
-		int n = -1;
-		while (n<0){
-			try {
-				n = Integer.parseInt(lireClavier());
-			}
-			catch (NumberFormatException e){
-				System.out.print("Nombre incorrect. Entrez un nouveau nombre : ");
-			}
-		}
-		return n;
-	}
-
-	public static int lireEntier(int min, int max) {
-		int n;
-		do {
-			System.out.print("Entrez un nombre compris entre " + min + " et " + max + " : ");
-			n = lireEntier();
-		} while (n<min || n>max);
-		return n;
-	}
 	
-	public static ArrayList<Integer> lireEntiers(int min, int max) {
-		ArrayList<Integer> integers = new ArrayList<Integer>();
-		boolean ok = false;
-		while (!ok){
-			try {
-				String [] entiers = lireClavier().split(" ");
-				for (String e : entiers) {
-					Integer val = Integer.parseInt(e);
-					System.out.println(max);
-					if (val < min || val > max){
-						throw new Exception("Nombres incorrects.");
-					}
-					integers.add(val);
-				}
-				ok = true;
-			}
-			catch (NumberFormatException e){
-				integers.clear();
-				System.out.print("Nombres incorrects. Entrez les nouveaux nombres : ");
-
-			}
-			catch (Exception e) {
-				integers.clear();
-				System.out.print(e.getMessage() + " Entrez les nouveaux nombres : ");
-			}
-		}
-		return integers;
-	}
-
-
 	public static void sauvegarderFichier (Object contenu) {
 		File file = getFile(false);
 		save (contenu,  file);
 	}
 	
 	public static void sauvegarderFichier (Object contenu, File file) {
-
 		save (contenu,  file);
 	}
 
@@ -149,8 +96,4 @@ public class EntreesSorties {
 		}
 		return file;
 	}
-	
-
-
-
 }
