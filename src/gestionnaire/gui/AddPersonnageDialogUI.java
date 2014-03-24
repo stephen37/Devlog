@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -27,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import personnages.Humain;
 import personnages.Personnage;
 
 @SuppressWarnings("serial")
@@ -42,8 +44,8 @@ public class AddPersonnageDialogUI extends JFrame {
 		// JDialog.ModalityType.DOCUMENT_MODAL*
 		// super(owner, title);
 		this.gestionnaire = gestionnaire;
-		AddPersonnagePanelUI add_perso = new AddPersonnagePanelUI();
-		this.add(add_perso);
+		AddPersonnagePanelUI addPerso = new AddPersonnagePanelUI();
+		this.add(addPerso);
 		this.setTitle("Ajouter Personnage");
 		this.setSize(500, 300);
 		this.setLocationRelativeTo(owner);
@@ -52,7 +54,7 @@ public class AddPersonnageDialogUI extends JFrame {
 	}
 
 	class AddPersonnagePanelUI extends JPanel {
-
+		
 		JTextField persoName;
 		JSlider vitesseSlider;
 		JSlider forceSlider;
@@ -149,6 +151,7 @@ public class AddPersonnageDialogUI extends JFrame {
 			this.add(buttonPanel, BorderLayout.SOUTH);
 			// buttonSave.addActionListener(new SaveListener());
 			buttonSaveAs.addActionListener(new SaveAsListener());
+			randomButton.addActionListener(new RandomListener());
 		}
 
 		public class ComboBoxListener implements ItemListener {
@@ -182,10 +185,8 @@ public class AddPersonnageDialogUI extends JFrame {
 						forceSlider.setMinimum(1);
 						forceSlider.setMaximum(7);
 						forceSlider.setValue(4);
-
 					}
 				}
-
 			}
 		}
 
@@ -243,11 +244,10 @@ public class AddPersonnageDialogUI extends JFrame {
 					if (filechooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 						gestionnaire.ajouterPersonnage(name, raceChoosen, force,
 								vitesse);
-						
-						
 						EntreesSorties.sauvegarderFichier(gestionnaire
 								.getPersonnages().toString(), filechooser
 								.getSelectedFile());
+//						gestionnaireUI.lmodel.addElement(new Humain(name, raceChoosen, force, vitesse));
 					}
 				} else {
 					JOptionPane
@@ -264,9 +264,44 @@ public class AddPersonnageDialogUI extends JFrame {
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
+			getContentPane().revalidate();
 			}
 		}
-
+		
+		public void initRandomPerso(){
+			String[] nameTab = {"Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "iota"};
+			int ranName = (int) (Math.random()*nameTab.length);
+			name = nameTab[ranName];
+			persoName.setText(name);
+			int ranRace = (int) (Math.random()*3);
+			race.setSelectedItem(race.getItemAt(ranRace));
+			int ranVitesse = 0;
+			int ranForce = 0;
+			if (race.getItemAt(ranRace).equals("Elf")) {
+				ranVitesse = (int) (Math.random()* (11 - 8) + 8);
+				ranForce = (int) (Math.random()* (4 - 1) + 1);
+			}
+			
+			if (race.getItemAt(ranRace).equals("Ogre")) {
+				ranVitesse = (int) (Math.random()* (8 - 1) + 1);
+				ranForce = (int) (Math.random()* (11 - 4) + 4);
+			}
+			if (race.getItemAt(ranRace).equals("Humain")) {
+				ranVitesse = (int) (Math.random()* (11 - 4) + 4);
+				ranForce = (int) (Math.random()* (7 - 1) + 1);
+			}
+			vitesseSlider.setValue(ranVitesse);
+			forceSlider.setValue(ranForce);
+		}
+		
+		public class RandomListener implements ActionListener {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				initRandomPerso();
+			}
+		}
+		
+		
 		/*
 		 * 
 		 * TODO : Récupérer le chemin du fichier ouvert par l'utilisateur en cas

@@ -101,6 +101,7 @@ public class GestionnaireUI extends JFrame {
 
 		/* Charger un gestionnaire existant */
 		JMenuItem menuLoad = new JMenuItem("Charger...");
+
 		menu.add(menuLoad);
 		class MenuChargerAL implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
@@ -115,9 +116,9 @@ public class GestionnaireUI extends JFrame {
 						Logger.getLogger(GestionnaireUI.class.getName()).log(
 								Level.SEVERE, null, ex);
 					}
-				}
-
+				}				
 				initPersonnageIntoList();
+				System.out.println("Taille du lmodel: " +lmodel.size());
 			}
 		}
 		menuLoad.addActionListener(new MenuChargerAL());
@@ -174,7 +175,7 @@ public class GestionnaireUI extends JFrame {
 
 	private void initListPersonnages() {
 		lmodel = new DefaultListModel<Personnage>();
-		listPerso = new JList(lmodel);
+		listPerso = new JList<Personnage>(lmodel);
 		/* Scroll pane */
 		JScrollPane scrollpane = new JScrollPane(listPerso);
 		this.getContentPane().add(scrollpane);
@@ -194,6 +195,7 @@ public class GestionnaireUI extends JFrame {
 									GestionnaireUI.this,
 									"veuillez créer un nouveau gestionnaire ou charger un gestionnaire existant",
 									"Erreur", JOptionPane.ERROR_MESSAGE);
+			System.out.println("Taille lmodel en ouvrant la fenetre ajouter personnage" +lmodel.getSize());
 			}
 		}
 		buttonAddPersonnage.addActionListener(new ButtonAddPersoAL());
