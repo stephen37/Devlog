@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -28,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
-import personnages.Humain;
 import personnages.Personnage;
 
 @SuppressWarnings("serial")
@@ -43,6 +41,7 @@ public class AddPersonnageDialogUI extends JFrame {
 		// Third argument? DOCUMENT MODAL blocks user input
 		// JDialog.ModalityType.DOCUMENT_MODAL*
 		// super(owner, title);
+		
 		this.gestionnaire = gestionnaire;
 		AddPersonnagePanelUI addPerso = new AddPersonnagePanelUI();
 		this.add(addPerso);
@@ -52,8 +51,8 @@ public class AddPersonnageDialogUI extends JFrame {
 		this.setVisible(true);
 		this.setResizable(false);
 	}
-
-	class AddPersonnagePanelUI extends JPanel {
+	
+public class AddPersonnagePanelUI extends JPanel {
 		
 		JTextField persoName;
 		JSlider vitesseSlider;
@@ -302,6 +301,23 @@ public class AddPersonnageDialogUI extends JFrame {
 		}
 		
 		
+		public String getName() {
+			return name;
+		}
+		
+		public String getRace() {
+			return raceChoosen;
+		}
+		
+		public int getVitesse() {
+			return vitesse;
+		}
+		
+		public int getForce() {
+			return force;
+		}
+		
+		
 		/*
 		 * 
 		 * TODO : Récupérer le chemin du fichier ouvert par l'utilisateur en cas
@@ -328,4 +344,5 @@ public class AddPersonnageDialogUI extends JFrame {
 		 * }
 		 */
 	}
+
 }

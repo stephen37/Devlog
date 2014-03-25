@@ -208,6 +208,9 @@ public class GestionnaireUI extends JFrame {
 					if (selectedSerie != null) {
 						PersonnagesUI personnageDialog = new PersonnagesUI(
 								GestionnaireUI.this, gestionnaire);
+						
+						//TODO : Lors d'un double clique; ouvrir la fenetre permettant de modifier le personnage
+//						AddPersonnageDialogUI personnageDialog = new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, null);						
 					}
 				}
 			}

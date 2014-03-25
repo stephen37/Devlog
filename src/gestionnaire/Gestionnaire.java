@@ -29,7 +29,7 @@ public class Gestionnaire implements Serializable {
 		return personnages.add(new Personnage(nom, race, pointForce, vitesse) {
 			@Override
 			public String toBase() {
-				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse;
+				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse + "\t" +vie;
 //				throw new UnsupportedOperationException("Not supported yet.");
 			}
 
