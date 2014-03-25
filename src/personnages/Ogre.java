@@ -17,7 +17,7 @@ public class Ogre extends Personnage{
 
 	@Override
 	public String toBase() {
-		return "Ogre\t" + nom + "\t" + vie + "\t" + force + "\t vitesse de mouvement " + vitesseMouvement;
+		return "Ogre\t" + nom + "\t" + vie + "\t" + force + "\t" + vitesseMouvement;
 	}
 	
 	

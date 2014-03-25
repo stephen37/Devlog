@@ -16,7 +16,7 @@ public class Humain extends Personnage {
 	@Override
 	public String toBase() {
 		return "Humain\t" + nom + "\t" + vie + "\t" + force
-				+ "\t vitesse de mouvement " + vitesseMouvement;
+				+ "\t" + vitesseMouvement;
 	}
 
 	public int GetVItesseMouvement() {

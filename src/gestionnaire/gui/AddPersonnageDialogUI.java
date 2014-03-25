@@ -19,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,16 +33,17 @@ import personnages.Personnage;
 @SuppressWarnings("serial")
 public class AddPersonnageDialogUI extends JFrame {
 
-	Gestionnaire gestionnaire;
+	static Gestionnaire gestionnaire;
 	GestionnaireUI gestionnaireUI;
 	File f;
+	AddPersonnagePanelUI persoPanel;
 
 	public AddPersonnageDialogUI(JFrame owner, Gestionnaire gestionnaire,
 			String title) {
 		// Third argument? DOCUMENT MODAL blocks user input
 		// JDialog.ModalityType.DOCUMENT_MODAL*
 		// super(owner, title);
-		
+
 		this.gestionnaire = gestionnaire;
 		AddPersonnagePanelUI addPerso = new AddPersonnagePanelUI();
 		this.add(addPerso);
@@ -51,9 +53,9 @@ public class AddPersonnageDialogUI extends JFrame {
 		this.setVisible(true);
 		this.setResizable(false);
 	}
-	
-public class AddPersonnagePanelUI extends JPanel {
-		
+
+	class AddPersonnagePanelUI extends JPanel {
+
 		JTextField persoName;
 		JSlider vitesseSlider;
 		JSlider forceSlider;
@@ -241,12 +243,12 @@ public class AddPersonnagePanelUI extends JPanel {
 						}
 					};
 					if (filechooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-						gestionnaire.ajouterPersonnage(name, raceChoosen, force,
-								vitesse);
+						gestionnaire.ajouterPersonnage(name, raceChoosen,
+								force, vitesse);
 						EntreesSorties.sauvegarderFichier(gestionnaire
 								.getPersonnages().toString(), filechooser
 								.getSelectedFile());
-//						gestionnaireUI.lmodel.addElement(new Humain(name, raceChoosen, force, vitesse));
+						
 					}
 				} else {
 					JOptionPane
@@ -259,65 +261,92 @@ public class AddPersonnagePanelUI extends JPanel {
 				// Le personnage s'ajoute bien à l'arraylist lors du chargement.
 				try {
 					gestionnaire.addToFile(gestionnaire.getPersonnages(), f);
-					
+
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-			getContentPane().revalidate();
+				getContentPane().revalidate();
 			}
 		}
-		
-		public void initRandomPerso(){
-			String[] nameTab = {"Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "iota"};
-			int ranName = (int) (Math.random()*nameTab.length);
+
+		public void initRandomPerso() {
+			String[] nameTab = { "Alpha", "Beta", "Gamma", "Delta", "Epsilon",
+					"Zeta", "Eta", "Theta", "iota" };
+			int ranName = (int) (Math.random() * nameTab.length);
 			name = nameTab[ranName];
 			persoName.setText(name);
-			int ranRace = (int) (Math.random()*3);
+			int ranRace = (int) (Math.random() * 3);
 			race.setSelectedItem(race.getItemAt(ranRace));
 			int ranVitesse = 0;
 			int ranForce = 0;
 			if (race.getItemAt(ranRace).equals("Elf")) {
-				ranVitesse = (int) (Math.random()* (11 - 8) + 8);
-				ranForce = (int) (Math.random()* (4 - 1) + 1);
+				ranVitesse = (int) (Math.random() * (11 - 8) + 8);
+				ranForce = (int) (Math.random() * (4 - 1) + 1);
 			}
-			
+
 			if (race.getItemAt(ranRace).equals("Ogre")) {
-				ranVitesse = (int) (Math.random()* (8 - 1) + 1);
-				ranForce = (int) (Math.random()* (11 - 4) + 4);
+				ranVitesse = (int) (Math.random() * (8 - 1) + 1);
+				ranForce = (int) (Math.random() * (11 - 4) + 4);
 			}
 			if (race.getItemAt(ranRace).equals("Humain")) {
-				ranVitesse = (int) (Math.random()* (11 - 4) + 4);
-				ranForce = (int) (Math.random()* (7 - 1) + 1);
+				ranVitesse = (int) (Math.random() * (11 - 4) + 4);
+				ranForce = (int) (Math.random() * (7 - 1) + 1);
 			}
 			vitesseSlider.setValue(ranVitesse);
 			forceSlider.setValue(ranForce);
 		}
 		
+		public void setName(String name) {
+			persoName.setText(name);
+		}
+		
+		public void setRace(String raceCharge) {
+			//Test pour une simple selection, peut importe la race.
+			race.setSelectedIndex(0);
+		}
+		
+		public void setForce (int force) {
+			forceSlider.setValue(force);
+		}
+		
+		public void setVitesse(int vitesse){
+			vitesseSlider.setValue(vitesse);
+		}
+		
+		public void SetPersonnage (String name, String raceCharge, int force, int vitesse) {
+			persoName.setText(name);
+			if (raceCharge.equals("Humain")) race.setSelectedIndex(0);
+			else if (raceCharge.equals("Elf")) race.setSelectedIndex(1);
+			else race.setSelectedIndex(2);
+			forceSlider.setValue(force);
+			vitesseSlider.setValue(vitesse);
+			
+		}
+		
+
 		public class RandomListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				initRandomPerso();
 			}
 		}
-		
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public String getRace() {
 			return raceChoosen;
 		}
-		
+
 		public int getVitesse() {
 			return vitesse;
 		}
-		
+
 		public int getForce() {
 			return force;
 		}
-		
-		
+
 		/*
 		 * 
 		 * TODO : Récupérer le chemin du fichier ouvert par l'utilisateur en cas

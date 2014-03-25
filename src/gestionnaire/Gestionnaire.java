@@ -53,19 +53,19 @@ public class Gestionnaire implements Serializable {
 	public Personnage createPersonnageFromLine(String ligne) {
 		String[] tab = ligne.split("\t");
 		if (tab[0].equals("Humain")) {
-			String nom = tab[1];
+			String nom = tab[0];
 			// int vie = Integer.parseInt(tab[2]);
-			int force = Integer.parseInt(tab[3]);
-			int vitesse = Integer.parseInt(tab[4]);
+			int force = Integer.parseInt(tab[2]);
+			int vitesse = Integer.parseInt(tab[3]);
 			return new Humain(nom,"Humain", force, vitesse);
 		} else if (tab[0].equals("Elf")) {
-			String nom = tab[1];
+			String nom = tab[0];
 			// int vie = Integer.parseInt(tab[2]);
-			int force = Integer.parseInt(tab[3]);
-			int vitesse = Integer.parseInt(tab[4]);
+			int force = Integer.parseInt(tab[2]);
+			int vitesse = Integer.parseInt(tab[3]);
 			return new Elf(nom,"Elf", force, vitesse);
 		} else {
-			String nom = tab[1];
+			String nom = tab[0];
 			// int vie = Integer.parseInt(tab[2]);
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);

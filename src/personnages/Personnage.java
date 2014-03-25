@@ -34,7 +34,7 @@ public abstract class Personnage {
 	}
 
 	public String toString() {
-		return "Nom : " + nom + " vie : " + vie + " force : " + force;
+		return "Nom : " + nom + " race : " +race + " force : " + force + " vitesse : " +vitesseMouvement;
 	}
 
 	public int getVie() {
@@ -51,6 +51,10 @@ public abstract class Personnage {
 	
 	public int getVitesse () {
 		return vitesseMouvement;
+	}
+	
+	public String getRace() {
+		return race;
 	}
 	
 

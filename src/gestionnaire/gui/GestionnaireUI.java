@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -173,6 +172,12 @@ public class GestionnaireUI extends JFrame {
 
 	}
 
+//	public void accessInnerClass () {
+//		AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, "Modifier Perso");
+//		AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
+//	}
+	
+	
 	private void initListPersonnages() {
 		lmodel = new DefaultListModel<Personnage>();
 		listPerso = new JList<Personnage>(lmodel);
@@ -206,11 +211,24 @@ public class GestionnaireUI extends JFrame {
 				if (e.getClickCount() == 2) {
 					Personnage selectedSerie = listPerso.getSelectedValue();
 					if (selectedSerie != null) {
-						PersonnagesUI personnageDialog = new PersonnagesUI(
-								GestionnaireUI.this, gestionnaire);
+//						PersonnagesUI personnageDialog = new PersonnagesUI(GestionnaireUI.this, gestionnaire);
+					
+						AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, "Modifier Perso");
+						AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
+/*						
+						persoPanel.persoName.setText(selectedSerie.getNom());
+						persoPanel.persoName.setText("Test Bro");
 						
-						//TODO : Lors d'un double clique; ouvrir la fenetre permettant de modifier le personnage
-//						AddPersonnageDialogUI personnageDialog = new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, null);						
+						persoPanel.raceChoosen = selectedSerie.getRace();
+						persoPanel.vitesseSlider.setValue(selectedSerie.getVitesse());
+						persoPanel.forceSlider.setValue(selectedSerie.getForce());
+						persoPanel.forceSlider.setValue(6);
+	*/					
+						persoPanel.forceSlider.setValue(6);
+						System.out.println("Valeur " +persoPanel.forceSlider.getValue());
+						persoPanel.SetPersonnage(selectedSerie.getNom(), selectedSerie.getRace(), selectedSerie.getForce(), selectedSerie.getVitesse());
+						
+						System.out.println("Nom " +selectedSerie.getNom() + "Race " + selectedSerie.getRace() + " Force " +selectedSerie.getForce() + " Vitesse " + selectedSerie.getVitesse());
 					}
 				}
 			}
