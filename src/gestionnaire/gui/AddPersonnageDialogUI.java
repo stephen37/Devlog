@@ -35,7 +35,7 @@ public class AddPersonnageDialogUI extends JFrame {
 
 	static Gestionnaire gestionnaire;
 	GestionnaireUI gestionnaireUI;
-	File f;
+	File fileSelected;
 	AddPersonnagePanelUI persoPanel;
 
 	public AddPersonnageDialogUI(JFrame owner, Gestionnaire gestionnaire,
@@ -225,8 +225,8 @@ public class AddPersonnageDialogUI extends JFrame {
 				if (AddPersonnageDialogUI.this.gestionnaire != null) {
 					JFileChooser filechooser = new JFileChooser(".") {
 						public void approveSelection() {
-							f = getSelectedFile();
-							if (f.exists()) {
+							fileSelected = getSelectedFile();
+							if (fileSelected.exists()) {
 								int result = JOptionPane.showConfirmDialog(
 										this, "Écraser le fichier?",
 										"Confirmation",
@@ -260,7 +260,7 @@ public class AddPersonnageDialogUI extends JFrame {
 
 				// Le personnage s'ajoute bien à l'arraylist lors du chargement.
 				try {
-					gestionnaire.addToFile(gestionnaire.getPersonnages(), f);
+					gestionnaire.addToFile(gestionnaire.getPersonnages(), fileSelected);
 
 				} catch (Exception e1) {
 					e1.printStackTrace();

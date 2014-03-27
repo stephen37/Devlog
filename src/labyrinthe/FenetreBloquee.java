@@ -32,12 +32,12 @@ public class FenetreBloquee extends JFrame {
 	private ButtonGroup bg = new ButtonGroup();
 	private JRadioButton jr1 = new JRadioButton("Toujours");
 	private JRadioButton jr2 = new JRadioButton("Periodiquement chaque");
-	private JRadioButton jr3 = new JRadioButton("Aléatoirement avec prob");
-	JSlider prob = new JSlider();
-	SpinnerModel modelspin_duree = new SpinnerNumberModel(0, 0, 9999, 0.5);
-	SpinnerModel modelspin_periode = new SpinnerNumberModel(0, 0, 9999, 0.5);
-	JSpinner spinner_duree = new JSpinner(modelspin_duree);
-	JSpinner spinner_periode = new JSpinner(modelspin_periode);
+	private JRadioButton jr3 = new JRadioButton("AlÃ©atoirement avec prob");
+	static JSlider slider_prob = new JSlider();
+	static SpinnerModel modelspin_duree = new SpinnerNumberModel(0, 0, 9999, 0.5);
+	static SpinnerModel modelspin_periode = new SpinnerNumberModel(0, 0, 9999, 0.5);
+	static JSpinner spinner_duree = new JSpinner(modelspin_duree);
+	static JSpinner spinner_periode = new JSpinner(modelspin_periode);
 	
 	public FenetreBloquee() {
 		init();
@@ -48,19 +48,19 @@ public class FenetreBloquee extends JFrame {
 	
 	public void init(){
 		
-		this.setTitle("Salle Bloquée");
+		this.setTitle("Salle BloquÃ©e");
         this.setSize(500, 300);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null); 
         content_pane = new JPanel();
         content_pane.setLayout(new BorderLayout());
-        prob.setMaximum(100);
-        prob.setMinimum(0);
-        prob.setValue(50);
-        prob.setPaintTicks(true);
-        prob.setPaintLabels(true);
-        prob.setMinorTickSpacing(10);
-        prob.setMajorTickSpacing(20);
+        slider_prob.setMaximum(100);
+        slider_prob.setMinimum(0);
+        slider_prob.setValue(50);
+        slider_prob.setPaintTicks(true);
+        slider_prob.setPaintLabels(true);
+        slider_prob.setMinorTickSpacing(10);
+        slider_prob.setMajorTickSpacing(20);
         JPanel panel_parametres = new JPanel();        
         panel_parametres.setLayout(new BoxLayout(panel_parametres, BoxLayout.Y_AXIS));
         
@@ -79,10 +79,10 @@ public class FenetreBloquee extends JFrame {
         
         panel_boutton3.setLayout(new BoxLayout(panel_boutton3, BoxLayout.X_AXIS));
         panel_boutton3.add(jr3);
-        panel_boutton3.add(prob);
+        panel_boutton3.add(slider_prob);
         
         panel_duree.setLayout(new BoxLayout(panel_duree, BoxLayout.X_AXIS));
-        panel_duree.add(new JLabel("Durée: "));
+        panel_duree.add(new JLabel("DurÃ©e: "));
         panel_duree.add(spinner_duree);
         panel_duree.add(new JLabel(" sec"));
         panel_duree.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 0));
@@ -109,6 +109,8 @@ public class FenetreBloquee extends JFrame {
         this.setContentPane(content_pane); // CETTE CLASSE EST DENUEE DE LISTENER POUR LE MOMENT
         
 	}
+	
+
 	
 	public static void main(String[] args) {
 		FenetreBloquee Fenetre = new FenetreBloquee();

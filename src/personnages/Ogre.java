@@ -24,14 +24,4 @@ public class Ogre extends Personnage{
 	public int GetVItesseMouvement() {
 		return vitesseMouvement;
 	}
-	
-	@Override
-	public void setImage() {
-		try {
-			image = ImageIO.read(new File("images/p-ogre.png"));
-		} catch (IOException e) {
-			System.out.println("L'image Ogre n'existe pas");
-		}
-	}
-
 }

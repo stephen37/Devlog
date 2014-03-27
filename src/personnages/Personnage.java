@@ -1,5 +1,4 @@
 package personnages;
-import java.awt.Image;
 
 /**
  * @author stephen BATIFOL L2 MI
@@ -56,9 +55,6 @@ public abstract class Personnage {
 	public String getRace() {
 		return race;
 	}
-	
-
-	public abstract void setImage();
 	
 	public abstract String toBase();
 

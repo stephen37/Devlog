@@ -23,13 +23,4 @@ public class Humain extends Personnage {
 		return vitesseMouvement;
 	}
 
-	@Override
-	public void setImage() {
-		try {
-			image = ImageIO.read(new File("images/p-elf.png"));
-		} catch (IOException e) {
-			System.out.println("L'image Elf n'existe pas");
-		}
-	}
-
 }

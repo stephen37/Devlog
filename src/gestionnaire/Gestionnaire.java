@@ -32,12 +32,7 @@ public class Gestionnaire implements Serializable {
 				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse + "\t" +vie;
 //				throw new UnsupportedOperationException("Not supported yet.");
 			}
-
-			@Override
-			public void setImage() {
-//				throw new UnsupportedOperationException("Not supported yet.");
-
-			}
+			
 		});
 	}
 
