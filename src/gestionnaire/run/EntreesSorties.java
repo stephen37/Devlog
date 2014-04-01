@@ -12,6 +12,10 @@ import java.io.ObjectOutputStream;
 
 public class EntreesSorties {
 
+	/**
+	 * Renvoie la valeur tapée au clavier.
+	 * @return String
+	 */
 	public static String lireClavier() {
 		try {
 			BufferedReader clavier =
@@ -24,26 +28,50 @@ public class EntreesSorties {
 	}
 
 	
+	/**
+	 * Permet de sauvegarder un Object dans un fichier sans préciser le fichier.
+	 * @param contenu
+	 */
 	public static void sauvegarderFichier (Object contenu) {
 		File file = getFile(false);
 		save (contenu,  file);
 	}
 	
+
+	/**
+	 * Permet de sauvegarder un Object dans un fichier en précisant le fichier.
+	 * @param contenu
+	 */
 	public static void sauvegarderFichier (Object contenu, File file) {
 		save (contenu,  file);
 	}
 
 
+	/**
+	 * Charge un fichier
+	 * @return Object
+	 */
 	public static Object chargerFichier () {
 		File file = getFile(true);
 
 		return load(file);
 	}
 	
+	
+	/**
+	 * Charge un fichier.
+	 * @param file
+	 * @return
+	 */
 	public static Object chargerFichier (File file) {
 		return load(file);
 	}
 
+	/**
+	 * Permet de sauvegarder un object dans un fichier
+	 * @param s
+	 * @param file
+	 */
 	private static void save (Object s, File file) {
 		ObjectOutputStream output;
 		try {
@@ -58,6 +86,12 @@ public class EntreesSorties {
 		}
 	}
 
+	/**
+	 * 
+	 * Permet de charger un fichier et de renvoyer l'object chargé.
+	 * @param file
+	 * @return Object
+	 */
 	private static Object load (File file) {
 		Object res = new Object();
 		ObjectInputStream input;
@@ -75,6 +109,11 @@ public class EntreesSorties {
 		return res;
 	}
 
+	/**
+	 * Permet d'obtenir un fichier
+	 * @param existantFile
+	 * @return
+	 */
 	public static File getFile (boolean existantFile) {
 		File file ;
 		String path;
@@ -85,7 +124,6 @@ public class EntreesSorties {
 				path = lireClavier();
 				file = new File(path);
 			} while (!file.isFile());
-			
 		}
 		else {
 			do{

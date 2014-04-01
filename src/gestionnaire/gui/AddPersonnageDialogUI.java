@@ -19,7 +19,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,26 +33,30 @@ import personnages.Personnage;
 public class AddPersonnageDialogUI extends JFrame {
 
 	static Gestionnaire gestionnaire;
-	GestionnaireUI gestionnaireUI;
+	/*********************************************************************************************************/
+	//TODO : Modifier l'addPersonnageDialogUI pour éviter d'ouvrir une nouvelle fenêtre..
+	// Il faut enlever le new GestionnaireUI();
+	GestionnaireUI gestionnaireUI = new GestionnaireUI();
 	File fileSelected;
 	AddPersonnagePanelUI persoPanel;
 
 	public AddPersonnageDialogUI(JFrame owner, Gestionnaire gestionnaire,
 			String title) {
-		// Third argument? DOCUMENT MODAL blocks user input
-		// JDialog.ModalityType.DOCUMENT_MODAL*
-		// super(owner, title);
-
+		
 		this.gestionnaire = gestionnaire;
 		AddPersonnagePanelUI addPerso = new AddPersonnagePanelUI();
 		this.add(addPerso);
-		this.setTitle("Ajouter Personnage");
+		this.setTitle(title);
 		this.setSize(500, 300);
 		this.setLocationRelativeTo(owner);
 		this.setVisible(true);
 		this.setResizable(false);
 	}
 
+	/**
+	 * Ajoute un panel permettant de recueillir les infos sur le personnage
+	 * 
+	 */
 	class AddPersonnagePanelUI extends JPanel {
 
 		JTextField persoName;
@@ -62,7 +65,7 @@ public class AddPersonnageDialogUI extends JFrame {
 		String[] tabPerso = { "Humain", "Ogre", "Elf" };
 		JComboBox<String> race;
 		File file;
-		String raceChoosen = "";
+		String raceChoosen = "Humain";
 		String name = "";
 		int vitesse;
 		int force;
@@ -155,6 +158,10 @@ public class AddPersonnageDialogUI extends JFrame {
 			randomButton.addActionListener(new RandomListener());
 		}
 
+		/**
+		 * Obtient la dernière valeur selectionnée par la jcombobox par
+		 * l'utilisateur.
+		 */
 		public class ComboBoxListener implements ItemListener {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -191,6 +198,10 @@ public class AddPersonnageDialogUI extends JFrame {
 			}
 		}
 
+		/**
+		 * Ajoute une image en fonction du choix de personnages
+		 * 
+		 */
 		public class ImagePanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponents(g);
@@ -216,9 +227,13 @@ public class AddPersonnageDialogUI extends JFrame {
 			}
 		}
 
+		/**
+		 * Permet de sauvegarder un personnage dans un fichier
+		 */
 		public class SaveAsListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				name = persoName.getText().toString();
 				vitesse = vitesseSlider.getValue();
 				force = forceSlider.getValue();
@@ -248,7 +263,7 @@ public class AddPersonnageDialogUI extends JFrame {
 						EntreesSorties.sauvegarderFichier(gestionnaire
 								.getPersonnages().toString(), filechooser
 								.getSelectedFile());
-						
+
 					}
 				} else {
 					JOptionPane
@@ -260,15 +275,22 @@ public class AddPersonnageDialogUI extends JFrame {
 
 				// Le personnage s'ajoute bien à l'arraylist lors du chargement.
 				try {
-					gestionnaire.addToFile(gestionnaire.getPersonnages(), fileSelected);
+					gestionnaire.addToFile(gestionnaire.getPersonnages(),
+							fileSelected);
+					gestionnaireUI.initPersonnageIntoList();
 
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 				getContentPane().revalidate();
+				dispose();
 			}
 		}
 
+		/**
+		 * Initialise un personnage de façon aléatoire et l'affiche dans le
+		 * Jpanel
+		 */
 		public void initRandomPerso() {
 			String[] nameTab = { "Alpha", "Beta", "Gamma", "Delta", "Epsilon",
 					"Zeta", "Eta", "Theta", "iota" };
@@ -283,7 +305,6 @@ public class AddPersonnageDialogUI extends JFrame {
 				ranVitesse = (int) (Math.random() * (11 - 8) + 8);
 				ranForce = (int) (Math.random() * (4 - 1) + 1);
 			}
-
 			if (race.getItemAt(ranRace).equals("Ogre")) {
 				ranVitesse = (int) (Math.random() * (8 - 1) + 1);
 				ranForce = (int) (Math.random() * (11 - 4) + 4);
@@ -295,35 +316,51 @@ public class AddPersonnageDialogUI extends JFrame {
 			vitesseSlider.setValue(ranVitesse);
 			forceSlider.setValue(ranForce);
 		}
-		
+
 		public void setName(String name) {
 			persoName.setText(name);
 		}
-		
+
 		public void setRace(String raceCharge) {
-			//Test pour une simple selection, peut importe la race.
+			// Test pour une simple selection, peut importe la race.
 			race.setSelectedIndex(0);
 		}
-		
-		public void setForce (int force) {
-			forceSlider.setValue(force);
-		}
-		
-		public void setVitesse(int vitesse){
-			vitesseSlider.setValue(vitesse);
-		}
-		
-		public void SetPersonnage (String name, String raceCharge, int force, int vitesse) {
-			persoName.setText(name);
-			if (raceCharge.equals("Humain")) race.setSelectedIndex(0);
-			else if (raceCharge.equals("Elf")) race.setSelectedIndex(1);
-			else race.setSelectedIndex(2);
-			forceSlider.setValue(force);
-			vitesseSlider.setValue(vitesse);
-			
-		}
-		
 
+		public void setForce(int force) {
+			forceSlider.setValue(force);
+		}
+
+		public void setVitesse(int vitesse) {
+			vitesseSlider.setValue(vitesse);
+		}
+
+		/**
+		 * 
+		 * Permet de charger les valeurs d'un personnage déjà existant dans le
+		 * Jpanel.
+		 * 
+		 * @param name
+		 * @param raceCharge
+		 * @param force
+		 * @param vitesse
+		 */
+		public void SetPersonnage(String name, String raceCharge, int force,
+				int vitesse) {
+			persoName.setText(name);
+			if (raceCharge.equals("Humain"))
+				race.setSelectedIndex(0);
+			else if (raceCharge.equals("Elf"))
+				race.setSelectedIndex(1);
+			else
+				race.setSelectedIndex(2);
+			forceSlider.setValue(force);
+			vitesseSlider.setValue(vitesse);
+		}
+
+		/**
+		 * Ecoute le bouton Random afin de lancer un personnage de façon
+		 * aléatoire si l'utilisateur clique dessus.
+		 */
 		public class RandomListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -346,32 +383,5 @@ public class AddPersonnageDialogUI extends JFrame {
 		public int getForce() {
 			return force;
 		}
-
-		/*
-		 * 
-		 * TODO : Récupérer le chemin du fichier ouvert par l'utilisateur en cas
-		 * de modification de personnages.
-		 * 
-		 * public class SaveListener implements ActionListener {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) { vitesse =
-		 * vitesseSlider.getValue(); force = forceSlider.getValue();
-		 * 
-		 * if (AddPersonnageDialogUI.this.gestionnaire != null) {
-		 * EntreesSorties.sauvegarderFichier(gestionnaire,
-		 * filechooser.getSelectedFile()); } else { JOptionPane
-		 * .showMessageDialog( AddPersonnageDialogUI.this,
-		 * "veuillez créer un nouveau gestionnaire ou charger un gestionnaire existant"
-		 * , "Erreur", JOptionPane.ERROR_MESSAGE); } dispose(); } }
-		 */
-		/*
-		 * public void creerPersonnage(String nom, String race, int vitesse, int
-		 * force) { nom = this.name; race = this.raceChoosen; vitesse =
-		 * this.vitesse; force = this.force; gestionnaire.ajouterPersonnage(nom,
-		 * force, vitesse);
-		 * 
-		 * }
-		 */
 	}
-
 }

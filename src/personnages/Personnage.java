@@ -5,7 +5,7 @@ package personnages;
  *
  */
 
-public abstract class Personnage {
+public abstract class Personnage implements Runnable {
 	protected int vie;
 	protected int force;
 	protected String nom;
@@ -27,6 +27,9 @@ public abstract class Personnage {
 		this.vitesseMouvement = vitesseMouvement;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object o) {
 		Personnage p = (Personnage) o;
 		return ((this.nom.equals(p.getNom())));
@@ -57,5 +60,27 @@ public abstract class Personnage {
 	}
 	
 	public abstract String toBase();
+	
+	@Override
+	public void run() {
+		// Thread à gerer.
+	}
+
+	
+	//Permet de comparer deux personnages.
+	public boolean contains(Personnage selected) {
+		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement) {
+			
+			@Override
+			public String toBase() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		if (perso2.nom.equals(selected.nom) && perso2.race.equals(selected.race) && perso2.force == selected.force && perso2.vitesseMouvement == selected.vitesseMouvement) {
+			return true;
+		}
+		return false;
+	}
 
 }

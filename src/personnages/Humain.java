@@ -1,9 +1,5 @@
 package personnages;
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class Humain extends Personnage {
 
@@ -13,6 +9,9 @@ public class Humain extends Personnage {
 		super(nom, "Humain", force, vitesseMouvement);
 	}
 
+	/* (non-Javadoc)
+	 * @see personnages.Personnage#toBase()
+	 */
 	@Override
 	public String toBase() {
 		return "Humain\t" + nom + "\t" + vie + "\t" + force

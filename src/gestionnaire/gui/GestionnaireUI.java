@@ -3,21 +3,17 @@ package gestionnaire.gui;
 import gestionnaire.Gestionnaire;
 import gestionnaire.run.EntreesSorties;
 
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -40,7 +36,8 @@ public class GestionnaireUI extends JFrame {
 	DefaultListModel<Personnage> lmodel;
 	JPanel contentPane;
 	File file;
-	
+	AddPersonnageDialogUI persoDialog;
+
 	public GestionnaireUI() {
 		init();
 		initMenu();
@@ -50,6 +47,9 @@ public class GestionnaireUI extends JFrame {
 		this.setVisible(true);
 	}
 
+	/**
+	 * Initialise la JFrame.
+	 */
 	private void init() {
 		/*
 		 * Initializing the main JFrame, keeping the default FlowLayout for the
@@ -63,9 +63,7 @@ public class GestionnaireUI extends JFrame {
 		this.setLocationRelativeTo(null);
 		// Instanciate a content pane
 		contentPane = new JPanel();
-		contentPane
-				.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-		contentPane.add(new ImagePanel());
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
 		this.setContentPane(contentPane);
 
@@ -81,6 +79,9 @@ public class GestionnaireUI extends JFrame {
 
 	}
 
+	/**
+	 * Initialise le menu dans la jframe.
+	 */
 	private void initMenu() {
 		// A JMenuBar
 		JMenuBar menubar = new JMenuBar();
@@ -115,17 +116,19 @@ public class GestionnaireUI extends JFrame {
 						Logger.getLogger(GestionnaireUI.class.getName()).log(
 								Level.SEVERE, null, ex);
 					}
-				}				
+				}
 				initPersonnageIntoList();
-				System.out.println("Taille du lmodel: " +lmodel.size());
+				System.out.println("Taille du lmodel: " + lmodel.size());
 			}
 		}
+
 		menuLoad.addActionListener(new MenuChargerAL());
 
 		/* Sauvegarder un gestionnaire existant */
 		JMenuItem menuSave = new JMenuItem("Sauvegarder...");
 		menu.add(menuSave);
-	class MenuSauvegarderAL implements ActionListener {
+
+		class MenuSauvegarderAL implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if (GestionnaireUI.this.gestionnaire != null) {
 					JFileChooser filechooser = new JFileChooser(".") {
@@ -162,22 +165,21 @@ public class GestionnaireUI extends JFrame {
 		menuSave.addActionListener(new MenuSauvegarderAL());
 	}
 
-	private void initPersonnageIntoList() {
+	/**
+	 * Charge les personnages dans la Jmodel (liste d'affichage).
+	 */
+	protected void initPersonnageIntoList() {
 		if (this.gestionnaire != null) {
 			lmodel.clear();
 			for (Personnage personnage : this.gestionnaire.getPersonnages()) {
 				lmodel.addElement(personnage);
 			}
 		}
-
 	}
 
-//	public void accessInnerClass () {
-//		AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, "Modifier Perso");
-//		AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
-//	}
-	
-	
+	/**
+	 * Initialise la Jlist et la DefaultListModel
+	 */
 	private void initListPersonnages() {
 		lmodel = new DefaultListModel<Personnage>();
 		listPerso = new JList<Personnage>(lmodel);
@@ -189,6 +191,34 @@ public class GestionnaireUI extends JFrame {
 		JButton buttonAddPersonnage = new JButton("Ajouter personnage");
 		contentPane.add(buttonAddPersonnage);
 
+		/* Permet de SUPPRIMER un personnage */
+		JButton removePersonnageButton = new JButton(" Supprimer personnage");
+		contentPane.add(removePersonnageButton);
+
+		
+		//TODO : Supprimer un personnage dans l'arraylist.
+		/**
+		 * Supprime un personnage de la liste.
+		 */
+		class RemovePersonnage implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+
+				Personnage selected = listPerso.getSelectedValue();
+				if (selected != null) {
+					Iterator<Personnage> itr = gestionnaire.getPersonnages().iterator();
+					while (itr.hasNext()) {
+						Personnage nextItem = itr.next();
+						System.out.println(nextItem);
+						System.out.println("sd" +selected);
+						if(nextItem.contains(selected)) {
+							itr.remove();
+						}
+						gestionnaire.getPersonnages().removeAll(gestionnaire.getPersonnages());
+					}
+					System.out.println(gestionnaire.getPersonnages());
+				}
+			}
+		}
 		class ButtonAddPersoAL implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if (GestionnaireUI.this.gestionnaire != null) {
@@ -200,9 +230,9 @@ public class GestionnaireUI extends JFrame {
 									GestionnaireUI.this,
 									"veuillez créer un nouveau gestionnaire ou charger un gestionnaire existant",
 									"Erreur", JOptionPane.ERROR_MESSAGE);
-			System.out.println("Taille lmodel en ouvrant la fenetre ajouter personnage" +lmodel.getSize());
 			}
 		}
+		removePersonnageButton.addActionListener(new RemovePersonnage());
 		buttonAddPersonnage.addActionListener(new ButtonAddPersoAL());
 
 		/* Adding a listener for double clicked series in the JList */
@@ -211,50 +241,39 @@ public class GestionnaireUI extends JFrame {
 				if (e.getClickCount() == 2) {
 					Personnage selectedSerie = listPerso.getSelectedValue();
 					if (selectedSerie != null) {
-//						PersonnagesUI personnageDialog = new PersonnagesUI(GestionnaireUI.this, gestionnaire);
-					
-						AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, "Modifier Perso");
+						// PersonnagesUI personnageDialog = new
+						// PersonnagesUI(GestionnaireUI.this, gestionnaire);
+
+						persoDialog = new AddPersonnageDialogUI(
+								GestionnaireUI.this, gestionnaire,
+								"Modifier Perso");
 						AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
-/*						
-						persoPanel.persoName.setText(selectedSerie.getNom());
-						persoPanel.persoName.setText("Test Bro");
-						
-						persoPanel.raceChoosen = selectedSerie.getRace();
-						persoPanel.vitesseSlider.setValue(selectedSerie.getVitesse());
-						persoPanel.forceSlider.setValue(selectedSerie.getForce());
-						persoPanel.forceSlider.setValue(6);
-	*/					
-						persoPanel.forceSlider.setValue(6);
-						System.out.println("Valeur " +persoPanel.forceSlider.getValue());
-						persoPanel.SetPersonnage(selectedSerie.getNom(), selectedSerie.getRace(), selectedSerie.getForce(), selectedSerie.getVitesse());
-						
-						System.out.println("Nom " +selectedSerie.getNom() + "Race " + selectedSerie.getRace() + " Force " +selectedSerie.getForce() + " Vitesse " + selectedSerie.getVitesse());
+						/*
+						 * persoPanel.persoName.setText(selectedSerie.getNom());
+						 * persoPanel.persoName.setText("Test Bro");
+						 * 
+						 * persoPanel.raceChoosen = selectedSerie.getRace();
+						 * persoPanel
+						 * .vitesseSlider.setValue(selectedSerie.getVitesse());
+						 * persoPanel
+						 * .forceSlider.setValue(selectedSerie.getForce());
+						 * persoPanel.forceSlider.setValue(6);
+						 */
+
+						System.out.println("Valeur : "
+								+ persoPanel.forceSlider.getValue());
+						// persoPanel.SetPersonnage(selectedSerie.getNom(),
+						// selectedSerie.getRace(), selectedSerie.getForce(),
+						// selectedSerie.getVitesse());
+
+						System.out.println("Nom " + selectedSerie.getNom()
+								+ " Race " + selectedSerie.getRace()
+								+ " Force " + selectedSerie.getForce()
+								+ " Vitesse " + selectedSerie.getVitesse());
 					}
 				}
 			}
 		}
 		listPerso.addMouseListener(new listSeriesDoubleClickedAL());
 	}
-
-	public static void main(String args[]) {
-		new GestionnaireUI();
-	}
-
-	public class ImagePanel extends JComponent {
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			try {
-				BufferedImage img = ImageIO.read(new File("./images/p-human.png"));
-
-				g.drawImage(img, (this.getWidth() - img.getWidth() / 2) / 2,
-						(this.getHeight() - img.getHeight() / 2) / 2,
-						img.getWidth() / 2, img.getHeight() / 2, null);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-	}
-
 }

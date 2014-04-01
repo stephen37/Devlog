@@ -1,9 +1,5 @@
 package personnages;
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 
 public class Elf extends Personnage {
@@ -14,6 +10,9 @@ public class Elf extends Personnage {
 		super(nom,"Elf", force, vitesseMouvement);
 	}
 
+	/* (non-Javadoc)
+	 * @see personnages.Personnage#toBase()
+	 */
 	@Override
 	public String toBase() {
 		return "Elf\t" + nom + "\t" + vie + "\t" + force + "\t vitesse de mouvement " + vitesseMouvement;

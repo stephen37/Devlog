@@ -1,15 +1,11 @@
 package labyrinthe;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -17,80 +13,127 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 @SuppressWarnings("serial")
-public class Case extends JPanel {
+public class Salle extends JPanel {
 
 	JPanel panel_case = new JPanel();
-	String etat = "";
+	String etat = " ";
 	protected int x;
 	protected int y;
-	int period = 0;
-	int time = 0;
+	double period = 0;
+	double time = 0;
 	int proba = 0;
 	private JPopupMenu mouseMenu = new JPopupMenu();
 	private JMenuItem sortie = new JMenuItem("Sortie");
 	private JMenuItem bloquee = new JMenuItem("Salle Bloquée");
 	private JMenuItem raz = new JMenuItem("Raz");
+	JLabel label;
 
-	public Case() {
+	public Salle(int x, int y, String etat, double period, int proba, double time) {
+		this.x = x;
+		this.y = y;
+		this.etat = etat;
+		this.period = period;
+		this.time = time;
 		init();
 		this.setVisible(true);
 	}
 
+	/**
+	 * Initialise la JPanel et ajoute une image à la case.
+	 */
 	protected void init() {
 		mouseMenu.add(sortie);
 		mouseMenu.add(bloquee);
 		mouseMenu.add(raz);
-		panel_case.setPreferredSize(new Dimension(90, 90));
-		panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
 
+		panel_case.setPreferredSize(new Dimension(90, 90));
+		panel_case.setMinimumSize(new Dimension(90, 90));
+
+		label = new JLabel(new ImageIcon("./images/s-normal.png"));
+		panel_case.add(label);
 		panel_case.addMouseListener(new CaseListener());
 		sortie.addActionListener(new SortieListener());
 		bloquee.addActionListener(new BloqueListener());
 		raz.addActionListener(new RazListener());
 	}
 
+	/**
+	 * Lance la fenêtre permettant de bloquer une case.
+	 */
 	protected void definirBlock() {
 		raz();
 		panel_case.removeAll();
-		FenetreBloquee fenetre = new FenetreBloquee();
-		panel_case.add(new JLabel(new ImageIcon("./images/s-locked.png")));
-		etat = "locked";
-		panel_case.repaint();
+		FenetreBloquee fenetre = new FenetreBloquee(this);
 	}
 
+	/**
+	 * Permet de définir un point de sortie sur une case.
+	 */
 	protected void definirSortie() {
 		raz();
 		panel_case.removeAll();
-		panel_case.add(new JLabel(new ImageIcon("./images/s-exit.png")));
-		etat = "exit";
+		definirEtat("exit");
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+
+	/**
+	 * Dessine des images en fonction de l'état de la case
+	 * @param e
+	 */
+	protected void definirEtat(String e) {
+		this.etat = e;
+		if (this.etat == "") {
+			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+		}
+		if (this.etat == "locked") {
+			label = new JLabel(new ImageIcon("./images/s-locked.png"));
+			panel_case.add(label);
+		}
+		if (this.etat == "exit") {
+			label = new JLabel(new ImageIcon("./images/s-exit.png"));
+			panel_case.add(label);
+		}
+		panel_case.validate();
 		panel_case.repaint();
 	}
 
+	/**
+	 * Remise à zéro de la case.
+	 */
 	protected void raz() {
 		time = 0;
 		period = 0;
 		proba = 0;
 		panel_case.removeAll();
-		panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
-		etat = "";
-		panel_case.validate();
-		panel_case.repaint();
+		definirEtat("");
+		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
-	protected int blockPeriod() {
-		period = (int) FenetreBloquee.spinner_periode.getValue();
+	/**
+	 * Obtient la periode selectionnée dans la fenêtre FenetreBloquee
+	 * @return double
+	 */
+	protected double blockPeriod() {
+		period = (double) FenetreBloquee.spinner_periode.getValue();
 		return period;
 	}
 
-	protected int blockTime() {
-		time = (int) FenetreBloquee.spinner_duree.getValue();
+	/**
+	 * Obtient le temps selectionné dans la fenêtre FenetreBloquee
+	 * @return double
+	 */
+	protected double blockTime() {
+		time = (double) FenetreBloquee.spinner_duree.getValue();
 		return time;
 	}
 
-	protected int probBlock() {
+	/**
+	 * Obtient la proba selectionnée dans la fenêtre FenetreBloquee
+	 * @return int
+	 */
+	protected int blockProb() {
 		proba = (int) FenetreBloquee.slider_prob.getValue();
 		return proba;
-
 	}
 
 	protected int GetX() {
@@ -101,6 +144,9 @@ public class Case extends JPanel {
 		return y;
 	}
 
+	/**
+	 * Ecoute la sourie pour savoir si on clique sur une case.
+	 */
 	class CaseListener implements MouseListener {
 
 		@Override
@@ -125,32 +171,38 @@ public class Case extends JPanel {
 		}
 	}
 
+	/**
+	 * Ecoute la sourie afin de savoir si le JMenuItem "Sortie" a été selectionné
+	 */
 	class SortieListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Clique sur sortie");
 			definirSortie();
 			panel_case.validate();
 			panel_case.repaint();
 		}
 	}
 
+	/**
+	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été selectionné
+	 */
 	class BloqueListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Clique sur bloque");
 			definirBlock();
 			panel_case.validate();
 			panel_case.repaint();
 		}
 	}
-
+	
+	/**
+	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été selectionné
+	 */
 	class RazListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			raz();
 			panel_case.repaint();
-			System.out.println("Clique sur raz");
 		}
 	}
 }

@@ -1,9 +1,5 @@
 package personnages;
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 
 public class Ogre extends Personnage{
@@ -15,6 +11,9 @@ public class Ogre extends Personnage{
 		super(nom,"Ogre", force, vitesseMouvement);
 	}
 
+	/* (non-Javadoc)
+	 * @see personnages.Personnage#toBase()
+	 */
 	@Override
 	public String toBase() {
 		return "Ogre\t" + nom + "\t" + vie + "\t" + force + "\t" + vitesseMouvement;
