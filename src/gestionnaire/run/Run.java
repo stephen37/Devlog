@@ -1,7 +1,7 @@
 package gestionnaire.run;
 
-import labyrinthe.MenuEditeur;
 import gestionnaire.gui.GestionnaireUI;
+import labyrinthe.MenuEditeur;
 
 public class Run {
 

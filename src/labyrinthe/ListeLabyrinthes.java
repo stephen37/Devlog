@@ -34,11 +34,10 @@ public class ListeLabyrinthes implements Serializable {
 		FileReader file = new FileReader(file_name);
 		BufferedReader bf = new BufferedReader(file);
 
-		for (Salle[] tabCase : ie.getSalle()) {
+		for (Salle[] tabCase : ie.getTabSalle()) {
 			for (Salle cases : tabCase) {
 				System.out.println("Case : " + cases.etat);
 				ie.EtablirLabyrinthe(cases.x, cases.y);
-
 			}
 		}
 //		bf.close();

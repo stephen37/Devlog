@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -29,16 +28,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import personnages.Personnage;
+
 @SuppressWarnings("serial")
 public class InterfaceEditeur extends JFrame {
-
-	JPanel content_pane;
 
 	private JButton load = new JButton("Load");
 	private JButton saveas = new JButton("Save as");
 	private JPanel panel_save = new JPanel();
 	private JPanel panel_size = new JPanel();
-	private JPanel panel_labyrinthe = new JPanel();
+	static JPanel panel_labyrinthe = new JPanel();
+	static JPanel content_pane = new JPanel();
+	private JButton randomButton = new JButton(" Random ");
+	private JPanel panel_random = new JPanel();
 	private JComboBox<Integer> taille_x = new JComboBox<Integer>();
 	private JComboBox<Integer> taille_y = new JComboBox<Integer>();
 	private int tailleChoisieX = 1;
@@ -51,6 +53,9 @@ public class InterfaceEditeur extends JFrame {
 	JTextField text_nom = new JTextField("Donnez un nom à votre labyrinthe");
 	File file;
 	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
+	Labyrinthe laby = new Labyrinthe(tab);
+	ArrayList<Salle> listSalle = new ArrayList<Salle>();
+	Salle[][] tabSalles;
 
 	public InterfaceEditeur() {
 		init();
@@ -91,9 +96,11 @@ public class InterfaceEditeur extends JFrame {
 		panel_save.add(load);
 		panel_save.add(saveas);
 		panel_save.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panel_random.add(randomButton);
 		bas_fenetre.add(panel_save, BorderLayout.EAST);
 		bas_fenetre.add(panel_size, BorderLayout.WEST);
 		content_pane.add(top, BorderLayout.WEST);
+		bas_fenetre.add(panel_random, BorderLayout.CENTER);
 		content_pane.add(bas_fenetre, BorderLayout.PAGE_END);
 
 		this.setContentPane(content_pane); // CETTE CLASSE EST DENUEE DE
@@ -103,6 +110,7 @@ public class InterfaceEditeur extends JFrame {
 		taille_y.addItemListener(new TailleYlistener());
 		saveas.addActionListener(new SaveAsListener());
 		load.addActionListener(new ChargerListener());
+		randomButton.addActionListener(new RandomListener());
 
 	}
 
@@ -132,16 +140,45 @@ public class InterfaceEditeur extends JFrame {
 			for (int j = 0; j < y; j++) {
 				gbc.gridx = i;
 				gbc.gridy = j;
-				Salle case_labyrinthe = new Salle(i, j, "", 0, 0, 0);
 				// panel_case.setBorder(door);
-				case_labyrinthe.panel_case.setPreferredSize(new Dimension(90,
-						90));
-				case_labyrinthe.panel_case.add(new JLabel(new ImageIcon(
-						"./images/s-normal.png")));
-
+				Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
 				tab[i][j] = case_labyrinthe;
 				panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
 			}
+		}
+		content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
+		
+				
+		
+	}
+
+	public void EtablirLabyrinthe(Labyrinthe laby) {
+
+		panel_labyrinthe.setLayout(new GridBagLayout());
+		panel_labyrinthe.setPreferredSize(new Dimension(300, 300));
+		// Border door = BorderFactory.createDashedBorder(Color.black, 5, 10,
+		// 20, true);
+		panel_labyrinthe.removeAll();
+		panel_labyrinthe.repaint();
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridheight = 1;
+		gbc.gridwidth = 1;
+		gbc.anchor = GridBagConstraints.CENTER;
+		labyrinthes = new ArrayList<Labyrinthe>();
+		for (int i = 0; i < laby.tab_cases.length; i++) {
+			for (int j = 0; j < laby.tab_cases[i].length; j++) {
+				gbc.gridx = i;
+				gbc.gridy = j;
+				// panel_case.setBorder(door);
+//				 Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
+//				 tab[i][j] = case_labyrinthe;
+//				 panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
+				panel_labyrinthe.add(laby.tab_cases[i][j].panel_case, gbc);
+				System.out.print(laby.tab_cases[i][j].etat+" ");
+				
+			}
+			System.out.println();
 		}
 		content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
 	}
@@ -151,7 +188,7 @@ public class InterfaceEditeur extends JFrame {
 	 * 
 	 * @return Case[][]
 	 */
-	public Salle[][] getSalle() {
+	public Salle[][] getTabSalle() {
 		return tab;
 	}
 
@@ -222,10 +259,6 @@ public class InterfaceEditeur extends JFrame {
 									+ tab[i][j].etat);
 						}
 					}
-					// listelabyrinthes.ajouterLabyrinthe(laby);
-					// ListeLabyrinthes.ajouterLabyrinthe(tab);
-					// EntreesSorties.sauvegarderFichier(listelabyrinthes.getLabyrinthes().toString(),
-					// filechooser.getSelectedFile());
 				}
 			} else {
 				JOptionPane
@@ -252,29 +285,76 @@ public class InterfaceEditeur extends JFrame {
 	class ChargerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser filechooser = new JFileChooser(".");
-			// filechooser.setFileFilter(new FileNameExtensionFilter(
-			// "Gestionnaire", ".*"));
 			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
-					Labyrinthe laby = new Labyrinthe(tab);
+//					laby = new Labyrinthe(tab);
 					fileSelected = filechooser.getSelectedFile();
-					// Cette ligne écrase le labyrinthe précédent sauvegardé
-					// dans le fichier.
-
-					// listeLabyrinthes.addToFile(laby, fileSelected);
-
 					BufferedReader br = new BufferedReader(new FileReader(
 							fileSelected));
-					String line = br.readLine();
-					laby.createLabyrintheFromLine(line);
+					String line;
+					while ((line = br.readLine()) != null) {
+						// laby.createLabyrintheFromLine(line);
+						// laby.createSalleFromLine(line);
+						listSalle.add(laby.createSalleFromLine(line));
+					}
+					
+					int x = listSalle.get(listSalle.size()-1).GetX();
+					int y = listSalle.get(listSalle.size()-1).GetY();
+					tabSalles = new Salle[x][y];
+					int cpt = 0;
+					for (int i = 0; i< x ; i++) {
+						for (int j = 0; j < y ; j++) {
+							tabSalles[i][j] = listSalle.get(cpt);
+							cpt++;
+							System.out.print(tabSalles[i][j].etat+" ");
+							
+						}
+						System.out.println();
+					}
+//					tabSalles = new Salle[x][y];
+					laby = new Labyrinthe(tabSalles);
 					br.close();
 				} catch (Exception ex) {
 					Logger.getLogger(GestionnaireUI.class.getName()).log(
 							Level.SEVERE, null, ex);
 				}
 			}
-			repaint();
+
+			// EtablirLabyrinthe(laby.x, laby.y);
+			EtablirLabyrinthe(laby);
+			panel_labyrinthe.revalidate();
+			panel_labyrinthe.repaint();
 			// initLabyrintheIntoList();
+		}
+	}
+
+	// TODO : A compléter
+	public void initRandomLaby() { // A COMPLETER
+		  String[] etatTab = { "normal", "locked", "exit" };
+		  int ranX = (int) (Math.random() * (9 - 1) + 1);
+		  int ranY = (int) (Math.random() * (9 - 1) + 1);
+		  taille_x.setSelectedItem(ranX);
+		  taille_y.setSelectedIndex(ranY);
+		  
+		  for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
+
+		   int ran_caseX = (int) (Math.random() * (ranX));
+		   int ran_caseY = (int) (Math.random() * (ranY));
+		   int ranEtat = (int) (Math.random() * etatTab.length);
+		   String etat = etatTab[ranEtat];
+		   tab[ran_caseX][ran_caseY].definirEtat(etat);
+
+		  }
+		  Labyrinthe laby = new Labyrinthe(tab);
+		  EtablirLabyrinthe(laby);
+		  repaint();
+		  getContentPane().revalidate();
+
+		 }
+	public class RandomListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			initRandomLaby();
 		}
 	}
 

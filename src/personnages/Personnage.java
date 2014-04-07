@@ -1,5 +1,11 @@
 package personnages;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+import labyrinthe.InterfaceEditeur;
+import labyrinthe.Salle;
+
 /**
  * @author stephen BATIFOL L2 MI
  *
@@ -11,6 +17,8 @@ public abstract class Personnage implements Runnable {
 	protected String nom;
 	protected String race;
 	protected int vitesseMouvement;
+	InterfaceEditeur ie = new InterfaceEditeur();
+	
 	
 	/**
 	 * @param nom
@@ -61,9 +69,12 @@ public abstract class Personnage implements Runnable {
 	
 	public abstract String toBase();
 	
+	public abstract void setImage();
+	
 	@Override
 	public void run() {
-		// Thread à gerer.
+		Salle[][] tab = ie.getTabSalle();
+		tab[0][0].add(new JLabel(new ImageIcon("./images/p-elf.png")));
 	}
 
 	
@@ -72,15 +83,13 @@ public abstract class Personnage implements Runnable {
 		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement) {
 			
 			@Override
-			public String toBase() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+			public String toBase() {return null;}
+			@Override
+			public void setImage() {}
 		};
 		if (perso2.nom.equals(selected.nom) && perso2.race.equals(selected.race) && perso2.force == selected.force && perso2.vitesseMouvement == selected.vitesseMouvement) {
 			return true;
 		}
 		return false;
 	}
-
 }

@@ -1,6 +1,10 @@
 package personnages;
 import java.awt.Image;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 public class Humain extends Personnage {
 
 	protected Image image;
@@ -22,4 +26,9 @@ public class Humain extends Personnage {
 		return vitesseMouvement;
 	}
 
+	@Override
+	public void setImage() {
+		JPanel panelImage = new JPanel();
+		panelImage.add(new JLabel(new ImageIcon("./images/p-human.png")));
+	}
 }

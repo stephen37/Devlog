@@ -1,5 +1,8 @@
 package labyrinthe;
 
+import gestionnaire.Gestionnaire;
+import gestionnaire.gui.AddPersonnageDialogUI;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +19,7 @@ import javax.swing.JPopupMenu;
 public class Salle extends JPanel {
 
 	JPanel panel_case = new JPanel();
-	String etat = " ";
+	String etat = "normal";
 	protected int x;
 	protected int y;
 	double period = 0;
@@ -26,15 +29,20 @@ public class Salle extends JPanel {
 	private JMenuItem sortie = new JMenuItem("Sortie");
 	private JMenuItem bloquee = new JMenuItem("Salle Bloquée");
 	private JMenuItem raz = new JMenuItem("Raz");
-	JLabel label;
+	private JMenuItem ajouterPerso = new JMenuItem("Ajouter Personnage");
+	private Gestionnaire gestionnaire = new Gestionnaire();
 
-	public Salle(int x, int y, String etat, double period, int proba, double time) {
+	JLabel label = new JLabel();
+
+	public Salle(int x, int y, String etat, double period, int proba,
+			double time) {
 		this.x = x;
 		this.y = y;
 		this.etat = etat;
 		this.period = period;
 		this.time = time;
 		init();
+		// definirEtat(etat);
 		this.setVisible(true);
 	}
 
@@ -45,16 +53,18 @@ public class Salle extends JPanel {
 		mouseMenu.add(sortie);
 		mouseMenu.add(bloquee);
 		mouseMenu.add(raz);
+		mouseMenu.add(ajouterPerso);
 
 		panel_case.setPreferredSize(new Dimension(90, 90));
 		panel_case.setMinimumSize(new Dimension(90, 90));
 
-		label = new JLabel(new ImageIcon("./images/s-normal.png"));
+		definirEtat(etat);
 		panel_case.add(label);
 		panel_case.addMouseListener(new CaseListener());
 		sortie.addActionListener(new SortieListener());
 		bloquee.addActionListener(new BloqueListener());
 		raz.addActionListener(new RazListener());
+		ajouterPerso.addActionListener(new PersoListener());
 	}
 
 	/**
@@ -76,20 +86,44 @@ public class Salle extends JPanel {
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
+	protected void definirPerso(String perso) {
+		panel_case.removeAll();
+		AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(null,
+				gestionnaire, "");
+		AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
+		System.out.println("Race" + persoPanel.getRace());
+		switch (perso) {
+		case "Elf":
+			panel_case.add(new JLabel(new ImageIcon("./images/p-elf.png")));
+			break;
+		case "Ogre":
+			panel_case.add(new JLabel(new ImageIcon("./images/p-ogre.png")));
+			break;
+		case "Humain":
+			panel_case.add(new JLabel(new ImageIcon("./images/p-human.png")));
+			break;
+		default:
+			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+			break;
+		}
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+
 	/**
 	 * Dessine des images en fonction de l'état de la case
+	 * 
 	 * @param e
 	 */
 	protected void definirEtat(String e) {
 		this.etat = e;
-		if (this.etat == "") {
+		if (this.etat.equalsIgnoreCase("normal")) {
 			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
 		}
-		if (this.etat == "locked") {
+		if (this.etat.equalsIgnoreCase("locked")) {
 			label = new JLabel(new ImageIcon("./images/s-locked.png"));
 			panel_case.add(label);
 		}
-		if (this.etat == "exit") {
+		if (this.etat.equalsIgnoreCase("exit")) {
 			label = new JLabel(new ImageIcon("./images/s-exit.png"));
 			panel_case.add(label);
 		}
@@ -105,12 +139,13 @@ public class Salle extends JPanel {
 		period = 0;
 		proba = 0;
 		panel_case.removeAll();
-		definirEtat("");
+		definirEtat("normal");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
 	 * Obtient la periode selectionnée dans la fenêtre FenetreBloquee
+	 * 
 	 * @return double
 	 */
 	protected double blockPeriod() {
@@ -120,6 +155,7 @@ public class Salle extends JPanel {
 
 	/**
 	 * Obtient le temps selectionné dans la fenêtre FenetreBloquee
+	 * 
 	 * @return double
 	 */
 	protected double blockTime() {
@@ -129,6 +165,7 @@ public class Salle extends JPanel {
 
 	/**
 	 * Obtient la proba selectionnée dans la fenêtre FenetreBloquee
+	 * 
 	 * @return int
 	 */
 	protected int blockProb() {
@@ -142,6 +179,10 @@ public class Salle extends JPanel {
 
 	protected int GetY() {
 		return y;
+	}
+
+	protected JPanel getPanel() {
+		return panel_case;
 	}
 
 	/**
@@ -172,7 +213,8 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la sourie afin de savoir si le JMenuItem "Sortie" a été selectionné
+	 * Ecoute la sourie afin de savoir si le JMenuItem "Sortie" a été
+	 * selectionné
 	 */
 	class SortieListener implements ActionListener {
 		@Override
@@ -184,7 +226,8 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été selectionné
+	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été
+	 * selectionné
 	 */
 	class BloqueListener implements ActionListener {
 		@Override
@@ -194,14 +237,36 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	/**
-	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été selectionné
+	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été
+	 * selectionné
 	 */
 	class RazListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			raz();
+			panel_case.repaint();
+		}
+	}
+
+	class PersoListener implements ActionListener {
+		@Override
+		public synchronized void actionPerformed(ActionEvent arg0) {
+			try {
+				notify();
+				AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(
+						null, gestionnaire, "");
+				AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
+				definirPerso(persoPanel.getRace());
+//				wait();
+			} catch (NullPointerException e) {
+//			} catch (InterruptedException e) {
+//				 TODO Auto-generated catch block
+//				e.printStackTrace();
+			}
+
+			panel_case.validate();
 			panel_case.repaint();
 		}
 	}
