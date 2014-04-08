@@ -19,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,19 +28,14 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
-import labyrinthe.Salle;
+import labyrinthe.InterfaceEditeur;
 
 import personnages.Personnage;
 
 @SuppressWarnings("serial")
-public class AddPersonnageDialogUI extends JFrame {
+public class AddPersonnageDialogUI extends JDialog {
 
 	Gestionnaire gestionnaire;
-	/*********************************************************************************************************/
-	// TODO : Modifier l'addPersonnageDialogUI pour éviter d'ouvrir une nouvelle
-	// fenêtre..
-	// Il faut enlever le new GestionnaireUI();
-//	GestionnaireUI gestionnaireUI = new GestionnaireUI();
 	File fileSelected;
 	AddPersonnagePanelUI persoPanel;
 
@@ -74,6 +70,7 @@ public class AddPersonnageDialogUI extends JFrame {
 		int force;
 		JPanel leftJpanel;
 		ArrayList<Personnage> list = gestionnaire.getPersonnages();
+
 		public AddPersonnagePanelUI() {
 			this.setLayout(new BorderLayout());
 			/*
@@ -204,7 +201,7 @@ public class AddPersonnageDialogUI extends JFrame {
 		 * Ajoute une image en fonction du choix de personnages
 		 * 
 		 */
-		 class ImagePanel extends JPanel {
+		class ImagePanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponents(g);
 				try {
@@ -228,17 +225,18 @@ public class AddPersonnageDialogUI extends JFrame {
 
 			}
 		}
+
 		/**
 		 * Permet de sauvegarder un personnage dans un fichier
 		 */
 		public class SaveAsListener implements ActionListener {
 			@Override
-			public synchronized void actionPerformed(ActionEvent e) {
-				notify();
+			public void actionPerformed(ActionEvent e) {
 				name = persoName.getText().toString();
 				vitesse = vitesseSlider.getValue();
 				force = forceSlider.getValue();
-				if (AddPersonnageDialogUI.this.gestionnaire != null) {
+
+				if (gestionnaire != null) {
 					JFileChooser filechooser = new JFileChooser(".") {
 						public void approveSelection() {
 							fileSelected = getSelectedFile();
@@ -264,7 +262,6 @@ public class AddPersonnageDialogUI extends JFrame {
 						EntreesSorties.sauvegarderFichier(gestionnaire
 								.getPersonnages().toString(), filechooser
 								.getSelectedFile());
-
 					}
 				} else {
 					JOptionPane
@@ -274,26 +271,20 @@ public class AddPersonnageDialogUI extends JFrame {
 									"Erreur", JOptionPane.ERROR_MESSAGE);
 				}
 
-				// Le personnage s'ajoute bien à l'arraylist lors du chargement.
 				try {
 					gestionnaire.addToFile(gestionnaire.getPersonnages(),
 							fileSelected);
-//					GestionnaireUI gui = new GestionnaireUI();
-//					gui.initPersonnageIntoList();
+					GestionnaireUI gui = new GestionnaireUI();
+					gui.dispose();
+					gui.initPersonnageIntoList();
 //					gestionnaireUI.initPersonnageIntoList();
 
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				try {
-					wait();
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				getContentPane().revalidate();
 				dispose();
-				
+
 			}
 		}
 

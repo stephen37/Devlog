@@ -55,7 +55,6 @@ public class InterfaceEditeur extends JFrame {
 	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
 	Labyrinthe laby = new Labyrinthe(tab);
 	ArrayList<Salle> listSalle = new ArrayList<Salle>();
-	Salle[][] tabSalles;
 
 	public InterfaceEditeur() {
 		init();
@@ -147,9 +146,7 @@ public class InterfaceEditeur extends JFrame {
 			}
 		}
 		content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
-		
-				
-		
+
 	}
 
 	public void EtablirLabyrinthe(Labyrinthe laby) {
@@ -171,12 +168,12 @@ public class InterfaceEditeur extends JFrame {
 				gbc.gridx = i;
 				gbc.gridy = j;
 				// panel_case.setBorder(door);
-//				 Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
-//				 tab[i][j] = case_labyrinthe;
-//				 panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
+				// Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
+				// tab[i][j] = case_labyrinthe;
+				// panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
 				panel_labyrinthe.add(laby.tab_cases[i][j].panel_case, gbc);
-				System.out.print(laby.tab_cases[i][j].etat+" ");
-				
+				System.out.print(laby.tab_cases[i][j].etat + " ");
+				tab = laby.tab_cases;
 			}
 			System.out.println();
 		}
@@ -233,7 +230,7 @@ public class InterfaceEditeur extends JFrame {
 			Labyrinthe laby = new Labyrinthe(tab);
 			laby.nom = name;
 
-			if (InterfaceEditeur.this != null) {
+			if (this != null) {
 				JFileChooser filechooser = new JFileChooser(".") {
 					public void approveSelection() {
 						fileSelected = getSelectedFile();
@@ -287,40 +284,33 @@ public class InterfaceEditeur extends JFrame {
 			JFileChooser filechooser = new JFileChooser(".");
 			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
-//					laby = new Labyrinthe(tab);
 					fileSelected = filechooser.getSelectedFile();
 					BufferedReader br = new BufferedReader(new FileReader(
 							fileSelected));
 					String line;
 					while ((line = br.readLine()) != null) {
-						// laby.createLabyrintheFromLine(line);
-						// laby.createSalleFromLine(line);
 						listSalle.add(laby.createSalleFromLine(line));
 					}
-					
-					int x = listSalle.get(listSalle.size()-1).GetX();
-					int y = listSalle.get(listSalle.size()-1).GetY();
-					tabSalles = new Salle[x][y];
+
+					int x = listSalle.get(listSalle.size() - 1).GetX();
+					int y = listSalle.get(listSalle.size() - 1).GetY();
+					tab = new Salle[x][y];
 					int cpt = 0;
-					for (int i = 0; i< x ; i++) {
-						for (int j = 0; j < y ; j++) {
-							tabSalles[i][j] = listSalle.get(cpt);
+					for (int i = 0; i < x; i++) {
+						for (int j = 0; j < y; j++) {
+							tab[i][j] = listSalle.get(cpt);
 							cpt++;
-							System.out.print(tabSalles[i][j].etat+" ");
-							
+							System.out.print(tab[i][j].etat + " ");
 						}
 						System.out.println();
 					}
-//					tabSalles = new Salle[x][y];
-					laby = new Labyrinthe(tabSalles);
+					laby = new Labyrinthe(tab);
 					br.close();
 				} catch (Exception ex) {
 					Logger.getLogger(GestionnaireUI.class.getName()).log(
 							Level.SEVERE, null, ex);
 				}
 			}
-
-			// EtablirLabyrinthe(laby.x, laby.y);
 			EtablirLabyrinthe(laby);
 			panel_labyrinthe.revalidate();
 			panel_labyrinthe.repaint();
@@ -330,32 +320,34 @@ public class InterfaceEditeur extends JFrame {
 
 	// TODO : A compléter
 	public void initRandomLaby() { // A COMPLETER
-		  String[] etatTab = { "normal", "locked", "exit" };
-		  int ranX = (int) (Math.random() * (9 - 1) + 1);
-		  int ranY = (int) (Math.random() * (9 - 1) + 1);
-		  taille_x.setSelectedItem(ranX);
-		  taille_y.setSelectedIndex(ranY);
-		  
-		  for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
+		String[] etatTab = { "normal", "locked", "exit" };
+		int ranX = (int) (Math.random() * (9 - 1) + 1);
+		int ranY = (int) (Math.random() * (9 - 1) + 1);
+		taille_x.setSelectedItem(ranX);
+		taille_y.setSelectedIndex(ranY);
+		
+		for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
 
-		   int ran_caseX = (int) (Math.random() * (ranX));
-		   int ran_caseY = (int) (Math.random() * (ranY));
-		   int ranEtat = (int) (Math.random() * etatTab.length);
-		   String etat = etatTab[ranEtat];
-		   tab[ran_caseX][ran_caseY].definirEtat(etat);
+			int ran_caseX = (int) (Math.random() * (ranX));
+			int ran_caseY = (int) (Math.random() * (ranY));
+			int ranEtat = (int) (Math.random() * etatTab.length);
+			String etat = etatTab[ranEtat];
+			tab[ran_caseX][ran_caseY].definirEtat(etat);
+		}
+		laby = new Labyrinthe(tab);
+		panel_labyrinthe.removeAll();
+		EtablirLabyrinthe(laby);
+		panel_labyrinthe.validate();
+		panel_labyrinthe.repaint();
+//		repaint();
+//		getContentPane().revalidate();
 
-		  }
-		  Labyrinthe laby = new Labyrinthe(tab);
-		  EtablirLabyrinthe(laby);
-		  repaint();
-		  getContentPane().revalidate();
+	}
 
-		 }
 	public class RandomListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			initRandomLaby();
 		}
 	}
-
 }

@@ -16,13 +16,11 @@ import personnages.Personnage;
 @SuppressWarnings("serial")
 public class Gestionnaire implements Serializable {
 
-	private static ArrayList<Personnage> personnages;
+	private ArrayList<Personnage> personnages;
 
 	public Gestionnaire() {
 		personnages = new ArrayList<Personnage>();
-	}
-
-	
+	}	
 	/**
 	 * 
 	 * Ajoute un personnage à partir de ses attributs à l'arrayList de personnages.
@@ -37,6 +35,7 @@ public class Gestionnaire implements Serializable {
 			@Override
 			public String toBase() {
 				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse + "\t" +vie;
+				
 //				throw new UnsupportedOperationException("Not supported yet.");
 			}
 @Override
@@ -86,8 +85,6 @@ public class Gestionnaire implements Serializable {
 	 * @throws Exception
 	 */
 	public void addToFile(ArrayList<Personnage> personnages, File file) throws Exception {
-//		BufferedWriter buffer = new BufferedWriter(new FileWriter(
-//				"personnages.txt"));
 		BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
 		for (Personnage l : personnages) {
 			buffer.write(l.toBase() + "\n");
@@ -108,9 +105,9 @@ public class Gestionnaire implements Serializable {
 		while (line != null) {
 			Personnage new_personnage = createPersonnageFromLine(line);
 			personnages.add(new_personnage);
-
 			line = buff.readLine();
 		}
+		buff.close();
 
 	}
 

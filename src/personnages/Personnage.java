@@ -1,23 +1,19 @@
 package personnages;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
 import labyrinthe.InterfaceEditeur;
-import labyrinthe.Salle;
 
 /**
  * @author stephen BATIFOL L2 MI
  *
  */
 
-public abstract class Personnage implements Runnable {
+public abstract class Personnage {
 	protected int vie;
 	protected int force;
 	protected String nom;
 	protected String race;
 	protected int vitesseMouvement;
-	InterfaceEditeur ie = new InterfaceEditeur();
+//	InterfaceEditeur ie = new InterfaceEditeur();
 	
 	
 	/**
@@ -71,11 +67,11 @@ public abstract class Personnage implements Runnable {
 	
 	public abstract void setImage();
 	
-	@Override
-	public void run() {
-		Salle[][] tab = ie.getTabSalle();
-		tab[0][0].add(new JLabel(new ImageIcon("./images/p-elf.png")));
-	}
+//	@Override
+//	public void run() {
+//		Salle[][] tab = ie.getTabSalle();
+//		tab[0][0].add(new JLabel(new ImageIcon("./images/p-elf.png")));
+//	}
 
 	
 	//Permet de comparer deux personnages.

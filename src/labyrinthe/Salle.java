@@ -2,18 +2,30 @@ package labyrinthe;
 
 import gestionnaire.Gestionnaire;
 import gestionnaire.gui.AddPersonnageDialogUI;
+import gestionnaire.gui.GestionnaireUI;
+import gestionnaire.run.EntreesSorties;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.event.MouseInputAdapter;
+
+import personnages.Personnage;
 
 @SuppressWarnings("serial")
 public class Salle extends JPanel {
@@ -31,6 +43,9 @@ public class Salle extends JPanel {
 	private JMenuItem raz = new JMenuItem("Raz");
 	private JMenuItem ajouterPerso = new JMenuItem("Ajouter Personnage");
 	private Gestionnaire gestionnaire = new Gestionnaire();
+	File fileSelected;
+	GestionnaireUI gui;
+	Personnage selectedSerie;
 
 	JLabel label = new JLabel();
 
@@ -73,7 +88,8 @@ public class Salle extends JPanel {
 	protected void definirBlock() {
 		raz();
 		panel_case.removeAll();
-		FenetreBloquee fenetre = new FenetreBloquee(this);
+		new FenetreBloquee(this);
+		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
@@ -86,13 +102,9 @@ public class Salle extends JPanel {
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
-	protected void definirPerso(String perso) {
+	protected void definirPerso(String race) {
 		panel_case.removeAll();
-		AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(null,
-				gestionnaire, "");
-		AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
-		System.out.println("Race" + persoPanel.getRace());
-		switch (perso) {
+		switch (race) {
 		case "Elf":
 			panel_case.add(new JLabel(new ImageIcon("./images/p-elf.png")));
 			break;
@@ -106,6 +118,8 @@ public class Salle extends JPanel {
 			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
 			break;
 		}
+		panel_case.validate();
+		panel_case.repaint();
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
@@ -186,7 +200,7 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la sourie pour savoir si on clique sur une case.
+	 * Ecoute la souris pour savoir si on clique sur une case.
 	 */
 	class CaseListener implements MouseListener {
 
@@ -213,7 +227,7 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la sourie afin de savoir si le JMenuItem "Sortie" a été
+	 * Ecoute la souris afin de savoir si le JMenuItem "Sortie" a été
 	 * selectionné
 	 */
 	class SortieListener implements ActionListener {
@@ -226,7 +240,7 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été
+	 * Ecoute la souris afin de savoir si le JMenuItem "Bloquer" a été
 	 * selectionné
 	 */
 	class BloqueListener implements ActionListener {
@@ -239,7 +253,7 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la sourie afin de savoir si le JMenuItem "Bloquer" a été
+	 * Ecoute la souris afin de savoir si le JMenuItem "Bloquer" a été
 	 * selectionné
 	 */
 	class RazListener implements ActionListener {
@@ -252,22 +266,36 @@ public class Salle extends JPanel {
 
 	class PersoListener implements ActionListener {
 		@Override
-		public synchronized void actionPerformed(ActionEvent arg0) {
-			try {
-				notify();
-				AddPersonnageDialogUI persoDialog = new AddPersonnageDialogUI(
-						null, gestionnaire, "");
-				AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
-				definirPerso(persoPanel.getRace());
-//				wait();
-			} catch (NullPointerException e) {
-//			} catch (InterruptedException e) {
-//				 TODO Auto-generated catch block
-//				e.printStackTrace();
-			}
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser filechooser = new JFileChooser(".");
+			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				try {
+					fileSelected = filechooser.getSelectedFile();
+					gestionnaire.chargerPersonnage(fileSelected.getPath());
+					gui = new GestionnaireUI();
 
+					gui.initPersonnageIntoList(gestionnaire.getPersonnages());
+
+				} catch (Exception ex) {
+					Logger.getLogger(GestionnaireUI.class.getName()).log(
+							Level.SEVERE, null, ex);
+				}
+			}
+			gui.getJList().addMouseListener(new listSeriesDoubleClickedAL());
 			panel_case.validate();
 			panel_case.repaint();
+		}
+
+	}
+
+	class listSeriesDoubleClickedAL extends MouseInputAdapter {
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				selectedSerie = gui.getJList().getSelectedValue();
+				if (selectedSerie != null) {
+					definirPerso(selectedSerie.getRace());
+				}
+			}
 		}
 	}
 }
