@@ -1,11 +1,13 @@
 package labyrinthe;
 
-import gestionnaire.gui.GestionnaireUI;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,24 +22,29 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
+import javax.swing.event.MouseInputAdapter;
 
 @SuppressWarnings("serial")
 public class MenuEditeur extends JFrame {
 	JList<Labyrinthe> liste_labyrinthe;
 	DefaultListModel<Labyrinthe> liste_model;
-	JPanel content_pane;
 	ListeLabyrinthes classListLabyrinthes;
 
 	private JButton ajouter;
 	private JButton supprimer;
 	private JButton charger;
+
+	JPanel content_pane = new JPanel();
+	static Salle[][] tab;
+	static ArrayList<Labyrinthe> labyrinthes;
 	File file;
+	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
+	Labyrinthe laby = new Labyrinthe(tab);
+	ArrayList<Salle> listSalle = new ArrayList<Salle>();
 
 	public MenuEditeur() {
 		init();
 		initListLabyrinthe();
-		initLabyrintheIntoList();
-
 		this.setVisible(true);
 	}
 
@@ -45,6 +52,7 @@ public class MenuEditeur extends JFrame {
 	 * Initialise la Jframe, y ajoute ses boutons et ses Listeners.
 	 */
 	public void init() {
+
 		classListLabyrinthes = new ListeLabyrinthes();
 		this.setTitle("Editeur de Labyrinthe");
 		this.setSize(400, 400);
@@ -80,7 +88,7 @@ public class MenuEditeur extends JFrame {
 		this.getContentPane().add(scroll_pane);
 		ajouter = new JButton("+");
 		supprimer = new JButton("-");
-		charger = new JButton("charger");
+		charger = new JButton(" Charger ");
 
 		JPanel buttonPane1 = new JPanel();
 		buttonPane1.setLayout(new BoxLayout(buttonPane1, BoxLayout.LINE_AXIS));
@@ -97,9 +105,10 @@ public class MenuEditeur extends JFrame {
 
 		content_pane.add(buttonPane1);
 		content_pane.add(buttonPane2);
-
-		ajouter.addActionListener(new AjouterListener());
 		charger.addActionListener(new ChargerListener());
+		ajouter.addActionListener(new AjouterListener());
+		liste_labyrinthe
+		.addMouseListener(new listSeriesDoubleClickedAL());
 	}
 
 	class AjouterListener implements ActionListener {
@@ -119,25 +128,62 @@ public class MenuEditeur extends JFrame {
 			// "Gestionnaire", ".*"));
 			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
-//					InterfaceEditeur ie = new InterfaceEditeur();
-					Labyrinthe laby = new Labyrinthe(InterfaceEditeur.tab);
 					file = filechooser.getSelectedFile();
-//					classListLabyrinthes.addToFile(laby, file);
+					BufferedReader br = new BufferedReader(new FileReader(file));
+					String line;
+					while ((line = br.readLine()) != null) {
+						listSalle.add(laby.createSalleFromLine(line));
+					}
 
+					int x = listSalle.get(listSalle.size() - 1).GetX();
+					int y = listSalle.get(listSalle.size() - 1).GetY();
+					tab = new Salle[x][y];
+					int cpt = 0;
+					for (int i = 0; i < x; i++) {
+						for (int j = 0; j < y; j++) {
+							tab[i][j] = listSalle.get(cpt);
+							cpt++;
+							System.out.print(tab[i][j].etat + " ");
+						}
+						System.out.println();
+					}
+					laby = new Labyrinthe(tab);
+					br.close();
 				} catch (Exception ex) {
-					Logger.getLogger(GestionnaireUI.class.getName()).log(
+					Logger.getLogger(MenuEditeur.class.getName()).log(
 							Level.SEVERE, null, ex);
 				}
 			}
+			initLabyrintheIntoList(laby);
 			repaint();
-			initLabyrintheIntoList();
+		}
+	}
+
+	class listSeriesDoubleClickedAL extends MouseInputAdapter {
+		@SuppressWarnings("static-access")
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				
+				Labyrinthe selectedSerie = liste_labyrinthe.getSelectedValue();
+				if (selectedSerie != null) {
+					InterfaceEditeur ie = new InterfaceEditeur();
+					ie.EtablirLabyrinthe(selectedSerie);					
+				}
+			}
 		}
 	}
 
 	/**
 	 * Ajoute les Labyrinthes à la Jlist.
 	 */
-	public void initLabyrintheIntoList() {
+	public void initLabyrintheIntoList(Labyrinthe laby) {
+		if (laby != null) {
+			liste_model.clear();
+			// for (Labyrinthe labyrinthe : laby) {
+			liste_model.addElement(laby);
+			// }
 
+		}
 	}
+
 }

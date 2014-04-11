@@ -1,5 +1,6 @@
 package gestionnaire;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,10 +37,9 @@ public class Gestionnaire implements Serializable {
 			public String toBase() {
 				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse + "\t" +vie;
 				
-//				throw new UnsupportedOperationException("Not supported yet.");
 			}
 @Override
-			public void setImage() {}
+			public Component setImage() {return null;}
 		});
 	}
 

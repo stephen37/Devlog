@@ -274,10 +274,6 @@ public class AddPersonnageDialogUI extends JDialog {
 				try {
 					gestionnaire.addToFile(gestionnaire.getPersonnages(),
 							fileSelected);
-					GestionnaireUI gui = new GestionnaireUI();
-					gui.dispose();
-					gui.initPersonnageIntoList();
-//					gestionnaireUI.initPersonnageIntoList();
 
 				} catch (Exception e1) {
 					e1.printStackTrace();

@@ -46,10 +46,9 @@ public class InterfaceEditeur extends JFrame {
 	private int tailleChoisieX = 1;
 	private int tailleChoisieY = 1;
 	GridBagConstraints gbc;
-	static Salle[][] tab;
-	ListeLabyrinthes listelabyrinthes;
+	public static Salle[][] tab;
 	File fileSelected;
-	ArrayList<Labyrinthe> labyrinthes;
+	static ArrayList<Labyrinthe> labyrinthes;
 	JTextField text_nom = new JTextField("Donnez un nom à votre labyrinthe");
 	File file;
 	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
@@ -102,8 +101,7 @@ public class InterfaceEditeur extends JFrame {
 		bas_fenetre.add(panel_random, BorderLayout.CENTER);
 		content_pane.add(bas_fenetre, BorderLayout.PAGE_END);
 
-		this.setContentPane(content_pane); // CETTE CLASSE EST DENUEE DE
-											// LISTENER POUR LE MOMENT
+		this.setContentPane(content_pane);
 
 		taille_x.addItemListener(new TailleXListener());
 		taille_y.addItemListener(new TailleYlistener());
@@ -149,7 +147,7 @@ public class InterfaceEditeur extends JFrame {
 
 	}
 
-	public void EtablirLabyrinthe(Labyrinthe laby) {
+	public static void EtablirLabyrinthe(Labyrinthe laby) {
 
 		panel_labyrinthe.setLayout(new GridBagLayout());
 		panel_labyrinthe.setPreferredSize(new Dimension(300, 300));
@@ -185,12 +183,21 @@ public class InterfaceEditeur extends JFrame {
 	 * 
 	 * @return Case[][]
 	 */
-	public Salle[][] getTabSalle() {
+	public static Salle[][] getTabSalle() {
 		return tab;
+	}
+	
+	
+	public int getX() {
+		return tailleChoisieX;
+	}
+	
+	public int getY() {
+		return tailleChoisieY;
 	}
 
 	/**
-	 * Ecoute le changement de valeur pour Y
+	 * Ecoute le changement de valeur pour X
 	 */
 	class TailleXListener implements ItemListener {
 		@Override
@@ -213,7 +220,6 @@ public class InterfaceEditeur extends JFrame {
 			if (e.getStateChange() == 1) {
 				tailleChoisieY = (int) e.getItem();
 				EtablirLabyrinthe(tailleChoisieX, tailleChoisieY);
-
 			}
 		}
 	}
@@ -315,9 +321,11 @@ public class InterfaceEditeur extends JFrame {
 			panel_labyrinthe.revalidate();
 			panel_labyrinthe.repaint();
 			// initLabyrintheIntoList();
+//			MenuEditeur me = new MenuEditeur();
+//			me.initLabyrintheIntoList(labyrinthes);
 		}
 	}
-
+	
 	// TODO : A compléter
 	public void initRandomLaby() { // A COMPLETER
 		String[] etatTab = { "normal", "locked", "exit" };
@@ -339,8 +347,6 @@ public class InterfaceEditeur extends JFrame {
 		EtablirLabyrinthe(laby);
 		panel_labyrinthe.validate();
 		panel_labyrinthe.repaint();
-//		repaint();
-//		getContentPane().revalidate();
 
 	}
 

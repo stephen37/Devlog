@@ -1,10 +1,9 @@
 package personnages;
+import java.awt.Component;
 import java.awt.Image;
-import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 
 public class Elf extends Personnage {
@@ -27,9 +26,8 @@ public class Elf extends Personnage {
 	}
 	
 	@Override
-	public void setImage() {
-		JPanel panelImage = new JPanel();
-		panelImage.add(new JLabel(new ImageIcon("./images/p-elf.png")));
+	public Component setImage() {
+		return new JLabel(new ImageIcon("./images/p-elf.png"));
 	}
 
 }

@@ -143,12 +143,13 @@ public class Salle extends JPanel {
 		}
 		panel_case.validate();
 		panel_case.repaint();
+//		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
 	 * Remise à zéro de la case.
 	 */
-	protected void raz() {
+	public void raz() {
 		time = 0;
 		period = 0;
 		proba = 0;
@@ -187,15 +188,19 @@ public class Salle extends JPanel {
 		return proba;
 	}
 
-	protected int GetX() {
+	public int GetX() {
 		return x;
 	}
 
-	protected int GetY() {
+	public int GetY() {
 		return y;
 	}
 
-	protected JPanel getPanel() {
+	public String getEtat() {
+		return etat;
+	}
+
+	public JPanel getPanel() {
 		return panel_case;
 	}
 

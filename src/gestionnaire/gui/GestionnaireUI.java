@@ -3,6 +3,7 @@ package gestionnaire.gui;
 import gestionnaire.Gestionnaire;
 import gestionnaire.run.EntreesSorties;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -43,7 +44,7 @@ public class GestionnaireUI extends JFrame {
 		init();
 		initMenu();
 		initListPersonnages();
-		initPersonnageIntoList();
+//		initPersonnageIntoList();
 
 		this.setVisible(true);
 	}
@@ -180,7 +181,6 @@ public class GestionnaireUI extends JFrame {
 	public void initPersonnageIntoList( ArrayList<Personnage> list) {
 		if (list != null) {
 			lmodel.clear();
-			System.out.println(gestionnaire.getPersonnages().size());
 			for (Personnage personnage : list) {
 				lmodel.addElement(personnage); 
 			}
@@ -190,6 +190,7 @@ public class GestionnaireUI extends JFrame {
 	public JList<Personnage> getJList() {
 		return listPerso;
 	}
+	
 	/**
 	 * Initialise la Jlist et la DefaultListModel
 	 */
@@ -205,8 +206,19 @@ public class GestionnaireUI extends JFrame {
 		contentPane.add(buttonAddPersonnage);
 
 		/* Permet de SUPPRIMER un personnage */
-		JButton removePersonnageButton = new JButton(" Supprimer personnage");
+		JButton removePersonnageButton = new JButton("Supprimer personnage");
 		contentPane.add(removePersonnageButton);
+		
+		JButton closeButton = new JButton(" Fermer ");
+		closeButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+		});
+		contentPane.add(closeButton);
+		
 
 		
 		//TODO : Supprimer un personnage dans l'arraylist.

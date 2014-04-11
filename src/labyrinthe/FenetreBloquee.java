@@ -41,11 +41,11 @@ public class FenetreBloquee extends JDialog {
 			0.5);
 	static JSpinner spinner_duree = new JSpinner(modelspin_duree);
 	static JSpinner spinner_periode = new JSpinner(modelspin_periode);
-	Salle c;
+	Salle salle;
 	
-	public FenetreBloquee(Salle c) {
+	public FenetreBloquee(Salle salle) {
 		init();
-		this.c = c;
+		this.salle = salle;
 		this.setVisible(true);
 		this.setResizable(false);
 	}
@@ -123,26 +123,26 @@ public class FenetreBloquee extends JDialog {
 	class ValiderListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			c.definirEtat("locked");
+			salle.definirEtat("locked");
 			if (jr1.isSelected()) {	
 			}else if (jr2.isSelected()) {
-				c.blockPeriod();
-				c.label.setForeground(Color.red);
-				c.label.setFont(new Font("Arial", Font.BOLD, 16));
-				c.label.setText(""+c.blockPeriod());
-				c.label.setHorizontalTextPosition(JLabel.CENTER);
-				c.label.setVerticalTextPosition(JLabel.CENTER);
+				salle.blockPeriod();
+				salle.label.setForeground(Color.red);
+				salle.label.setFont(new Font("Arial", Font.BOLD, 16));
+				salle.label.setText(""+salle.blockPeriod());
+				salle.label.setHorizontalTextPosition(JLabel.CENTER);
+				salle.label.setVerticalTextPosition(JLabel.CENTER);
 			}else if (jr3.isSelected()) {
-				c.blockProb();
+				salle.blockProb();
 			}else {
-				c.blockTime();
-				c.label.setForeground(Color.red);
-				c.label.setFont(new Font("Arial", Font.BOLD, 16));
-				c.label.setText(""+c.blockTime());
-				c.label.setHorizontalTextPosition(JLabel.CENTER);
-				c.label.setVerticalTextPosition(JLabel.CENTER);
+				salle.blockTime();
+				salle.label.setForeground(Color.red);
+				salle.label.setFont(new Font("Arial", Font.BOLD, 16));
+				salle.label.setText(""+salle.blockTime());
+				salle.label.setHorizontalTextPosition(JLabel.CENTER);
+				salle.label.setVerticalTextPosition(JLabel.CENTER);
 			}
-			InterfaceEditeur.tab[c.GetX()][c.GetY()] = c;
+			InterfaceEditeur.tab[salle.GetX()][salle.GetY()] = salle;
 			dispose();
 		}
 	}

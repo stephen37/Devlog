@@ -1,4 +1,4 @@
-package labyrinthe;
+package labyrinthe; 
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,39 +14,13 @@ public class Labyrinthe implements Serializable {
 	protected Salle[][] tab_cases;
 	protected String nom;
 	protected String etat = "normal";
-	ArrayList<Labyrinthe> labyrinthes;
+	ArrayList<Labyrinthe> labyrinthes = new ArrayList<Labyrinthe>();
 
 	public Labyrinthe(Salle[][] tab) {
 		super();
 		tab_cases = tab;
-		// init();
+		
 	}
-
-	
-	// public void init() {
-	// InterfaceEditeur.panel_labyrinthe.setLayout(new GridBagLayout());
-	// InterfaceEditeur.panel_labyrinthe.setPreferredSize(new Dimension(300,
-	// 300));
-	// InterfaceEditeur.panel_labyrinthe.removeAll();
-	// InterfaceEditeur.panel_labyrinthe.repaint();
-	//
-	// GridBagConstraints gbc = new GridBagConstraints();
-	// gbc.gridheight = 1;
-	// gbc.gridwidth = 1;
-	// gbc.anchor = GridBagConstraints.CENTER;
-	// labyrinthes = new ArrayList<Labyrinthe>();
-	// for (int i = 0; i < tab_cases.length; i++) {
-	// for (int j = 0; j < tab_cases[i].length; j++) {
-	// gbc.gridx = i;
-	// gbc.gridy = j;
-	// // panel_case.setBorder(door);
-	// InterfaceEditeur.panel_labyrinthe.add(tab_cases[i][j].panel_case, gbc);
-	// }
-	// }
-	// InterfaceEditeur.content_pane.add(InterfaceEditeur.panel_labyrinthe,
-	// BorderLayout.CENTER);
-	// }
-
 	/**
 	 * Renvoie la taille du tableau contenant les cases
 	 * 
@@ -67,9 +41,14 @@ public class Labyrinthe implements Serializable {
 	public String getName() {
 		return nom;
 	}
+	
 
 	public String getEtat() {
 		return etat;
+	}
+	
+	public ArrayList<Labyrinthe> getLabyrinthe() {
+		return new ArrayList<Labyrinthe>(this.labyrinthes);
 	}
 
 	public String toString() {
@@ -84,24 +63,7 @@ public class Labyrinthe implements Serializable {
 		}
 		return res;
 	}
-//Ancienne version
-//	public Labyrinthe createLabyrintheFromLine(String ligne) {
-//		String[] tab = ligne.split(" ");
-//		Salle[][] tab_cases = new Salle[6][tab.length + 1];
-//		x = Integer.parseInt(tab[0]);
-//		y = Integer.parseInt(tab[1]);
-//		etat = tab[2];
-////		System.out.println("Etat " +etat);
-//		double period = Double.parseDouble(tab[3]);
-//		int proba = Integer.parseInt(tab[4]);
-//		double time = Double.parseDouble(tab[5]);
-//		Salle c = new Salle(x, y, etat, period, proba, time);
-//		tab_cases[x][y] = c;
-//		Labyrinthe laby = new Labyrinthe(tab_cases);
-//
-//		return laby;
-//	}
-	
+
 	 public Salle createSalleFromLine(String ligne) {
 
 		  String[] tab = ligne.split(" ");
@@ -111,12 +73,9 @@ public class Labyrinthe implements Serializable {
 		  double period = Double.parseDouble(tab[3]);
 		  int proba = Integer.parseInt(tab[4]);
 		  double time = Double.parseDouble(tab[5]);
-		  Salle c = new Salle(x, y, etat, period, proba, time);	  
+		  Salle salle = new Salle(x, y, etat, period, proba, time);	  
 
-		  return c;
-		  //Labyrinthe laby = new Labyrinthe(tab_cases);
-
-		  //return laby;
+		  return salle;
 	 }
 	 
 	 

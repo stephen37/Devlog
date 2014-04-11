@@ -1,9 +1,9 @@
 package personnages;
+import java.awt.Component;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 
 public class Ogre extends Personnage{
@@ -24,9 +24,8 @@ public class Ogre extends Personnage{
 	}
 	
 	@Override
-	public void setImage() {
-		JPanel panelImage = new JPanel();
-		panelImage.add(new JLabel(new ImageIcon("./images/p-ogre.png")));
+	public Component setImage() {
+		return new JLabel(new ImageIcon("./images/p-ogre.png"));
 	}
 	
 	public int GetVItesseMouvement() {
