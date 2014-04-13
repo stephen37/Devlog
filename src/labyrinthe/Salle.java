@@ -61,6 +61,9 @@ public class Salle extends JPanel {
 		this.setVisible(true);
 	}
 
+	public JPanel getPanelCase() {
+		return panel_case;
+	}
 	/**
 	 * Initialise la JPanel et ajoute une image à la case.
 	 */
@@ -120,7 +123,9 @@ public class Salle extends JPanel {
 		}
 		panel_case.validate();
 		panel_case.repaint();
-		InterfaceEditeur.tab[this.x][this.y] = this;
+		InterfaceEditeur.tab[this.x][this.y].etat = race;
+		InterfaceEditeur.tab[this.x][this.y]= this;
+		System.out.println("X : " +InterfaceEditeur.tab[this.x][this.y].x + " Y : " +InterfaceEditeur.tab[this.x][this.y].y);
 	}
 
 	/**
@@ -139,6 +144,18 @@ public class Salle extends JPanel {
 		}
 		if (this.etat.equalsIgnoreCase("exit")) {
 			label = new JLabel(new ImageIcon("./images/s-exit.png"));
+			panel_case.add(label);
+		}
+		if (this.etat.equalsIgnoreCase("humain")) {
+			label = new JLabel(new ImageIcon("./images/p-human.png"));
+			panel_case.add(label);
+		}
+		if (this.etat.equalsIgnoreCase("elf")) {
+			label = new JLabel(new ImageIcon("./images/p-elf.png"));
+			panel_case.add(label);
+		}
+		if (this.etat.equalsIgnoreCase("ogre")) {
+			label = new JLabel(new ImageIcon("./images/p-ogre.png"));
 			panel_case.add(label);
 		}
 		panel_case.validate();
@@ -213,22 +230,14 @@ public class Salle extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			mouseMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
-
 		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-
+		public void mouseEntered(MouseEvent e) {}
 		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-
+		public void mouseExited(MouseEvent e) {}
 		@Override
-		public void mousePressed(MouseEvent e) {
-		}
-
+		public void mousePressed(MouseEvent e) {}
 		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
+		public void mouseReleased(MouseEvent e) {}
 	}
 
 	/**

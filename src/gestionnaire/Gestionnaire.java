@@ -21,25 +21,33 @@ public class Gestionnaire implements Serializable {
 
 	public Gestionnaire() {
 		personnages = new ArrayList<Personnage>();
-	}	
+	}
+
 	/**
 	 * 
-	 * Ajoute un personnage à partir de ses attributs à l'arrayList de personnages.
+	 * Ajoute un personnage à partir de ses attributs à l'arrayList de
+	 * personnages.
+	 * 
 	 * @param nom
 	 * @param race
 	 * @param pointForce
 	 * @param vitesse
-	 * @return String 
+	 * @return String
 	 */
-	public boolean ajouterPersonnage(String nom,String race,  final int pointForce, final int vitesse) {
+	public boolean ajouterPersonnage(String nom, String race,
+			final int pointForce, final int vitesse) {
 		return personnages.add(new Personnage(nom, race, pointForce, vitesse) {
 			@Override
 			public String toBase() {
-				return nom + "\t" + race + "\t" + pointForce + "\t" +vitesse + "\t" +vie;
-				
+				return nom + "\t" + race + "\t" + pointForce + "\t" + vitesse
+						+ "\t" + vie;
+
 			}
-@Override
-			public Component setImage() {return null;}
+
+			@Override
+			public Component setImage() {
+				return null;
+			}
 		});
 	}
 
@@ -54,37 +62,40 @@ public class Gestionnaire implements Serializable {
 
 	/**
 	 * Crée des personnages à partir d'un fichier de personnages.
+	 * 
 	 * @param ligne
 	 * @return Personnage
 	 */
 	public Personnage createPersonnageFromLine(String ligne) {
 		String[] tab = ligne.split("\t");
-		if (tab[0].equals("Humain")) {
-			String nom = tab[1];
+		if (tab[1].equals("Humain")) {
+			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);
-			return new Humain(nom,"Humain", force, vitesse);
-		} else if (tab[0].equals("Elf")) {
-			String nom = tab[1];
+			return new Humain(nom, "Humain", force, vitesse);
+		} else if (tab[1].equals("Elf")) {
+			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);
-			return new Elf(nom,"Elf", force, vitesse);
+			return new Elf(nom, "Elf", force, vitesse);
 		} else {
-			String nom = tab[1];
+			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);
-			return new Ogre(nom,"Ogre", force, vitesse);
+			return new Ogre(nom, "Ogre", force, vitesse);
 		}
 
 	}
-	
+
 	/**
 	 * Ajoute dans un fichier la liste des personnages
+	 * 
 	 * @param personnages
 	 * @param file
 	 * @throws Exception
 	 */
-	public void addToFile(ArrayList<Personnage> personnages, File file) throws Exception {
+	public void addToFile(ArrayList<Personnage> personnages, File file)
+			throws Exception {
 		BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
 		for (Personnage l : personnages) {
 			buffer.write(l.toBase() + "\n");
@@ -94,7 +105,9 @@ public class Gestionnaire implements Serializable {
 
 	/**
 	 * 
-	 * Charge les personnages qui sont enregistrés dans un fichier dans une arraylist.
+	 * Charge les personnages qui sont enregistrés dans un fichier dans une
+	 * arraylist.
+	 * 
 	 * @param file_name
 	 * @throws Exception
 	 */
@@ -113,6 +126,7 @@ public class Gestionnaire implements Serializable {
 
 	/**
 	 * Renvoie l'arraylist de personnages
+	 * 
 	 * @return ArrayList<Personnage>
 	 */
 	public ArrayList<Personnage> getPersonnages() {

@@ -3,6 +3,7 @@ package labyrinthe;
 import gestionnaire.gui.GestionnaireUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -148,11 +149,7 @@ public class InterfaceEditeur extends JFrame {
 	}
 
 	public static void EtablirLabyrinthe(Labyrinthe laby) {
-
 		panel_labyrinthe.setLayout(new GridBagLayout());
-		panel_labyrinthe.setPreferredSize(new Dimension(300, 300));
-		// Border door = BorderFactory.createDashedBorder(Color.black, 5, 10,
-		// 20, true);
 		panel_labyrinthe.removeAll();
 		panel_labyrinthe.repaint();
 
@@ -165,33 +162,27 @@ public class InterfaceEditeur extends JFrame {
 			for (int j = 0; j < laby.tab_cases[i].length; j++) {
 				gbc.gridx = i;
 				gbc.gridy = j;
-				// panel_case.setBorder(door);
-				// Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
-				// tab[i][j] = case_labyrinthe;
-				// panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
-				panel_labyrinthe.add(laby.tab_cases[i][j].panel_case, gbc);
-				System.out.print(laby.tab_cases[i][j].etat + " ");
+				panel_labyrinthe.add(laby.tab_cases[i][j].getPanelCase(), gbc);
 				tab = laby.tab_cases;
 			}
-			System.out.println();
 		}
-		content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
+		// content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
+		content_pane.add(panel_labyrinthe);
 	}
 
 	/**
 	 * Renvoie le tableau contenant les cases.
 	 * 
-	 * @return Case[][]
+	 * @return Salle[][]
 	 */
 	public static Salle[][] getTabSalle() {
 		return tab;
 	}
-	
-	
+
 	public int getX() {
 		return tailleChoisieX;
 	}
-	
+
 	public int getY() {
 		return tailleChoisieY;
 	}
@@ -231,10 +222,10 @@ public class InterfaceEditeur extends JFrame {
 	public class SaveAsListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String name = JOptionPane
-					.showInputDialog("Donnez un nom à votre labyrinthe");
+			// String name = JOptionPane
+			// .showInputDialog("Donnez un nom à votre labyrinthe");
 			Labyrinthe laby = new Labyrinthe(tab);
-			laby.nom = name;
+			// laby.nom = name;
 
 			if (this != null) {
 				JFileChooser filechooser = new JFileChooser(".") {
@@ -287,45 +278,17 @@ public class InterfaceEditeur extends JFrame {
 
 	class ChargerListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser filechooser = new JFileChooser(".");
-			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				try {
-					fileSelected = filechooser.getSelectedFile();
-					BufferedReader br = new BufferedReader(new FileReader(
-							fileSelected));
-					String line;
-					while ((line = br.readLine()) != null) {
-						listSalle.add(laby.createSalleFromLine(line));
-					}
-
-					int x = listSalle.get(listSalle.size() - 1).GetX();
-					int y = listSalle.get(listSalle.size() - 1).GetY();
-					tab = new Salle[x][y];
-					int cpt = 0;
-					for (int i = 0; i < x; i++) {
-						for (int j = 0; j < y; j++) {
-							tab[i][j] = listSalle.get(cpt);
-							cpt++;
-							System.out.print(tab[i][j].etat + " ");
-						}
-						System.out.println();
-					}
-					laby = new Labyrinthe(tab);
-					br.close();
-				} catch (Exception ex) {
-					Logger.getLogger(GestionnaireUI.class.getName()).log(
-							Level.SEVERE, null, ex);
-				}
-			}
+			laby.charger();
+			laby = new Labyrinthe(laby.tab_cases);
 			EtablirLabyrinthe(laby);
 			panel_labyrinthe.revalidate();
 			panel_labyrinthe.repaint();
 			// initLabyrintheIntoList();
-//			MenuEditeur me = new MenuEditeur();
-//			me.initLabyrintheIntoList(labyrinthes);
+			// MenuEditeur me = new MenuEditeur();
+			// me.initLabyrintheIntoList(labyrinthes);
 		}
 	}
-	
+
 	// TODO : A compléter
 	public void initRandomLaby() { // A COMPLETER
 		String[] etatTab = { "normal", "locked", "exit" };
@@ -333,7 +296,7 @@ public class InterfaceEditeur extends JFrame {
 		int ranY = (int) (Math.random() * (9 - 1) + 1);
 		taille_x.setSelectedItem(ranX);
 		taille_y.setSelectedIndex(ranY);
-		
+
 		for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
 
 			int ran_caseX = (int) (Math.random() * (ranX));

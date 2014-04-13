@@ -21,6 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import simulateur.MenuSimulateur;
+
 import labyrinthe.InterfaceEditeur;
 import labyrinthe.Labyrinthe;
 import labyrinthe.ListeLabyrinthes;
@@ -96,8 +98,7 @@ public class MenuPrincipal extends JFrame {
 	
 	class SimulateurListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			//new Simulateur();
-
+			new MenuSimulateur();
 		}
 	}
 

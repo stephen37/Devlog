@@ -81,34 +81,7 @@ public abstract class Personnage implements Runnable {
 	// en fonction.
 	@Override
 	public void run() {
-		System.out.println("Lancement de run");
-		int rand = (int) Math.random() * (5 - 1) + 1;
-		if (InterfaceEditeur.tab[laby.getX()][laby.getY()].getEtat().equals(
-				"exit")) {
-			return;
-		} else {
-			switch (tabMouvements[rand]) {
-			case "haut":
-				InterfaceEditeur.tab[laby.getX()][laby.getY() + 1]
-						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
-				break;
-			case "droite":
-				InterfaceEditeur.tab[laby.getX() + 1][laby.getY()]
-						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
-				break;
-			case "gauche":
-				InterfaceEditeur.tab[laby.getX() - 1][laby.getY()]
-						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
-				break;
-			case "bas":
-				InterfaceEditeur.tab[laby.getX()][laby.getY() - 1]
-						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
-				break;
-			default: 
-				break;
-			}
-
-		}
+		
 	}
 
 	// Permet de comparer deux personnages.

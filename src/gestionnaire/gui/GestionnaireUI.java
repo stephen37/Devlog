@@ -33,9 +33,9 @@ import personnages.Personnage;
 
 @SuppressWarnings("serial")
 public class GestionnaireUI extends JFrame {
-	Gestionnaire gestionnaire;
+	static Gestionnaire gestionnaire;
 	JList<Personnage> listPerso;
-	DefaultListModel<Personnage> lmodel;
+	static DefaultListModel<Personnage> lmodel;
 	JPanel contentPane;
 	File file;
 	AddPersonnageDialogUI persoDialog;
@@ -169,10 +169,10 @@ public class GestionnaireUI extends JFrame {
 	/**
 	 * Charge les personnages dans la Jmodel (liste d'affichage).
 	 */
-	public void initPersonnageIntoList() {
-		if (this.gestionnaire != null) {
+	public static void initPersonnageIntoList() {
+		if (gestionnaire != null) {
 			lmodel.clear();
-			for (Personnage personnage : this.gestionnaire.getPersonnages()) {
+			for (Personnage personnage : gestionnaire.getPersonnages()) {
 				lmodel.addElement(personnage); 
 			}
 		}
@@ -262,7 +262,7 @@ public class GestionnaireUI extends JFrame {
 		buttonAddPersonnage.addActionListener(new ButtonAddPersoAL());
 
 		/* Adding a listener for double clicked series in the JList */
-		class listSeriesDoubleClickedAL extends MouseInputAdapter {
+		class DoubleClickedPerso extends MouseInputAdapter {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					Personnage selectedSerie = listPerso.getSelectedValue();
@@ -300,6 +300,6 @@ public class GestionnaireUI extends JFrame {
 				}
 			}
 		}
-		listPerso.addMouseListener(new listSeriesDoubleClickedAL());
+		listPerso.addMouseListener(new DoubleClickedPerso());
 	}
 }
