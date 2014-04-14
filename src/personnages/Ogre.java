@@ -11,8 +11,8 @@ public class Ogre extends Personnage{
 	protected int vitesseMouvement; 
 	protected Image image;
 	
-	public Ogre(String nom, String race, int force, int vitesseMouvement) {
-		super(nom,"Ogre", force, vitesseMouvement);
+	public Ogre(String nom, String race, int force, int vitesseMouvement, String inclinaison, String arme, String armure) {
+		super(nom, "Ogre", force, vitesseMouvement, inclinaison, arme, armure);
 	}
 
 	/* (non-Javadoc)
@@ -20,7 +20,9 @@ public class Ogre extends Personnage{
 	 */
 	@Override
 	public String toBase() {
-		return "Ogre\t" + nom + "\t" + vie + "\t" + force + "\t" + vitesseMouvement;
+		return "Ogre\t" + nom + "\t" + vie + "\t" + force + "\t"
+				+ vitesseMouvement + "\t" + inclinaison + "\t" + arme + "\t"
+				+ armure;
 	}
 	
 	@Override

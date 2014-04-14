@@ -1,39 +1,30 @@
 package labyrinthe;
 
-import gestionnaire.Gestionnaire;
-import gestionnaire.gui.AddPersonnageDialogUI;
 import gestionnaire.gui.GestionnaireUI;
-import gestionnaire.run.EntreesSorties;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.event.MouseInputAdapter;
 
 import personnages.Personnage;
+import simulateur.Simulateur;
 
 @SuppressWarnings("serial")
 public class Salle extends JPanel {
 
 	JPanel panel_case = new JPanel();
 	String etat = "normal";
-	protected int x;
-	protected int y;
+	protected static int x;
+	protected static int y;
 	double period = 0;
 	double time = 0;
 	int proba = 0;
@@ -42,11 +33,11 @@ public class Salle extends JPanel {
 	private JMenuItem bloquee = new JMenuItem("Salle Bloquée");
 	private JMenuItem raz = new JMenuItem("Raz");
 	private JMenuItem ajouterPerso = new JMenuItem("Ajouter Personnage");
-	private Gestionnaire gestionnaire = new Gestionnaire();
+	private JMenuItem submerged = new JMenuItem("Submerger");
+	private JMenuItem dark = new JMenuItem("Sombre");
 	File fileSelected;
 	GestionnaireUI gui;
 	Personnage selectedSerie;
-
 	JLabel label = new JLabel();
 
 	public Salle(int x, int y, String etat, double period, int proba,
@@ -64,6 +55,7 @@ public class Salle extends JPanel {
 	public JPanel getPanelCase() {
 		return panel_case;
 	}
+
 	/**
 	 * Initialise la JPanel et ajoute une image à la case.
 	 */
@@ -71,6 +63,8 @@ public class Salle extends JPanel {
 		mouseMenu.add(sortie);
 		mouseMenu.add(bloquee);
 		mouseMenu.add(raz);
+		mouseMenu.add(submerged);
+		mouseMenu.add(dark);
 		mouseMenu.add(ajouterPerso);
 
 		panel_case.setPreferredSize(new Dimension(90, 90));
@@ -83,6 +77,8 @@ public class Salle extends JPanel {
 		bloquee.addActionListener(new BloqueListener());
 		raz.addActionListener(new RazListener());
 		ajouterPerso.addActionListener(new PersoListener());
+		submerged.addActionListener(new SubmergedListener());
+		dark.addActionListener(new DarkListener());
 	}
 
 	/**
@@ -110,12 +106,15 @@ public class Salle extends JPanel {
 		switch (race) {
 		case "Elf":
 			panel_case.add(new JLabel(new ImageIcon("./images/p-elf.png")));
+			System.out.println("x definirPerso " +GetX() + "y : "+GetY());
 			break;
 		case "Ogre":
 			panel_case.add(new JLabel(new ImageIcon("./images/p-ogre.png")));
+			System.out.println("x definirPerso " +GetX() + "y : "+GetY());
 			break;
 		case "Humain":
 			panel_case.add(new JLabel(new ImageIcon("./images/p-human.png")));
+			System.out.println("x definirPerso " +GetX() + "y : "+GetY());
 			break;
 		default:
 			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
@@ -123,9 +122,23 @@ public class Salle extends JPanel {
 		}
 		panel_case.validate();
 		panel_case.repaint();
-		InterfaceEditeur.tab[this.x][this.y].etat = race;
-		InterfaceEditeur.tab[this.x][this.y]= this;
-		System.out.println("X : " +InterfaceEditeur.tab[this.x][this.y].x + " Y : " +InterfaceEditeur.tab[this.x][this.y].y);
+		
+		InterfaceEditeur.tab[x][y].etat = race;
+		InterfaceEditeur.tab[x][y] = this;
+	}
+
+	protected void definirSubmerged() {
+		raz();
+		panel_case.removeAll();
+		definirEtat("submerged");
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+
+	protected void definirDark() {
+		raz();
+		panel_case.removeAll();
+		definirEtat("dark");
+		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
@@ -158,9 +171,17 @@ public class Salle extends JPanel {
 			label = new JLabel(new ImageIcon("./images/p-ogre.png"));
 			panel_case.add(label);
 		}
+		if (this.etat.equalsIgnoreCase("submerged")) {
+			label = new JLabel(new ImageIcon("./images/s-submerged.png"));
+			panel_case.add(label);
+		}
+		if (this.etat.equalsIgnoreCase("dark")) {
+			label = new JLabel(new ImageIcon("./images/s-dark.png"));
+			panel_case.add(label);
+		}
 		panel_case.validate();
 		panel_case.repaint();
-//		InterfaceEditeur.tab[this.x][this.y] = this;
+		// InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
@@ -173,6 +194,8 @@ public class Salle extends JPanel {
 		panel_case.removeAll();
 		definirEtat("normal");
 		InterfaceEditeur.tab[this.x][this.y] = this;
+		System.out.println("X : " + this.x);
+		System.out.println("Y : " + this.y);
 	}
 
 	/**
@@ -205,11 +228,11 @@ public class Salle extends JPanel {
 		return proba;
 	}
 
-	public int GetX() {
+	public static int GetX() {
 		return x;
 	}
 
-	public int GetY() {
+	public static int GetY() {
 		return y;
 	}
 
@@ -230,14 +253,22 @@ public class Salle extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			mouseMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
+
 		@Override
-		public void mouseEntered(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {
+		}
+
 		@Override
-		public void mouseExited(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {
+		}
+
 		@Override
-		public void mousePressed(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {
+		}
+
 		@Override
-		public void mouseReleased(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {
+		}
 	}
 
 	/**
@@ -280,36 +311,31 @@ public class Salle extends JPanel {
 
 	class PersoListener implements ActionListener {
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			JFileChooser filechooser = new JFileChooser(".");
-			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				try {
-					fileSelected = filechooser.getSelectedFile();
-					gestionnaire.chargerPersonnage(fileSelected.getPath());
-					gui = new GestionnaireUI();
+		public void actionPerformed(ActionEvent e) {
+			panel_case.validate();
+			panel_case.repaint();
+			definirPerso(Simulateur.getJlist().getSelectedValue().getRace());
+			
+		}
 
-					gui.initPersonnageIntoList(gestionnaire.getPersonnages());
+	}
 
-				} catch (Exception ex) {
-					Logger.getLogger(GestionnaireUI.class.getName()).log(
-							Level.SEVERE, null, ex);
-				}
-			}
-			gui.getJList().addMouseListener(new listSeriesDoubleClickedAL());
+	class SubmergedListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirSubmerged();
 			panel_case.validate();
 			panel_case.repaint();
 		}
-
 	}
 
-	class listSeriesDoubleClickedAL extends MouseInputAdapter {
-		public void mouseClicked(MouseEvent e) {
-			if (e.getClickCount() == 2) {
-				selectedSerie = gui.getJList().getSelectedValue();
-				if (selectedSerie != null) {
-					definirPerso(selectedSerie.getRace());
-				}
-			}
+	class DarkListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirDark();
+			panel_case.validate();
+			panel_case.repaint();
 		}
 	}
+
 }

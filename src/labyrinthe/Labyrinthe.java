@@ -114,13 +114,14 @@ public class Labyrinthe implements Serializable {
 				while ((line = br.readLine()) != null) {
 					listSalle.add(createSalleFromLine(line));
 				}
+
 				nom = fileSelected.getName();
 				int x = listSalle.get(listSalle.size() - 1).GetX();
 				int y = listSalle.get(listSalle.size() - 1).GetY();
-				Salle[][] tab = new Salle[x][y];
+				Salle[][] tab = new Salle[x + 1][y + 1];
 				int cpt = 0;
-				for (int i = 0; i < x; i++) {
-					for (int j = 0; j < y; j++) {
+				for (int i = 0; i < x + 1; i++) {
+					for (int j = 0; j < y + 1; j++) {
 						tab[i][j] = listSalle.get(cpt);
 						cpt++;
 						System.out.print(tab[i][j].etat + " ");
@@ -135,5 +136,4 @@ public class Labyrinthe implements Serializable {
 			}
 		}
 	}
-
 }

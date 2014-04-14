@@ -19,6 +19,9 @@ public abstract class Personnage implements Runnable {
 	protected String nom;
 	protected String race;
 	protected int vitesseMouvement;
+	String inclinaison;
+	String arme;
+	String armure;
 	Salle[][] tabSalles = InterfaceEditeur.getTabSalle();
 	Labyrinthe laby = new Labyrinthe(tabSalles);
 	String[] tabMouvements = { "haut", "bas", "gauche", "droite" };
@@ -29,13 +32,16 @@ public abstract class Personnage implements Runnable {
 	 * @param force
 	 * @param vitesseMouvement
 	 */
-	public Personnage(String nom, String race, int force, int vitesseMouvement) {
+	public Personnage(String nom, String race, int force, int vitesseMouvement, String inclinaison, String arme, String armure) {
 		super();
 		this.vie = 100;
 		this.force = force;
 		this.race = race;
 		this.nom = nom;
 		this.vitesseMouvement = vitesseMouvement;
+		this.inclinaison = inclinaison;
+		this.arme = arme;
+		this.armure = armure;
 	}
 
 	/*
@@ -50,9 +56,10 @@ public abstract class Personnage implements Runnable {
 
 	public String toString() {
 		return "Nom : " + nom + " race : " + race + " force : " + force
-				+ " vitesse : " + vitesseMouvement;
+				+ " vitesse : " + vitesseMouvement + " inclinaison " +inclinaison + " arme " +arme + " armure " +armure;
 	}
 
+	
 	public int getVie() {
 		return vie;
 	}
@@ -72,6 +79,18 @@ public abstract class Personnage implements Runnable {
 	public String getRace() {
 		return race;
 	}
+	
+	public String getInclinaison() {
+		return inclinaison;
+	}
+	
+	public String getArmure() {
+		return armure;
+	}
+	
+	public String getArme() {
+		return arme;
+	}
 
 	public abstract String toBase();
 
@@ -86,7 +105,7 @@ public abstract class Personnage implements Runnable {
 
 	// Permet de comparer deux personnages.
 	public boolean contains(Personnage selected) {
-		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement) {
+		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement, inclinaison, arme, armure) {
 
 			@Override
 			public String toBase() {

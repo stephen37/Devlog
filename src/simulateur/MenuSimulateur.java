@@ -5,7 +5,6 @@ import gestionnaire.Gestionnaire;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +19,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -80,6 +80,8 @@ public class MenuSimulateur extends JDialog {
 		classListLabyrinthes = new ListeLabyrinthes();
 		this.setTitle("Menu Simulateur");
 		this.setSize(800, 500);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
@@ -150,8 +152,6 @@ public class MenuSimulateur extends JDialog {
 	class ChargerPersoListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser filechooser = new JFileChooser(".");
-			// filechooser.setFileFilter(new FileNameExtensionFilter(
-			// "Gestionnaire", ".*"));
 			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
 					file = filechooser.getSelectedFile();
@@ -219,7 +219,6 @@ public class MenuSimulateur extends JDialog {
 		if (laby != null) {
 			listeModelLaby.clear();
 			listeModelLaby.addElement(laby);
-
 		}
 	}
 

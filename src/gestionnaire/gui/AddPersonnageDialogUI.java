@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -25,63 +26,79 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-
-import labyrinthe.InterfaceEditeur;
 
 import personnages.Personnage;
 
 @SuppressWarnings("serial")
 public class AddPersonnageDialogUI extends JDialog {
 
-	Gestionnaire gestionnaire;
-	File fileSelected;
-	AddPersonnagePanelUI persoPanel;
+	static Gestionnaire gestionnaire;
+	static File fileSelected;
+	static AddPersonnagePanelUI persoPanel;
+	static JDialog mainframe;
 
-	public AddPersonnageDialogUI(JFrame owner, Gestionnaire gestionnaire,
+	public AddPersonnageDialogUI(JFrame owner, Gestionnaire newgestionnaire,
 			String title) {
 
-		this.gestionnaire = gestionnaire;
-		AddPersonnagePanelUI addPerso = new AddPersonnagePanelUI();
-		this.add(addPerso);
-		this.setTitle(title);
-		this.setSize(500, 300);
-		this.setLocationRelativeTo(owner);
-		this.setVisible(true);
-		this.setResizable(false);
+		mainframe = this;
+		gestionnaire = newgestionnaire;
+		AddPersonnagePanelUI persoPanel = new AddPersonnagePanelUI();
+		mainframe.add(persoPanel);
+		mainframe.setTitle(title);
+		mainframe.setSize(500, 500);
+		mainframe.setLocationRelativeTo(owner);
+		mainframe.setVisible(true);
+		mainframe.setResizable(false);
 	}
 
 	/**
 	 * Ajoute un panel permettant de recueillir les infos sur le personnage
 	 * 
 	 */
-	public class AddPersonnagePanelUI extends JPanel {
+	public static class AddPersonnagePanelUI extends JPanel {
 
-		JTextField persoName;
-		JSlider vitesseSlider;
-		JSlider forceSlider;
-		String[] tabPerso = { "Humain", "Ogre", "Elf" };
-		JComboBox<String> race;
+		static JTextField persoName;
+		static JSlider vitesseSlider;
+		static JSlider forceSlider;
+		static String[] tabPerso = { "Humain", "Ogre", "Elf" };
+		static JComboBox<String> race;
 		File file;
-		String raceChoosen = "Humain";
+		static String raceChoosen = "Humain";
 		String name = "";
 		int vitesse;
 		int force;
 		JPanel leftJpanel;
 		ArrayList<Personnage> list = gestionnaire.getPersonnages();
+		String[] tabArmure = { "Cuir", "Maille", "Or" };
+		String[] tabArme = { "Épée", "Arc", "Hache" };
+		JComboBox<String> arme;
+		JComboBox<String> armure;
+		String armeChoisie = "Épée";
+		String armureChoisie = "Cuir";
+		String inclinaisonChoisie;
+		ButtonGroup bg;
+		JRadioButton gentil;
+		JRadioButton mechant;
 
 		public AddPersonnagePanelUI() {
+
 			this.setLayout(new BorderLayout());
 			/*
 			 * A JPanel asking for a name and a file, centered in the main
 			 * JPanel
 			 */
+
 			JPanel namePanel = new JPanel();
 			JPanel racePanel = new JPanel();
 			JPanel vitessePanel = new JPanel();
 			JPanel forcePanel = new JPanel();
 			JPanel buttonPanel = new JPanel();
+			JPanel inclinaisonPanel = new JPanel();
+			JPanel armePanel = new JPanel();
+			JPanel armurePanel = new JPanel();
 
 			leftJpanel = new JPanel();
 			leftJpanel
@@ -113,14 +130,39 @@ public class AddPersonnageDialogUI extends JDialog {
 			forceSlider.setPaintTicks(true);
 			forceSlider.setPaintLabels(true);
 			forcePanel.add(forceSlider);
+			JLabel inclinaisonLabel = new JLabel("Inclinaison");
+			gentil = new JRadioButton(":)");
+			mechant = new JRadioButton(":(");
+			bg = new ButtonGroup();
+			bg.add(gentil);
+			bg.add(mechant);
+			inclinaisonPanel.add(inclinaisonLabel);
+			inclinaisonPanel.add(gentil);
+			inclinaisonPanel.add(mechant);
+			armePanel.setLayout(new BoxLayout(armePanel, BoxLayout.LINE_AXIS));
+			armePanel.add(new JLabel(" Arme "));
+			arme = new JComboBox<String>(tabArme);
+			armePanel.add(arme);
+			arme.addItemListener(new ArmeComboBoxListener());
+
+			armurePanel.setLayout(new BoxLayout(armurePanel,
+					BoxLayout.LINE_AXIS));
+			armurePanel.add(new JLabel(" Armure "));
+			armure = new JComboBox<String>(tabArmure);
+			armure.addItemListener(new ArmureComboBoxListener());
+			armurePanel.add(armure);
+
 			leftJpanel.add(namePanel);
 			leftJpanel.add(racePanel);
 			leftJpanel.add(vitessePanel);
 			leftJpanel.add(forcePanel);
+			leftJpanel.add(inclinaisonPanel);
+			leftJpanel.add(armePanel);
+			leftJpanel.add(armurePanel);
 			this.add(leftJpanel, BorderLayout.WEST);
 			this.add(new ImagePanel());
 
-			race.addItemListener(new ComboBoxListener());
+			race.addItemListener(new RaceComboBoxListener());
 
 			/* A Button valider placed South of the main JPanel */
 			JButton buttonSave = new JButton(" Save ");
@@ -145,31 +187,50 @@ public class AddPersonnageDialogUI extends JDialog {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					dispose();
+					mainframe.dispose();
 				}
 			});
 
-			// TODO : Créer des bordures entre les buttons.
-
 			this.add(buttonPanel, BorderLayout.SOUTH);
-			// buttonSave.addActionListener(new SaveListener());
 			buttonSaveAs.addActionListener(new SaveAsListener());
 			randomButton.addActionListener(new RandomListener());
+			gentil.addActionListener(new InclinaisonListener());
+			mechant.addActionListener(new InclinaisonListener());
+
+		}
+
+		class ArmeComboBoxListener implements ItemListener {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				repaint();
+				if (e.getStateChange() == 1) {
+					armeChoisie = (String) e.getItem();
+				}
+			}
+		}
+
+		class ArmureComboBoxListener implements ItemListener {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				repaint();
+				if (e.getStateChange() == 1) {
+					armureChoisie = (String) e.getItem();
+				}
+			}
 		}
 
 		/**
 		 * Obtient la dernière valeur selectionnée par la jcombobox par
 		 * l'utilisateur.
 		 */
-		public class ComboBoxListener implements ItemListener {
+		public class RaceComboBoxListener implements ItemListener {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// Get the last object selected in the JComboBox
-				getContentPane().repaint();
+				repaint();
 
 				if (e.getStateChange() == 1) {
 					raceChoosen = (String) e.getItem();
-					System.out.println("Race choisie est " + raceChoosen);
 
 					if (raceChoosen.equals("Elf")) {
 						vitesseSlider.setMinimum(8);
@@ -226,6 +287,19 @@ public class AddPersonnageDialogUI extends JDialog {
 			}
 		}
 
+		class InclinaisonListener implements ActionListener {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() instanceof JRadioButton) {
+					JRadioButton radiobutton = (JRadioButton) e.getSource();
+					if (radiobutton.isSelected()) {
+						inclinaisonChoisie = radiobutton.getText();
+						System.out.println(inclinaisonChoisie);
+					}
+				}
+			}
+		}
+
 		/**
 		 * Permet de sauvegarder un personnage dans un fichier
 		 */
@@ -258,7 +332,8 @@ public class AddPersonnageDialogUI extends JDialog {
 					};
 					if (filechooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 						gestionnaire.ajouterPersonnage(name, raceChoosen,
-								force, vitesse);
+								force, vitesse, inclinaisonChoisie,
+								armeChoisie, armureChoisie);
 						EntreesSorties.sauvegarderFichier(gestionnaire
 								.getPersonnages().toString(), filechooser
 								.getSelectedFile());
@@ -266,7 +341,7 @@ public class AddPersonnageDialogUI extends JDialog {
 				} else {
 					JOptionPane
 							.showMessageDialog(
-									AddPersonnageDialogUI.this,
+									persoPanel,
 									"veuillez créer un nouveau gestionnaire ou charger un gestionnaire existant",
 									"Erreur", JOptionPane.ERROR_MESSAGE);
 				}
@@ -279,8 +354,9 @@ public class AddPersonnageDialogUI extends JDialog {
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				getContentPane().revalidate();
-				dispose();
+
+				revalidate();
+				mainframe.dispose();
 
 			}
 		}
@@ -313,6 +389,16 @@ public class AddPersonnageDialogUI extends JDialog {
 			}
 			vitesseSlider.setValue(ranVitesse);
 			forceSlider.setValue(ranForce);
+			int armeAleatoire = (int) (Math.random() * tabArme.length);
+			arme.setSelectedItem(arme.getItemAt(armeAleatoire));
+			int armureAleatoire = (int) (Math.random() * tabArmure.length);
+			armure.setSelectedItem(armure.getItemAt(armureAleatoire));
+			int inclinaisonAleatoire = (int) (Math.random() * (3 -1) +1);
+			if (inclinaisonAleatoire == 1 ) {
+				gentil.setSelected(true);
+			}else {
+				mechant.setSelected(true);
+			}
 		}
 
 		public void setName(String name) {
@@ -320,7 +406,6 @@ public class AddPersonnageDialogUI extends JDialog {
 		}
 
 		public void setRace(String raceCharge) {
-			// Test pour une simple selection, peut importe la race.
 			race.setSelectedIndex(0);
 		}
 

@@ -35,15 +35,13 @@ public class Gestionnaire implements Serializable {
 	 * @return String
 	 */
 	public boolean ajouterPersonnage(String nom, String race,
-			final int pointForce, final int vitesse) {
-		return personnages.add(new Personnage(nom, race, pointForce, vitesse) {
+			final int pointForce, final int vitesse, final String inclinaison, final String arme, final String armure) {
+		return personnages.add(new Personnage(nom, race, pointForce, vitesse, inclinaison, arme, armure) {
 			@Override
 			public String toBase() {
 				return nom + "\t" + race + "\t" + pointForce + "\t" + vitesse
-						+ "\t" + vie;
-
+						+ "\t" + vie + "\t" +inclinaison + "\t" + arme +"\t" +armure;
 			}
-
 			@Override
 			public Component setImage() {
 				return null;
@@ -72,17 +70,26 @@ public class Gestionnaire implements Serializable {
 			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);
-			return new Humain(nom, "Humain", force, vitesse);
+			String inclinaison = tab[5];
+			String arme = tab[6];
+			String armure = tab[7];
+			return new Humain(nom, "Humain", force, vitesse, inclinaison, arme, armure);
 		} else if (tab[1].equals("Elf")) {
 			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);
-			return new Elf(nom, "Elf", force, vitesse);
+			String inclinaison = tab[5];
+			String arme = tab[6];
+			String armure = tab[7];
+			return new Elf(nom, "Elf", force, vitesse, inclinaison, arme, armure);
 		} else {
 			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
 			int vitesse = Integer.parseInt(tab[3]);
-			return new Ogre(nom, "Ogre", force, vitesse);
+			String inclinaison = tab[5];
+			String arme = tab[6];
+			String armure = tab[7];
+			return new Ogre(nom, "Ogre", force, vitesse, inclinaison, arme, armure);
 		}
 
 	}

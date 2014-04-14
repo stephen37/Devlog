@@ -56,7 +56,7 @@ public class MenuEditeur extends JFrame {
 		classListLabyrinthes = new ListeLabyrinthes();
 		this.setTitle("Editeur de Labyrinthe");
 		this.setSize(400, 400);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		content_pane = new JPanel();
 		content_pane
@@ -166,7 +166,7 @@ public class MenuEditeur extends JFrame {
 				Labyrinthe selectedSerie = liste_labyrinthe.getSelectedValue();
 				if (selectedSerie != null) {
 					InterfaceEditeur ie = new InterfaceEditeur();
-					ie.EtablirLabyrinthe(selectedSerie);					
+					ie.EtablirLabyrinthe(selectedSerie, ie.content_pane);					
 				}
 			}
 		}

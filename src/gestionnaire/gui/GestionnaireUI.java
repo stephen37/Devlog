@@ -1,9 +1,9 @@
 package gestionnaire.gui;
 
 import gestionnaire.Gestionnaire;
+import gestionnaire.gui.AddPersonnageDialogUI.AddPersonnagePanelUI;
 import gestionnaire.run.EntreesSorties;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -44,7 +44,7 @@ public class GestionnaireUI extends JFrame {
 		init();
 		initMenu();
 		initListPersonnages();
-//		initPersonnageIntoList();
+		// initPersonnageIntoList();
 
 		this.setVisible(true);
 	}
@@ -59,8 +59,8 @@ public class GestionnaireUI extends JFrame {
 		 */
 		this.setTitle("Gestionnaire");
 		gestionnaire = new Gestionnaire();
-		this.setSize(400, 400); // this.pack();
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(600, 400); // this.pack();
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// center the window
 		this.setLocationRelativeTo(null);
 		// Instanciate a content pane
@@ -173,16 +173,16 @@ public class GestionnaireUI extends JFrame {
 		if (gestionnaire != null) {
 			lmodel.clear();
 			for (Personnage personnage : gestionnaire.getPersonnages()) {
-				lmodel.addElement(personnage); 
+				lmodel.addElement(personnage);
 			}
 		}
 	}
-	
-	public void initPersonnageIntoList( ArrayList<Personnage> list) {
+
+	public void initPersonnageIntoList(ArrayList<Personnage> list) {
 		if (list != null) {
 			lmodel.clear();
 			for (Personnage personnage : list) {
-				lmodel.addElement(personnage); 
+				lmodel.addElement(personnage);
 			}
 		}
 	}
@@ -190,7 +190,7 @@ public class GestionnaireUI extends JFrame {
 	public JList<Personnage> getJList() {
 		return listPerso;
 	}
-	
+
 	/**
 	 * Initialise la Jlist et la DefaultListModel
 	 */
@@ -208,20 +208,18 @@ public class GestionnaireUI extends JFrame {
 		/* Permet de SUPPRIMER un personnage */
 		JButton removePersonnageButton = new JButton("Supprimer personnage");
 		contentPane.add(removePersonnageButton);
-		
+
 		JButton closeButton = new JButton(" Fermer ");
 		closeButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
 		});
 		contentPane.add(closeButton);
-		
 
-		
-		//TODO : Supprimer un personnage dans l'arraylist.
+		// TODO : Supprimer un personnage dans l'arraylist.
 		/**
 		 * Supprime un personnage de la liste.
 		 */
@@ -230,15 +228,17 @@ public class GestionnaireUI extends JFrame {
 
 				Personnage selected = listPerso.getSelectedValue();
 				if (selected != null) {
-					Iterator<Personnage> itr = gestionnaire.getPersonnages().iterator();
+					Iterator<Personnage> itr = gestionnaire.getPersonnages()
+							.iterator();
 					while (itr.hasNext()) {
 						Personnage nextItem = itr.next();
 						System.out.println(nextItem);
-						System.out.println("sd" +selected);
-						if(nextItem.contains(selected)) {
+						System.out.println("sd" + selected);
+						if (nextItem.contains(selected)) {
 							itr.remove();
 						}
-						gestionnaire.getPersonnages().removeAll(gestionnaire.getPersonnages());
+						gestionnaire.getPersonnages().removeAll(
+								gestionnaire.getPersonnages());
 					}
 					System.out.println(gestionnaire.getPersonnages());
 				}
@@ -247,9 +247,10 @@ public class GestionnaireUI extends JFrame {
 		class ButtonAddPersoAL implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if (gestionnaire != null) {
-//					AddPersonnageDialogUI popup = new AddPersonnageDialogUI(
-//							GestionnaireUI.this, gestionnaire, "Ajouter Perso");
-					new AddPersonnageDialogUI(GestionnaireUI.this, gestionnaire, "Ajouter Perso");
+					// AddPersonnageDialogUI popup = new AddPersonnageDialogUI(
+					// GestionnaireUI.this, gestionnaire, "Ajouter Perso");
+					new AddPersonnageDialogUI(GestionnaireUI.this,
+							gestionnaire, "Ajouter Perso");
 				} else
 					JOptionPane
 							.showMessageDialog(
@@ -266,37 +267,23 @@ public class GestionnaireUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					Personnage selectedSerie = listPerso.getSelectedValue();
-					if (selectedSerie != null) {
-						// PersonnagesUI personnageDialog = new
-						// PersonnagesUI(GestionnaireUI.this, gestionnaire);
 
-//						persoDialog = new AddPersonnageDialogUI(
-//								GestionnaireUI.this, gestionnaire,
-//								"Modifier Perso");
-//						AddPersonnageDialogUI.AddPersonnagePanelUI persoPanel = persoDialog.new AddPersonnagePanelUI();
-						/*
-						 * persoPanel.persoName.setText(selectedSerie.getNom());
-						 * persoPanel.persoName.setText("Test Bro");
-						 * 
-						 * persoPanel.raceChoosen = selectedSerie.getRace();
-						 * persoPanel
-						 * .vitesseSlider.setValue(selectedSerie.getVitesse());
-						 * persoPanel
-						 * .forceSlider.setValue(selectedSerie.getForce());
-						 * persoPanel.forceSlider.setValue(6);
-						 */
+					persoDialog = new AddPersonnageDialogUI(
+							GestionnaireUI.this, gestionnaire, "Modifier Perso");
 
-//						System.out.println("Valeur : "
-//								+ persoPanel.forceSlider.getValue());
-						// persoPanel.SetPersonnage(selectedSerie.getNom(),
-						// selectedSerie.getRace(), selectedSerie.getForce(),
-						// selectedSerie.getVitesse());
+					AddPersonnagePanelUI.persoName.setText(selectedSerie
+							.getNom());
 
-						System.out.println("Nom " + selectedSerie.getNom()
-								+ " Race " + selectedSerie.getRace()
-								+ " Force " + selectedSerie.getForce()
-								+ " Vitesse " + selectedSerie.getVitesse());
-					}
+					AddPersonnagePanelUI.raceChoosen = selectedSerie.getRace();
+					AddPersonnagePanelUI.vitesseSlider.setValue(selectedSerie
+							.getVitesse());
+					AddPersonnagePanelUI.forceSlider.setValue(selectedSerie
+							.getForce());
+
+					System.out.println("Nom " + selectedSerie.getNom()
+							+ " Race " + selectedSerie.getRace() + " Force "
+							+ selectedSerie.getForce() + " Vitesse "
+							+ selectedSerie.getVitesse());
 				}
 			}
 		}

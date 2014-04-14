@@ -13,8 +13,8 @@ public class Humain extends Personnage {
 
 	protected Image image;
 
-	public Humain(String nom, String race, int force, int vitesseMouvement) {
-		super(nom, "Humain", force, vitesseMouvement);
+	public Humain(String nom, String race, int force, int vitesseMouvement, String inclinaison, String arme, String armure) {
+		super(nom, "Humain", force, vitesseMouvement, inclinaison, arme, armure);
 	}
 
 	/*
@@ -24,8 +24,10 @@ public class Humain extends Personnage {
 	 */
 	@Override
 	public String toBase() {
+		System.out.println();
 		return "Humain\t" + nom + "\t" + vie + "\t" + force + "\t"
-				+ vitesseMouvement;
+				+ vitesseMouvement + "\t" + inclinaison + "\t" + arme + "\t"
+				+ armure;
 	}
 
 	public int GetVItesseMouvement() {

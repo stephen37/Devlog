@@ -1,22 +1,16 @@
 package labyrinthe;
 
-import gestionnaire.gui.GestionnaireUI;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,8 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import personnages.Personnage;
 
 @SuppressWarnings("serial")
 public class InterfaceEditeur extends JFrame {
@@ -55,6 +47,12 @@ public class InterfaceEditeur extends JFrame {
 	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
 	Labyrinthe laby = new Labyrinthe(tab);
 	ArrayList<Salle> listSalle = new ArrayList<Salle>();
+	static int xSize = ((int) Toolkit.getDefaultToolkit().getScreenSize()
+			.getWidth());
+	static int ySize = ((int) Toolkit.getDefaultToolkit().getScreenSize()
+			.getHeight());
+	static int gameHeightLaby = (int) (Math.round(ySize * 1));
+	static int gameWidthLaby = (int) (Math.round(xSize * 0.85));
 
 	public InterfaceEditeur() {
 		init();
@@ -148,8 +146,15 @@ public class InterfaceEditeur extends JFrame {
 
 	}
 
-	public static void EtablirLabyrinthe(Labyrinthe laby) {
+	public static void EtablirLabyrinthe(Labyrinthe laby, JPanel content_pane) {
+
+		// JPanel panel_labyrinthe = new JPanel();
 		panel_labyrinthe.setLayout(new GridBagLayout());
+		panel_labyrinthe.setPreferredSize(new Dimension(gameWidthLaby,
+				gameHeightLaby));
+		// panel_labyrinthe.setPreferredSize(new Dimension(300, 300));
+		// Border door = BorderFactory.createDashedBorder(Color.black, 5, 10,
+		// 20, true);
 		panel_labyrinthe.removeAll();
 		panel_labyrinthe.repaint();
 
@@ -162,12 +167,15 @@ public class InterfaceEditeur extends JFrame {
 			for (int j = 0; j < laby.tab_cases[i].length; j++) {
 				gbc.gridx = i;
 				gbc.gridy = j;
-				panel_labyrinthe.add(laby.tab_cases[i][j].getPanelCase(), gbc);
-				tab = laby.tab_cases;
+				// panel_case.setBorder(door);
+				// Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
+				// tab[i][j] = case_labyrinthe;
+				// panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
+				panel_labyrinthe.add(laby.tab_cases[i][j].panel_case, gbc);
 			}
 		}
-		// content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
-		content_pane.add(panel_labyrinthe);
+		tab = laby.tab_cases;
+		content_pane.add(panel_labyrinthe, BorderLayout.CENTER);
 	}
 
 	/**
@@ -249,9 +257,9 @@ public class InterfaceEditeur extends JFrame {
 				if (filechooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 					for (int i = 0; i < tab.length; i++) {
 						for (int j = 0; j < tab[i].length; j++) {
-							System.out.println("Valeur du tableau "
-									+ tab[i][j].etat);
+							System.out.print(tab[i][j].etat + " ");
 						}
+						System.out.println();
 					}
 				}
 			} else {
@@ -280,7 +288,7 @@ public class InterfaceEditeur extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			laby.charger();
 			laby = new Labyrinthe(laby.tab_cases);
-			EtablirLabyrinthe(laby);
+			EtablirLabyrinthe(laby, content_pane);
 			panel_labyrinthe.revalidate();
 			panel_labyrinthe.repaint();
 			// initLabyrintheIntoList();
@@ -307,7 +315,7 @@ public class InterfaceEditeur extends JFrame {
 		}
 		laby = new Labyrinthe(tab);
 		panel_labyrinthe.removeAll();
-		EtablirLabyrinthe(laby);
+		EtablirLabyrinthe(laby, content_pane);
 		panel_labyrinthe.validate();
 		panel_labyrinthe.repaint();
 
