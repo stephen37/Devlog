@@ -1,4 +1,4 @@
-package labyrinthe;
+package labyrinthe; 
 
 import gestionnaire.gui.GestionnaireUI;
 
@@ -19,9 +19,10 @@ public class Labyrinthe implements Serializable {
 
 	protected int x;
 	protected int y;
-	public Salle[][] tab_cases;
+	protected Salle[][] tab_cases;
 	protected String nom;
 	protected String etat = "normal";
+	protected String objet = "empty";
 	ArrayList<Labyrinthe> labyrinthes = new ArrayList<Labyrinthe>();
 	ArrayList<Salle> listSalle = new ArrayList<Salle>();
 	File fileSelected;
@@ -29,9 +30,8 @@ public class Labyrinthe implements Serializable {
 	public Labyrinthe(Salle[][] tab) {
 		super();
 		tab_cases = tab;
-
+		
 	}
-
 	/**
 	 * Renvoie la taille du tableau contenant les cases
 	 * 
@@ -52,57 +52,43 @@ public class Labyrinthe implements Serializable {
 	public String getName() {
 		return nom;
 	}
+	
 
 	public String getEtat() {
 		return etat;
 	}
-
+	
 	public ArrayList<Labyrinthe> getLabyrinthe() {
 		return new ArrayList<Labyrinthe>(this.labyrinthes);
 	}
 
 	public String toString() {
-		return nom + " " + x + "x" + y;
+		return nom + " " + (x+1) + "x" + (y+1);
 	}
 
-	/**
-	 * Permet d'Ã©crire dans l'arrayList avec un format de sortie spÃ©cifique.
-	 * 
-	 * @return String
-	 */
-	public String toBase() {
-		String res = "";
-		for (int i = 0; i < tab_cases.length; i++) {
-			for (int j = 0; j < tab_cases[i].length; j++) {
-				res += "" + tab_cases[i][j].x + " " + tab_cases[i][j].y + " "
-						+ tab_cases[i][j].etat + " " + tab_cases[i][j].period
-						+ " " + tab_cases[i][j].proba + " "
-						+ tab_cases[i][j].time + "\n";
-			}
-		}
-		return res;
-	}
+	 public Salle createSalleFromLine(String ligne) {
 
-	public Salle createSalleFromLine(String ligne) {
+		  String[] tab = ligne.split(" ");
+		  x = Integer.parseInt(tab[0]);
+		  y = Integer.parseInt(tab[1]);
+		  etat = tab[2];
+		  double period = Double.parseDouble(tab[3]);
+		  int proba = Integer.parseInt(tab[4]);
+		  double time = Double.parseDouble(tab[5]);
+		  objet = tab[6];
+		  Salle salle = new Salle(x, y, etat, period, proba, time, objet);	  
 
-		String[] tab = ligne.split(" ");
-		x = Integer.parseInt(tab[0]);
-		y = Integer.parseInt(tab[1]);
-		etat = tab[2];
-		double period = Double.parseDouble(tab[3]);
-		int proba = Integer.parseInt(tab[4]);
-		double time = Double.parseDouble(tab[5]);
-		Salle salle = new Salle(x, y, etat, period, proba, time);
-
-		return salle;
-	}
+		  return salle;
+	 }
+	 
+	 
 
 	public void addToFile(Labyrinthe laby, File file) throws Exception {
 		BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
 		buffer.write(laby.toBase());
 		buffer.close();
 	}
-
+	
 	public void charger() {
 		JFileChooser filechooser = new JFileChooser(".");
 		if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -116,17 +102,19 @@ public class Labyrinthe implements Serializable {
 				}
 
 				nom = fileSelected.getName();
-				int x = listSalle.get(listSalle.size() - 1).GetX();
-				int y = listSalle.get(listSalle.size() - 1).GetY();
-				Salle[][] tab = new Salle[x + 1][y + 1];
+				int x = listSalle.get(listSalle.size() -1).GetX();
+				int y = listSalle.get(listSalle.size() -1).GetY();
+				Salle[][] tab = new Salle[x+1][y+1];
 				int cpt = 0;
-				for (int i = 0; i < x + 1; i++) {
-					for (int j = 0; j < y + 1; j++) {
+				for (int i = 0; i < x+1; i++) {
+					for (int j = 0; j <  y+1; j++) {
 						tab[i][j] = listSalle.get(cpt);
 						cpt++;
-						System.out.print(tab[i][j].etat + " ");
+						System.out.print(tab[i][j].objet+ " ");
 					}
-					System.out.println();
+					System.out.println("");
+					
+					
 				}
 				tab_cases = tab;
 				br.close();
@@ -136,4 +124,34 @@ public class Labyrinthe implements Serializable {
 			}
 		}
 	}
+
+	/**
+	 * Permet d'Ã©crire dans l'arrayList avec un format de sortie spÃ©cifique.
+	 * 
+	 * @return String
+	 */
+	
+	public String toBase() {
+		String res = "";
+		for (int i = 0; i < tab_cases.length; i++) {
+			for (int j = 0; j < tab_cases[i].length; j++) {
+				res += "" + tab_cases[i][j].x + " " + tab_cases[i][j].y + " "
+						+ tab_cases[i][j].etat + " " + tab_cases[i][j].period
+						+ " " + tab_cases[i][j].proba + " "
+						+ tab_cases[i][j].time + " " + tab_cases[i][j].objet + "\n";
+			}
+		}
+		
+		return res;
+	}
+//	public String toBase() {
+//		String res = "";
+//		for (int i = 0; i < 1; i++) {
+//			for (int j = 0; j < 1; j++) {
+//				res += " " + tab_cases.length + "x" + tab_cases[i].length;
+//			}
+//		}
+//		return res;
+//	}
+
 }

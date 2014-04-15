@@ -39,6 +39,7 @@ public class GestionnaireUI extends JFrame {
 	JPanel contentPane;
 	File file;
 	AddPersonnageDialogUI persoDialog;
+	File fileSelected;
 
 	public GestionnaireUI() {
 		init();
@@ -129,13 +130,15 @@ public class GestionnaireUI extends JFrame {
 		JMenuItem menuSave = new JMenuItem("Sauvegarder...");
 		menu.add(menuSave);
 
-		class MenuSauvegarderAL implements ActionListener {
+		class SaveAsListener implements ActionListener {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (GestionnaireUI.this.gestionnaire != null) {
+
+				if (gestionnaire != null) {
 					JFileChooser filechooser = new JFileChooser(".") {
 						public void approveSelection() {
-							File f = getSelectedFile();
-							if (f.exists()) {
+							fileSelected = getSelectedFile();
+							if (fileSelected.exists()) {
 								int result = JOptionPane.showConfirmDialog(
 										this, "Écraser le fichier?",
 										"Confirmation",
@@ -152,18 +155,32 @@ public class GestionnaireUI extends JFrame {
 						}
 					};
 					if (filechooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-						EntreesSorties.sauvegarderFichier(gestionnaire,
-								filechooser.getSelectedFile());
+						EntreesSorties.sauvegarderFichier(gestionnaire
+								.getPersonnages().toString(), filechooser
+								.getSelectedFile());
 					}
-				} else
+				} else {
 					JOptionPane
 							.showMessageDialog(
 									GestionnaireUI.this,
 									"veuillez créer un nouveau gestionnaire ou charger un gestionnaire existant",
 									"Erreur", JOptionPane.ERROR_MESSAGE);
+				}
+
+				try {
+					gestionnaire.addToFile(gestionnaire.getPersonnages(),
+							fileSelected);
+					GestionnaireUI.initPersonnageIntoList();
+
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+
+				revalidate();
 			}
 		}
-		menuSave.addActionListener(new MenuSauvegarderAL());
+		menuSave.addActionListener(new SaveAsListener());
+
 	}
 
 	/**

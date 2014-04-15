@@ -19,7 +19,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -49,14 +48,14 @@ public class Simulateur extends JFrame implements Runnable {
 	Labyrinthe laby;
 	ArrayList<Salle> listSalle = new ArrayList<Salle>();
 	Salle[][] tabSalles;
-	JPanel panel_labyrinthe = new JPanel();
+	JPanel panel_laby = new JPanel();
 	JPanel content_pane = new JPanel();
 	JPanel panelPerso = new JPanel();
 	JPanel panelDroit = new JPanel();
 	JPanel panelLog = new JPanel();
 	JPanel panelButton = new JPanel();
 	ArrayList<Personnage> personnage;
-	
+	JScrollPane scrollpaneLaby = new JScrollPane();
 
 	static JList<Personnage> listPerso;
 	DefaultListModel<Personnage> listeModelPerso;
@@ -68,7 +67,7 @@ public class Simulateur extends JFrame implements Runnable {
 		this.personnage = persos;
 		init();
 		initMenu();
-		InterfaceEditeur.EtablirLabyrinthe(laby, panel_labyrinthe);
+		InterfaceEditeur.EtablirLabyrinthe(laby, panel_laby);
 		this.setVisible(true);
 
 	}
@@ -86,8 +85,8 @@ public class Simulateur extends JFrame implements Runnable {
 		listeModelPerso = new DefaultListModel<Personnage>();
 		listPerso = new JList<Personnage>(listeModelPerso);
 		JScrollPane scrollpanePerso = new JScrollPane(listPerso);
-		scrollpanePerso.setBorder(BorderFactory.createEmptyBorder(10, 10, 10,
-				10));
+//		scrollpanePerso.setBorder(BorderFactory.createEmptyBorder(10, 10, 10,
+//				10));
 		initPersoIntoList();
 		panelPerso.add(scrollpanePerso);
 		content_pane = new JPanel();
@@ -99,7 +98,7 @@ public class Simulateur extends JFrame implements Runnable {
 				.getHeight());
 		int gameHeightLaby = (int) (Math.round(ySize * 1));
 		int gameWidthLaby = (int) (Math.round(xSize * 0.85));
-		panel_labyrinthe.setPreferredSize(new Dimension(gameWidthLaby,
+		panel_laby.setPreferredSize(new Dimension(gameWidthLaby,
 				gameHeightLaby));
 
 		int gameHeightPanelDroit = (int) (Math.round(ySize * 0.95));
@@ -122,8 +121,13 @@ public class Simulateur extends JFrame implements Runnable {
 
 		panelButton.add(startSimu);
 		panelDroit.add(panelButton);
+		
+		//InterfaceEditeur.panel_labyrinthe.setPreferredSize(new Dimension(gbc.gridx * 98, gbc.gridy * 98));
+		
+		scrollpaneLaby = new JScrollPane(panel_laby);
+		scrollpaneLaby.setViewportView(panel_laby);
 
-		content_pane.add(panel_labyrinthe);
+		content_pane.add(scrollpaneLaby);
 		content_pane.add(panelDroit);
 
 		listPerso.addMouseListener(new SelectedPersoListener());
@@ -187,14 +191,14 @@ public class Simulateur extends JFrame implements Runnable {
 	protected Component deplacement(Personnage p, String s) {
 		try {
 			if (s.equalsIgnoreCase("z")) {
-				InterfaceEditeur.tab[Salle.GetX()][Salle.GetY()].raz();
+				InterfaceEditeur.tab[laby.getX()][laby.getY()].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[Salle.GetX()][Salle.GetY() +1].add(new JLabel("sqdsqd"));
+				return InterfaceEditeur.tab[laby.getX()][laby.getY()+1].add(new JLabel("sqdsqd"));
 //				return InterfaceEditeur.tab[laby.getX()][laby.getY() + 1].add(p
 //						.setImage());
 			} else if (s.equalsIgnoreCase("s")) {
-				InterfaceEditeur.tab[Salle.GetX()][Salle.GetY() -1].raz();
+				InterfaceEditeur.tab[laby.getX()][laby.getY() -1].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
 				InterfaceEditeur.tab[0][0].add(new JLabel(new ImageIcon("./images/o-light.png")));
@@ -204,12 +208,12 @@ public class Simulateur extends JFrame implements Runnable {
 //				panel_labyrinthe.repaint();
 //				return InterfaceEditeur.tab[laby.getX()][laby.getY() - 1].add(p
 //						.setImage());
-				return InterfaceEditeur.tab[Salle.GetX()][Salle.GetY()-1].add(new JLabel(new ImageIcon("./images/o-light.png")));
+				return InterfaceEditeur.tab[laby.getX()][laby.getY()-1].add(new JLabel(new ImageIcon("./images/o-light.png")));
 			} else if (s.equalsIgnoreCase("q")) {
 				InterfaceEditeur.tab[laby.getX()][laby.getY()].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[Salle.GetX()-1][Salle.GetY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
+				return InterfaceEditeur.tab[laby.getX()-1][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
 //				return InterfaceEditeur.tab[laby.getX()-1][laby.getY()].add(new JLabel("sqdsqd"));
 //				return InterfaceEditeur.tab[laby.getX() - 1][laby.getY()].add(p
 //						.setImage());
@@ -217,14 +221,14 @@ public class Simulateur extends JFrame implements Runnable {
 				InterfaceEditeur.tab[laby.getX()][laby.getY()].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[Salle.GetX() + 1][Salle.GetY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
+				return InterfaceEditeur.tab[laby.getX() + 1][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
 //				return InterfaceEditeur.tab[laby.getX()+1][laby.getY()].add(new JLabel("sqdsqd"));
 //				return InterfaceEditeur.tab[laby.getX() + 1][laby.getY()].add(p
 //						.setImage());
 			} else {
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[Salle.GetX()][Salle.GetY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
+				return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
 //				return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(p
 //						.setImage());
 			}
@@ -233,7 +237,7 @@ public class Simulateur extends JFrame implements Runnable {
 					"Vous ne pouvez pas sortir du labyrinthe ! Bien tenté!!",
 					"Tricheur !!", JOptionPane.ERROR_MESSAGE);
 		}
-		return InterfaceEditeur.tab[Salle.GetX()][Salle.GetY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
+		return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
 
 //		return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(p.setImage());
 	}

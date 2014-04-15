@@ -4,6 +4,7 @@ import gestionnaire.Gestionnaire;
 import gestionnaire.run.EntreesSorties;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,12 +74,12 @@ public class AddPersonnageDialogUI extends JDialog {
 		JPanel leftJpanel;
 		ArrayList<Personnage> list = gestionnaire.getPersonnages();
 		String[] tabArmure = { "Cuir", "Maille", "Or" };
-		String[] tabArme = { "Épée", "Arc", "Hache" };
+		String[] tabArme = { "epee", "Arc", "Hache" };
 		JComboBox<String> arme;
 		JComboBox<String> armure;
-		String armeChoisie = "Épée";
+		String armeChoisie = "epee";
 		String armureChoisie = "Cuir";
-		String inclinaisonChoisie;
+		String inclinaisonChoisie = ":)";
 		ButtonGroup bg;
 		JRadioButton gentil;
 		JRadioButton mechant;
@@ -165,34 +166,52 @@ public class AddPersonnageDialogUI extends JDialog {
 			race.addItemListener(new RaceComboBoxListener());
 
 			/* A Button valider placed South of the main JPanel */
-			JButton buttonSave = new JButton(" Save ");
-			JButton buttonSaveAs = new JButton(" Save as ");
 			JButton randomButton = new JButton(" Random ");
 
 			buttonPanel.setLayout(new BoxLayout(buttonPanel,
 					BoxLayout.LINE_AXIS));
-			JPanel buttonSavePanel = new JPanel();
-			buttonSavePanel.setLayout(new BoxLayout(buttonSavePanel,
+			JPanel buttonValiderPanel = new JPanel();
+			buttonValiderPanel.setLayout(new BoxLayout(buttonValiderPanel,
 					BoxLayout.X_AXIS));
-			buttonSavePanel.add(buttonSave);
-			buttonSavePanel.add(buttonSaveAs);
+			
 			buttonPanel.setLayout(new BorderLayout());
-			buttonPanel.add(buttonSavePanel, BorderLayout.EAST);
+			buttonPanel.add(buttonValiderPanel, BorderLayout.EAST);
 			buttonPanel.add(randomButton, BorderLayout.WEST);
 			JButton validerButton = new JButton(" Valider ");
 			validerButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10,
 					20));
-			buttonPanel.add(validerButton, BorderLayout.AFTER_LAST_LINE);
+			buttonValiderPanel.add(validerButton);
 			validerButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					name = persoName.getText().toString();
+					vitesse = vitesseSlider.getValue();
+					force = forceSlider.getValue();
+					
+//					gestionnaire.ajouterPersonnage(name, raceChoosen,
+//							force, vitesse, inclinaisonChoisie,
+//							armeChoisie, armureChoisie);
+					gestionnaire.ajouterPersonnage(new Personnage(name, raceChoosen,force, vitesse, inclinaisonChoisie,armeChoisie, armureChoisie) {
+						
+						@Override
+						public String toBase() {
+							// TODO Auto-generated method stub
+							return null;
+						}
+						
+						@Override
+						public Component setImage() {
+							// TODO Auto-generated method stub
+							return null;
+						}
+					});
+					GestionnaireUI.initPersonnageIntoList();
 					mainframe.dispose();
 				}
 			});
 
 			this.add(buttonPanel, BorderLayout.SOUTH);
-			buttonSaveAs.addActionListener(new SaveAsListener());
 			randomButton.addActionListener(new RandomListener());
 			gentil.addActionListener(new InclinaisonListener());
 			mechant.addActionListener(new InclinaisonListener());
@@ -294,7 +313,7 @@ public class AddPersonnageDialogUI extends JDialog {
 					JRadioButton radiobutton = (JRadioButton) e.getSource();
 					if (radiobutton.isSelected()) {
 						inclinaisonChoisie = radiobutton.getText();
-						System.out.println(inclinaisonChoisie);
+						System.out.println("inclinaison " +inclinaisonChoisie);
 					}
 				}
 			}
@@ -393,11 +412,13 @@ public class AddPersonnageDialogUI extends JDialog {
 			arme.setSelectedItem(arme.getItemAt(armeAleatoire));
 			int armureAleatoire = (int) (Math.random() * tabArmure.length);
 			armure.setSelectedItem(armure.getItemAt(armureAleatoire));
-			int inclinaisonAleatoire = (int) (Math.random() * (3 -1) +1);
-			if (inclinaisonAleatoire == 1 ) {
+			int inclinaisonAleatoire = (int) (Math.random() * (3 - 1) + 1);
+			if (inclinaisonAleatoire == 1) {
 				gentil.setSelected(true);
-			}else {
+				inclinaisonChoisie = gentil.getText();
+			} else {
 				mechant.setSelected(true);
+				inclinaisonChoisie = mechant.getText();
 			}
 		}
 

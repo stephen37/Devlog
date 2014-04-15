@@ -11,6 +11,7 @@ import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -23,62 +24,102 @@ public class Salle extends JPanel {
 
 	JPanel panel_case = new JPanel();
 	String etat = "normal";
-	protected static int x;
-	protected static int y;
+	String objet = "empty";
+	protected int x;
+	protected int y;
 	double period = 0;
 	double time = 0;
 	int proba = 0;
+	Personnage perso;
+	boolean isaccessible;
 	private JPopupMenu mouseMenu = new JPopupMenu();
+	private JMenu mouseMenuObjets = new JMenu("Deposer un objet...");
 	private JMenuItem sortie = new JMenuItem("Sortie");
-	private JMenuItem bloquee = new JMenuItem("Salle Bloquée");
+	private JMenuItem bloquee = new JMenuItem("Salle Bloquee");
 	private JMenuItem raz = new JMenuItem("Raz");
-	private JMenuItem ajouterPerso = new JMenuItem("Ajouter Personnage");
 	private JMenuItem submerged = new JMenuItem("Submerger");
 	private JMenuItem dark = new JMenuItem("Sombre");
+	private JMenuItem ajouterPerso = new JMenuItem("Ajouter Personnage");
+	private JMenuItem key = new JMenuItem("Cle");
+	private JMenuItem light = new JMenuItem("Lampe");
+	private JMenuItem potion = new JMenuItem("Potion");
+	private JMenuItem spyglass = new JMenuItem("Telescope");
 	File fileSelected;
 	GestionnaireUI gui;
 	Personnage selectedSerie;
+
 	JLabel label = new JLabel();
 
 	public Salle(int x, int y, String etat, double period, int proba,
-			double time) {
+			double time, String objet) {
 		this.x = x;
 		this.y = y;
 		this.etat = etat;
 		this.period = period;
 		this.time = time;
+		this.objet = objet;
 		init();
+		verifierAccessible();
 		// definirEtat(etat);
 		this.setVisible(true);
 	}
-
-	public JPanel getPanelCase() {
-		return panel_case;
-	}
+	
+//////////////////////////////////////////////////// INIT ////////////////////////////////////////////////////
 
 	/**
 	 * Initialise la JPanel et ajoute une image à la case.
 	 */
 	protected void init() {
+		mouseMenuObjets.add(key);
+		mouseMenuObjets.add(light);
+		mouseMenuObjets.add(potion);
+		mouseMenuObjets.add(spyglass);
+		mouseMenuObjets.setToolTipText("Objets !");
 		mouseMenu.add(sortie);
 		mouseMenu.add(bloquee);
-		mouseMenu.add(raz);
 		mouseMenu.add(submerged);
 		mouseMenu.add(dark);
+		mouseMenu.add(raz);
 		mouseMenu.add(ajouterPerso);
+		mouseMenu.add(mouseMenuObjets);
 
 		panel_case.setPreferredSize(new Dimension(90, 90));
 		panel_case.setMinimumSize(new Dimension(90, 90));
-
+		
 		definirEtat(etat);
-		panel_case.add(label);
+		definirObjet(objet);
+		verifierVide();
+		//panel_case.repaint();
+		//InterfaceEditeur.tab[this.x][this.y] = this;
+		//panel_case.add(label);
 		panel_case.addMouseListener(new CaseListener());
 		sortie.addActionListener(new SortieListener());
 		bloquee.addActionListener(new BloqueListener());
-		raz.addActionListener(new RazListener());
-		ajouterPerso.addActionListener(new PersoListener());
 		submerged.addActionListener(new SubmergedListener());
 		dark.addActionListener(new DarkListener());
+		raz.addActionListener(new RazListener());
+		ajouterPerso.addActionListener(new PersoListener());
+		
+		key.addActionListener(new ObjectKeyListener());
+		light.addActionListener(new LightListener());
+		potion.addActionListener(new PotionListener());
+		spyglass.addActionListener(new SpyglassListener());
+	}
+	
+//////////////////////////////////////////////////// METHODES ////////////////////////////////////////////////////
+	
+	public void verifierAccessible() {
+		if (this.etat.equalsIgnoreCase("locked")) {
+			isaccessible = false;
+		} else {
+			isaccessible = true;
+		}
+	}
+	
+	public void verifierVide() {
+		if (this.etat.equalsIgnoreCase("normal") && this.objet.equalsIgnoreCase("empty")) {
+			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+		}
 	}
 
 	/**
@@ -100,75 +141,88 @@ public class Salle extends JPanel {
 		definirEtat("exit");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-
-	protected void definirPerso(String race) {
-		panel_case.removeAll();
-		switch (race) {
-		case "Elf":
-			panel_case.add(new JLabel(new ImageIcon("./images/p-elf.png")));
-			System.out.println("x definirPerso " +GetX() + "y : "+GetY());
-			break;
-		case "Ogre":
-			panel_case.add(new JLabel(new ImageIcon("./images/p-ogre.png")));
-			System.out.println("x definirPerso " +GetX() + "y : "+GetY());
-			break;
-		case "Humain":
-			panel_case.add(new JLabel(new ImageIcon("./images/p-human.png")));
-			System.out.println("x definirPerso " +GetX() + "y : "+GetY());
-			break;
-		default:
-			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
-			break;
-		}
-		panel_case.validate();
-		panel_case.repaint();
-		
-		InterfaceEditeur.tab[x][y].etat = race;
-		InterfaceEditeur.tab[x][y] = this;
-	}
-
+	
 	protected void definirSubmerged() {
 		raz();
 		panel_case.removeAll();
 		definirEtat("submerged");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-
+	
 	protected void definirDark() {
 		raz();
 		panel_case.removeAll();
 		definirEtat("dark");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
+	
+	protected void definirKey() {
+		raz();
+		panel_case.removeAll();
+		definirObjet("key");
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+	
+	protected void definirLight() {
+		raz();
+		panel_case.removeAll();
+		definirObjet("light");
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+	
+	protected void definirPotion() {
+		raz();
+		panel_case.removeAll();
+		definirObjet("potion");
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+	
+	protected void definirSpyglass() {
+		raz();
+		panel_case.removeAll();
+		definirObjet("spyglass");
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+
+	protected void definirPerso(String race) {
+		panel_case.removeAll();
+		switch (race) {
+		case "Elf":
+			panel_case.add(new JLabel(new ImageIcon("./images/p-elf.png")));
+			break;
+		case "Ogre":
+			panel_case.add(new JLabel(new ImageIcon("./images/p-ogre.png")));
+			break;
+		case "Humain":
+			panel_case.add(new JLabel(new ImageIcon("./images/p-human.png")));
+			break;
+		default:
+			break;
+		}
+		panel_case.validate();
+		panel_case.repaint();
+		//InterfaceEditeur.tab[this.x][this.y].etat = race;
+		InterfaceEditeur.tab[this.x][this.y] = this;
+		System.out.println("X : " + InterfaceEditeur.tab[this.x][this.y].x
+				+ " Y : " + InterfaceEditeur.tab[this.x][this.y].y);
+	}
 
 	/**
-	 * Dessine des images en fonction de l'état de la case
+	 * Dessine des images en fonction de l'�tat de la case
 	 * 
 	 * @param e
 	 */
 	protected void definirEtat(String e) {
 		this.etat = e;
-		if (this.etat.equalsIgnoreCase("normal")) {
-			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
-		}
+//		if (this.etat.equalsIgnoreCase("normal")) {
+//			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+//		}
 		if (this.etat.equalsIgnoreCase("locked")) {
 			label = new JLabel(new ImageIcon("./images/s-locked.png"));
 			panel_case.add(label);
 		}
 		if (this.etat.equalsIgnoreCase("exit")) {
 			label = new JLabel(new ImageIcon("./images/s-exit.png"));
-			panel_case.add(label);
-		}
-		if (this.etat.equalsIgnoreCase("humain")) {
-			label = new JLabel(new ImageIcon("./images/p-human.png"));
-			panel_case.add(label);
-		}
-		if (this.etat.equalsIgnoreCase("elf")) {
-			label = new JLabel(new ImageIcon("./images/p-elf.png"));
-			panel_case.add(label);
-		}
-		if (this.etat.equalsIgnoreCase("ogre")) {
-			label = new JLabel(new ImageIcon("./images/p-ogre.png"));
 			panel_case.add(label);
 		}
 		if (this.etat.equalsIgnoreCase("submerged")) {
@@ -179,13 +233,52 @@ public class Salle extends JPanel {
 			label = new JLabel(new ImageIcon("./images/s-dark.png"));
 			panel_case.add(label);
 		}
-		panel_case.validate();
+//		if (this.etat.equalsIgnoreCase("humain")) {
+//			label = new JLabel(new ImageIcon("./images/p-human.png"));
+//			panel_case.add(label);
+//		}
+//		if (this.etat.equalsIgnoreCase("elf")) {
+//			label = new JLabel(new ImageIcon("./images/p-elf.png"));
+//			panel_case.add(label);
+//		}
+//		if (this.etat.equalsIgnoreCase("ogre")) {
+//			label = new JLabel(new ImageIcon("./images/p-ogre.png"));
+//			panel_case.add(label);
+//		}
+		panel_case.revalidate();
+		panel_case.repaint();
+		//InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+	
+	protected void definirObjet(String e) {
+		this.objet = e;
+//		if (this.objet.equalsIgnoreCase("empty")) {
+//			label = new JLabel(new ImageIcon("./images/s-normal.png"));
+//			panel_case.add(label);
+//		}
+		if (this.objet.equalsIgnoreCase("key")) {
+			label = new JLabel(new ImageIcon("./images/o-key.png"));
+			panel_case.add(label);
+		}
+		if (this.objet.equalsIgnoreCase("light")) {
+			label = new JLabel(new ImageIcon("./images/o-light.png"));
+			panel_case.add(label);
+		}
+		if (this.objet.equalsIgnoreCase("potion")) {
+			label = new JLabel(new ImageIcon("./images/o-potion.png"));
+			panel_case.add(label);
+		}
+		if (this.objet.equalsIgnoreCase("spyglass")) {
+			label = new JLabel(new ImageIcon("./images/o-spyglass.png"));
+			panel_case.add(label);
+		}
+		panel_case.revalidate();
 		panel_case.repaint();
 		// InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
-	 * Remise à zéro de la case.
+	 * Remise à zero de la case.
 	 */
 	public void raz() {
 		time = 0;
@@ -193,9 +286,29 @@ public class Salle extends JPanel {
 		proba = 0;
 		panel_case.removeAll();
 		definirEtat("normal");
+		//definirObjet("empty");
 		InterfaceEditeur.tab[this.x][this.y] = this;
-		System.out.println("X : " + this.x);
-		System.out.println("Y : " + this.y);
+	}
+	
+	public void entreePerso(Personnage p) {
+		if (this.isaccessible == true) {
+			this.perso = p;
+			definirPerso(perso.getRace());	
+		} else {
+			System.out.println("Salle Inaccessible");
+		}
+			
+	}
+	
+	public void sortiePerso() {
+		if (this.perso != null) {
+			this.perso = null;
+			definirEtat(this.etat);
+			definirObjet(this.objet);
+			panel_case.repaint();
+		} else {
+			System.out.println("ERREUR, SORTIE DE PERSO SUR UNE CASE VIDE");
+		}
 	}
 
 	/**
@@ -227,12 +340,14 @@ public class Salle extends JPanel {
 		proba = (int) FenetreBloquee.slider_prob.getValue();
 		return proba;
 	}
+	
+//////////////////////////////////////////////////// GETTERS ////////////////////////////////////////////////////////////////
 
-	public static int GetX() {
+	public int GetX() {
 		return x;
 	}
 
-	public static int GetY() {
+	public int GetY() {
 		return y;
 	}
 
@@ -243,6 +358,9 @@ public class Salle extends JPanel {
 	public JPanel getPanel() {
 		return panel_case;
 	}
+	
+	
+//////////////////////////////////////////////////// LISTENERS ////////////////////////////////////////////////////////////////
 
 	/**
 	 * Ecoute la souris pour savoir si on clique sur une case.
@@ -251,6 +369,8 @@ public class Salle extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			System.out.println(GetX());
+			System.out.println(GetY());
 			mouseMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
 
@@ -283,6 +403,24 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
+	
+	class SubmergedListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirSubmerged();
+			panel_case.validate();
+			panel_case.repaint();
+		}
+	}
+	
+	class DarkListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirDark();
+			panel_case.validate();
+			panel_case.repaint();
+		}
+	}
 
 	/**
 	 * Ecoute la souris afin de savoir si le JMenuItem "Bloquer" a été
@@ -308,34 +446,50 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
+	class ObjectKeyListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirKey();
+			panel_case.validate();
+			panel_case.repaint();
+		}
+	}
+	
+	class LightListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirLight();
+			panel_case.validate();
+			panel_case.repaint();
+		}
+	}
+	
+	class PotionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirPotion();
+			panel_case.validate();
+			panel_case.repaint();
+		}
+	}
+	
+	class SpyglassListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			definirSpyglass();
+			panel_case.validate();
+			panel_case.repaint();
+		}
+	}
 
 	class PersoListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			panel_case.validate();
-			panel_case.repaint();
-			definirPerso(Simulateur.getJlist().getSelectedValue().getRace());
-			
-		}
+		  @Override
+		  public void actionPerformed(ActionEvent e) {
+		   panel_case.validate();
+		   panel_case.repaint();
+		   definirPerso(Simulateur.getJlist().getSelectedValue().getRace());
+		  }
 
-	}
-
-	class SubmergedListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			definirSubmerged();
-			panel_case.validate();
-			panel_case.repaint();
-		}
-	}
-
-	class DarkListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			definirDark();
-			panel_case.validate();
-			panel_case.repaint();
-		}
-	}
+		 }
 
 }

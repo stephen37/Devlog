@@ -202,15 +202,15 @@ public class MenuSimulateur extends JDialog {
 			listPersoSelected.add(listPerso.getSelectedValue());
 			System.out.println(listPerso.getSelectedValue());
 		}
-	} 
-	 /*class PersoListener extends MouseAdapter {
-		 public void mouseClicked(MouseEvent e) {
-			 listPersoSelected.add(listPerso.getSelectedValue());
-			 int index = listPerso.locationToIndex(e.getPoint());
-             System.out.println("clicked on Item " + index);  
-		 }
-	 }*/
-	
+	}
+
+	/*
+	 * class PersoListener extends MouseAdapter { public void
+	 * mouseClicked(MouseEvent e) {
+	 * listPersoSelected.add(listPerso.getSelectedValue()); int index =
+	 * listPerso.locationToIndex(e.getPoint());
+	 * System.out.println("clicked on Item " + index); } }
+	 */
 
 	/**
 	 * Ajoute les Labyrinthes à la Jlist.

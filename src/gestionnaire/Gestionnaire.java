@@ -35,18 +35,39 @@ public class Gestionnaire implements Serializable {
 	 * @return String
 	 */
 	public boolean ajouterPersonnage(String nom, String race,
-			final int pointForce, final int vitesse, final String inclinaison, final String arme, final String armure) {
-		return personnages.add(new Personnage(nom, race, pointForce, vitesse, inclinaison, arme, armure) {
+			final int pointForce, final int vitesse, final String inclinaison,
+			final String arme, final String armure) {
+		return personnages.add(new Personnage(nom, race, pointForce, vitesse,
+				inclinaison, arme, armure) {
 			@Override
 			public String toBase() {
 				return nom + "\t" + race + "\t" + pointForce + "\t" + vitesse
-						+ "\t" + vie + "\t" +inclinaison + "\t" + arme +"\t" +armure;
+						+ "\t" + vie + "\t" + inclinaison + "\t" + arme + "\t"
+						+ armure;
 			}
+
 			@Override
 			public Component setImage() {
 				return null;
 			}
 		});
+	}
+
+	public boolean ajouterPersonnage(final Personnage perso) {
+		return personnages.add(new Personnage(perso.getNom(),perso.getRace(),perso.getForce(), perso.getVitesse(), perso.getInclinaison(),perso.getArme(),perso.getArmure()){
+			
+			@Override
+			public String toBase() {
+				// TODO Auto-generated method stub
+				return perso.getNom() + "\t" +perso.getRace() + "\t" +perso.getForce() + "\t" + perso.getVitesse()+"\t"+perso.getVie()+"\t"+perso.getInclinaison()+ "\t"+perso.getArme() +"\t" +perso.getArmure() + "\t" + perso.getTailleSac();
+			}
+			
+			@Override
+			public Component setImage() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		}); 
 	}
 
 	@Override
@@ -73,7 +94,8 @@ public class Gestionnaire implements Serializable {
 			String inclinaison = tab[5];
 			String arme = tab[6];
 			String armure = tab[7];
-			return new Humain(nom, "Humain", force, vitesse, inclinaison, arme, armure);
+			return new Humain(nom, "Humain", force, vitesse, inclinaison, arme,
+					armure);
 		} else if (tab[1].equals("Elf")) {
 			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
@@ -81,7 +103,8 @@ public class Gestionnaire implements Serializable {
 			String inclinaison = tab[5];
 			String arme = tab[6];
 			String armure = tab[7];
-			return new Elf(nom, "Elf", force, vitesse, inclinaison, arme, armure);
+			return new Elf(nom, "Elf", force, vitesse, inclinaison, arme,
+					armure);
 		} else {
 			String nom = tab[0];
 			int force = Integer.parseInt(tab[2]);
@@ -89,7 +112,8 @@ public class Gestionnaire implements Serializable {
 			String inclinaison = tab[5];
 			String arme = tab[6];
 			String armure = tab[7];
-			return new Ogre(nom, "Ogre", force, vitesse, inclinaison, arme, armure);
+			return new Ogre(nom, "Ogre", force, vitesse, inclinaison, arme,
+					armure);
 		}
 
 	}

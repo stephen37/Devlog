@@ -25,6 +25,7 @@ public abstract class Personnage implements Runnable {
 	Salle[][] tabSalles = InterfaceEditeur.getTabSalle();
 	Labyrinthe laby = new Labyrinthe(tabSalles);
 	String[] tabMouvements = { "haut", "bas", "gauche", "droite" };
+	int tailleSac;
 
 	/**
 	 * @param nom
@@ -32,7 +33,8 @@ public abstract class Personnage implements Runnable {
 	 * @param force
 	 * @param vitesseMouvement
 	 */
-	public Personnage(String nom, String race, int force, int vitesseMouvement, String inclinaison, String arme, String armure) {
+	public Personnage(String nom, String race, int force, int vitesseMouvement,
+			String inclinaison, String arme, String armure) {
 		super();
 		this.vie = 100;
 		this.force = force;
@@ -42,6 +44,7 @@ public abstract class Personnage implements Runnable {
 		this.inclinaison = inclinaison;
 		this.arme = arme;
 		this.armure = armure;
+		tailleSac = 2 + (int)(Math.random() * ((4 - 2) + 1));
 	}
 
 	/*
@@ -56,10 +59,15 @@ public abstract class Personnage implements Runnable {
 
 	public String toString() {
 		return "Nom : " + nom + " race : " + race + " force : " + force
-				+ " vitesse : " + vitesseMouvement + " inclinaison " +inclinaison + " arme " +arme + " armure " +armure;
+				+ " vitesse : " + vitesseMouvement + " inclinaison : "
+				+ inclinaison + " arme : " + arme + " armure : " + armure
+				+ " sac : " + tailleSac;
 	}
 
-	
+	public int getTailleSac() {
+		return tailleSac;
+	}
+
 	public int getVie() {
 		return vie;
 	}
@@ -79,15 +87,15 @@ public abstract class Personnage implements Runnable {
 	public String getRace() {
 		return race;
 	}
-	
+
 	public String getInclinaison() {
 		return inclinaison;
 	}
-	
+
 	public String getArmure() {
 		return armure;
 	}
-	
+
 	public String getArme() {
 		return arme;
 	}
@@ -100,12 +108,13 @@ public abstract class Personnage implements Runnable {
 	// en fonction.
 	@Override
 	public void run() {
-		
+
 	}
 
 	// Permet de comparer deux personnages.
 	public boolean contains(Personnage selected) {
-		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement, inclinaison, arme, armure) {
+		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement,
+				inclinaison, arme, armure) {
 
 			@Override
 			public String toBase() {
