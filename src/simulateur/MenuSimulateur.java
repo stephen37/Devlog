@@ -152,6 +152,8 @@ public class MenuSimulateur extends JDialog {
 	class ChargerPersoListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser filechooser = new JFileChooser(".");
+			// filechooser.setFileFilter(new FileNameExtensionFilter(
+			// "Gestionnaire", ".*"));
 			if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
 					file = filechooser.getSelectedFile();
@@ -196,21 +198,20 @@ public class MenuSimulateur extends JDialog {
 		}
 	}
 
-	// TODO : Problème lors de la selection de BATMAN !!
 	class PersoListener extends MouseInputAdapter {
 		public void mouseClicked(MouseEvent e) {
 			listPersoSelected.add(listPerso.getSelectedValue());
 			System.out.println(listPerso.getSelectedValue());
 		}
-	}
-
-	/*
-	 * class PersoListener extends MouseAdapter { public void
-	 * mouseClicked(MouseEvent e) {
-	 * listPersoSelected.add(listPerso.getSelectedValue()); int index =
-	 * listPerso.locationToIndex(e.getPoint());
-	 * System.out.println("clicked on Item " + index); } }
-	 */
+	} 
+	 /*class PersoListener extends MouseAdapter {
+		 public void mouseClicked(MouseEvent e) {
+			 listPersoSelected.add(listPerso.getSelectedValue());
+			 int index = listPerso.locationToIndex(e.getPoint());
+             System.out.println("clicked on Item " + index);  
+		 }
+	 }*/
+	
 
 	/**
 	 * Ajoute les Labyrinthes à la Jlist.

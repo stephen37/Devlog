@@ -2,9 +2,6 @@ package personnages;
 
 import java.awt.Component;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
 import labyrinthe.InterfaceEditeur;
 import labyrinthe.Labyrinthe;
 import labyrinthe.Salle;
@@ -13,7 +10,7 @@ import labyrinthe.Salle;
  * @author stephen BATIFOL L2 MI
  */
 
-public abstract class Personnage implements Runnable {
+public abstract class Personnage  {
 	protected int vie;
 	protected int force;
 	protected String nom;
@@ -22,10 +19,14 @@ public abstract class Personnage implements Runnable {
 	String inclinaison;
 	String arme;
 	String armure;
+	double attaque;
+	double defense;
 	Salle[][] tabSalles = InterfaceEditeur.getTabSalle();
 	Labyrinthe laby = new Labyrinthe(tabSalles);
 	String[] tabMouvements = { "haut", "bas", "gauche", "droite" };
 	int tailleSac;
+	int tempsMouvement = 11 - vitesseMouvement;
+	Salle salle;
 
 	/**
 	 * @param nom
@@ -45,6 +46,7 @@ public abstract class Personnage implements Runnable {
 		this.arme = arme;
 		this.armure = armure;
 		tailleSac = 2 + (int)(Math.random() * ((4 - 2) + 1));
+		salle = null;
 	}
 
 	/*
@@ -52,21 +54,83 @@ public abstract class Personnage implements Runnable {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	
+/////////////////////////////////////////////////////// METHODES ///////////////////////////////////////////////////////
+	
+	public abstract void definirAttaque();
+	
+	public abstract void definirDefense();
+	
+	
 	public boolean equals(Object o) {
 		Personnage p = (Personnage) o;
 		return ((this.nom.equals(p.getNom())));
 	}
+	
+	/**
+	 * A la suite d'un combat perdu, cette m�thode bloque le personnage dans la salle o� il a �t� vaincu
+	 */
+	public void combatPerdu() {
+		try {
+			Thread.sleep(1000 * tempsMouvement * 3);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public String toString() {
-		return "Nom : " + nom + " race : " + race + " force : " + force
-				+ " vitesse : " + vitesseMouvement + " inclinaison : "
-				+ inclinaison + " arme : " + arme + " armure : " + armure
-				+ " sac : " + tailleSac;
-	}
+		  return "Nom : " + nom + " race : " + race + " force : " + force
+		    + " vitesse : " + vitesseMouvement + " inclinaison : "
+		    + inclinaison + " arme : " + arme + " armure : " + armure
+		    + " sac : " + tailleSac;
+		 }
+	
+	public abstract String toBase();
 
-	public int getTailleSac() {
-		return tailleSac;
+	public abstract Component setImage();
+
+	// TODO : Faire un random sur les positions et faire avancer le personnage
+	// en fonction.	
+	
+
+	// Permet de comparer deux personnages.
+	public boolean contains(Personnage selected) {
+		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement,
+				inclinaison, arme, armure) {
+
+			@Override
+			public String toBase() {
+				return null;
+			}
+
+			@Override
+			public Component setImage() {
+				return null;
+			}
+
+			@Override
+			public void definirAttaque() {
+				return;
+			}
+
+			@Override
+			public void definirDefense() {
+				
+			}
+		};
+		if (perso2.nom.equals(selected.nom)
+				&& perso2.race.equals(selected.race)
+				&& perso2.force == selected.force
+				&& perso2.vitesseMouvement == selected.vitesseMouvement) {
+			return true;
+		}
+		return false;
 	}
+	
+/////////////////////////////////////////////////////// GETTERS ///////////////////////////////////////////////////////
+	// Ces m�thodes �tant explicites, elles ne seront pas comment�es individuellement
+	
+	
 
 	public int getVie() {
 		return vie;
@@ -99,39 +163,18 @@ public abstract class Personnage implements Runnable {
 	public String getArme() {
 		return arme;
 	}
-
-	public abstract String toBase();
-
-	public abstract Component setImage();
-
-	// TODO : Faire un random sur les positions et faire avancer le personnage
-	// en fonction.
-	@Override
-	public void run() {
-
+	
+	public double getAttaque() {
+		return attaque;
+	}
+	
+	public double getDefense() {
+		return defense;
 	}
 
-	// Permet de comparer deux personnages.
-	public boolean contains(Personnage selected) {
-		Personnage perso2 = new Personnage(nom, race, force, vitesseMouvement,
-				inclinaison, arme, armure) {
-
-			@Override
-			public String toBase() {
-				return null;
-			}
-
-			@Override
-			public Component setImage() {
-				return null;
-			}
-		};
-		if (perso2.nom.equals(selected.nom)
-				&& perso2.race.equals(selected.race)
-				&& perso2.force == selected.force
-				&& perso2.vitesseMouvement == selected.vitesseMouvement) {
-			return true;
-		}
-		return false;
+	public int getTailleSac() {
+		return tailleSac;
 	}
+
+	
 }

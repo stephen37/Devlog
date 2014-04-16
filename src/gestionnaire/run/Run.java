@@ -1,16 +1,15 @@
 package gestionnaire.run;
 
-import gestionnaire.Gestionnaire;
-import gestionnaire.gui.GestionnaireUI;
-import labyrinthe.MenuEditeur;
+import personnages.Personnage;
 
 
 public class Run {
 
 	public static void main(String[] args) {
 //		new GestionnaireUI();
-		new MenuEditeur();
+//		new MenuEditeur();
 //		new Gestionnaire();
+		
 		
 	}
 }

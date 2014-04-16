@@ -1,5 +1,6 @@
 package simulateur;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -14,7 +15,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -49,6 +49,7 @@ public class Simulateur extends JFrame implements Runnable {
 	ArrayList<Salle> listSalle = new ArrayList<Salle>();
 	Salle[][] tabSalles;
 	JPanel panel_laby = new JPanel();
+	JPanel panel_game = new JPanel();
 	JPanel content_pane = new JPanel();
 	JPanel panelPerso = new JPanel();
 	JPanel panelDroit = new JPanel();
@@ -56,6 +57,7 @@ public class Simulateur extends JFrame implements Runnable {
 	JPanel panelButton = new JPanel();
 	ArrayList<Personnage> personnage;
 	JScrollPane scrollpaneLaby = new JScrollPane();
+	InterfaceEditeur ie = new InterfaceEditeur();
 
 	static JList<Personnage> listPerso;
 	DefaultListModel<Personnage> listeModelPerso;
@@ -67,14 +69,17 @@ public class Simulateur extends JFrame implements Runnable {
 		this.personnage = persos;
 		init();
 		initMenu();
-		InterfaceEditeur.EtablirLabyrinthe(laby, panel_laby);
+		ie.EtablirLabyrinthe(laby, panel_laby);
 		this.setVisible(true);
-
+		ie.setVisible(false);
 	}
 
 	public static JList<Personnage> getJlist() {
 		return listPerso;
 	}
+
+	// ///////////////////////////////////////////////////// INIT
+	// ///////////////////////////////////////////////////////
 
 	protected void init() {
 
@@ -85,8 +90,6 @@ public class Simulateur extends JFrame implements Runnable {
 		listeModelPerso = new DefaultListModel<Personnage>();
 		listPerso = new JList<Personnage>(listeModelPerso);
 		JScrollPane scrollpanePerso = new JScrollPane(listPerso);
-//		scrollpanePerso.setBorder(BorderFactory.createEmptyBorder(10, 10, 10,
-//				10));
 		initPersoIntoList();
 		panelPerso.add(scrollpanePerso);
 		content_pane = new JPanel();
@@ -98,8 +101,10 @@ public class Simulateur extends JFrame implements Runnable {
 				.getHeight());
 		int gameHeightLaby = (int) (Math.round(ySize * 1));
 		int gameWidthLaby = (int) (Math.round(xSize * 0.85));
-		panel_laby.setPreferredSize(new Dimension(gameWidthLaby,
-				gameHeightLaby));
+		panel_laby
+				.setPreferredSize(new Dimension(gameWidthLaby, gameHeightLaby));
+		panel_laby.setLayout(new BorderLayout());
+		panel_game.setPreferredSize(new Dimension(ie.gx, ie.gy));
 
 		int gameHeightPanelDroit = (int) (Math.round(ySize * 0.95));
 		int gameWidthPanelDroit = (int) (Math.round(xSize * 0.15));
@@ -121,13 +126,12 @@ public class Simulateur extends JFrame implements Runnable {
 
 		panelButton.add(startSimu);
 		panelDroit.add(panelButton);
-		
-		//InterfaceEditeur.panel_labyrinthe.setPreferredSize(new Dimension(gbc.gridx * 98, gbc.gridy * 98));
-		
-		scrollpaneLaby = new JScrollPane(panel_laby);
-		scrollpaneLaby.setViewportView(panel_laby);
 
-		content_pane.add(scrollpaneLaby);
+		scrollpaneLaby = new JScrollPane(panel_game);
+		scrollpaneLaby.setViewportView(panel_game);
+		panel_laby.add(scrollpaneLaby);
+
+		content_pane.add(panel_laby);
 		content_pane.add(panelDroit);
 
 		listPerso.addMouseListener(new SelectedPersoListener());
@@ -177,105 +181,105 @@ public class Simulateur extends JFrame implements Runnable {
 		}
 	}
 
+	// ///////////////////////////////////////////////////// METHODES
+	// ///////////////////////////////////////////////////////
+
+	/**
+	 * Le personnage en param�tre se d�placera suivant les directions indiqu�es
+	 * au clavier par le joueur
+	 */
 	protected void deplacementJoueur(Personnage p) {
 
 	}
 
+	/**
+	 * @param p
+	 * 
+	 *            Execute un d�placement du personnage en param�tre dans une
+	 *            direction al�atoire
+	 */
 	protected void deplacementRandom(Personnage p) {
 		String[] directionTab = { "north", "south", "west", "east", "stand" };
 		int ranDirection = (int) (Math.random() * directionTab.length);
 		String direction = directionTab[ranDirection];
-		deplacement(p, direction);
+		deplacement(direction);
 	}
 
-	protected Component deplacement(Personnage p, String s) {
+	/**
+	 * @param p
+	 * @param s
+	 * @return
+	 * 
+	 *         M�thode qui d�place le personnage p dans la direction s
+	 */
+	public Component deplacement(String s) {
 		try {
 			if (s.equalsIgnoreCase("z")) {
 				InterfaceEditeur.tab[laby.getX()][laby.getY()].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[laby.getX()][laby.getY()+1].add(new JLabel("sqdsqd"));
-//				return InterfaceEditeur.tab[laby.getX()][laby.getY() + 1].add(p
-//						.setImage());
+				return InterfaceEditeur.tab[laby.getX()][laby.getY() + 1]
+						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
 			} else if (s.equalsIgnoreCase("s")) {
-				InterfaceEditeur.tab[laby.getX()][laby.getY() -1].raz();
+				InterfaceEditeur.tab[laby.getX()][laby.getY() - 1].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				InterfaceEditeur.tab[0][0].add(new JLabel(new ImageIcon("./images/o-light.png")));
-				validate();
-				repaint();
-//				panel_labyrinthe.revalidate();
-//				panel_labyrinthe.repaint();
-//				return InterfaceEditeur.tab[laby.getX()][laby.getY() - 1].add(p
-//						.setImage());
-				return InterfaceEditeur.tab[laby.getX()][laby.getY()-1].add(new JLabel(new ImageIcon("./images/o-light.png")));
+				System.out.println("x " + ie.getX() + " Y " + ie.getY());
+				return InterfaceEditeur.tab[laby.getX()][laby.getY() - 1]
+						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
 			} else if (s.equalsIgnoreCase("q")) {
 				InterfaceEditeur.tab[laby.getX()][laby.getY()].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[laby.getX()-1][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
-//				return InterfaceEditeur.tab[laby.getX()-1][laby.getY()].add(new JLabel("sqdsqd"));
-//				return InterfaceEditeur.tab[laby.getX() - 1][laby.getY()].add(p
-//						.setImage());
+				System.out.println("x " + ie.getX() + " Y " + ie.getY());
+				return InterfaceEditeur.tab[laby.getX() - 1][laby.getY()]
+						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
 			} else if (s.equalsIgnoreCase("d")) {
 				InterfaceEditeur.tab[laby.getX()][laby.getY()].raz();
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[laby.getX() + 1][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
-//				return InterfaceEditeur.tab[laby.getX()+1][laby.getY()].add(new JLabel("sqdsqd"));
-//				return InterfaceEditeur.tab[laby.getX() + 1][laby.getY()].add(p
-//						.setImage());
+				System.out.println("x " + ie.getX() + " Y " + ie.getY());
+				return InterfaceEditeur.tab[laby.getX() + 1][laby.getY()]
+						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
 			} else {
 				getContentPane().revalidate();
 				getContentPane().repaint();
-				return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
-//				return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(p
-//						.setImage());
+				return InterfaceEditeur.tab[laby.getX()][laby.getY()]
+						.add(new JLabel(new ImageIcon("./images/p-elf.png")));
 			}
 		} catch (IndexOutOfBoundsException e) {
 			JOptionPane.showMessageDialog(Simulateur.this,
-					"Vous ne pouvez pas sortir du labyrinthe ! Bien tenté!!",
+					"Vous ne pouvez pas sortir du labyrinthe ! Bien tent�!!",
 					"Tricheur !!", JOptionPane.ERROR_MESSAGE);
 		}
-		return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(new JLabel(new ImageIcon("./images/o-light.png")));
-
-//		return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(p.setImage());
+		return InterfaceEditeur.tab[laby.getX()][laby.getY()].add(new JLabel(
+				new ImageIcon("./images/p-elf.png")));
 	}
 
-	private class MyDispatcher implements KeyEventDispatcher {
-		@Override
-		public boolean dispatchKeyEvent(KeyEvent e) {
-			if (e.getID() == KeyEvent.KEY_PRESSED) {
-				deplacement(Simulateur.getJlist().getSelectedValue(),
-						Character.toString(e.getKeyChar()));
-				getContentPane().revalidate();
-				getContentPane().repaint();
-				revalidate();
-				repaint();
-				
-			} else if (e.getID() == KeyEvent.KEY_RELEASED) {
-			} else if (e.getID() == KeyEvent.KEY_TYPED) {
-			}
-			return false;
+	/**
+	 * Cette m�thode, en plus de v�rifier si un combat peut avoir lieu, g�re le
+	 * d�roulement des combats si il y a entre 2 et 4 personnages en m�me temps.
+	 */
+
+	protected void organiserCombat(Salle s) {
+		if (s.perso_dans_salle.size() == 2) {
+			s.combat(s.perso_dans_salle.get(0), s.perso_dans_salle.get(1));
 		}
-	}
-
-	public void MyFrame() {
-		System.out.println("test");
-		KeyboardFocusManager manager = KeyboardFocusManager
-				.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(new MyDispatcher());
-	}
-
-	class ChargerMenuListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			new MenuSimulateur();
+		if (s.perso_dans_salle.size() == 3) {
+			s.combat(
+					s.perso_dans_salle.get(0),
+					(s.combat(s.perso_dans_salle.get(0),
+							s.perso_dans_salle.get(1))));
 		}
-	}
-
-	public Labyrinthe getLaby() {
-		return laby;
+		if (s.perso_dans_salle.size() == 4) {
+			Personnage vainqueur1 = s.combat(s.perso_dans_salle.get(0),
+					s.perso_dans_salle.get(1));
+			Personnage vainqueur2 = s.combat(s.perso_dans_salle.get(2),
+					s.perso_dans_salle.get(3));
+			s.combat(vainqueur1, vainqueur2);
+		} else {
+			System.out.println("Un combat n'est pas possible ici !");
+		}
 	}
 
 	private void pause() {
@@ -286,10 +290,11 @@ public class Simulateur extends JFrame implements Runnable {
 		}
 	}
 
-	class SelectedPersoListener extends MouseInputAdapter {
-		public void mouseClicked(MouseEvent e) {
-			persoSelected = listPerso.getSelectedValue();
-		}
+	public void MyFrame() {
+		System.out.println("test");
+		KeyboardFocusManager manager = KeyboardFocusManager
+				.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(new MyDispatcher());
 	}
 
 	@Override
@@ -297,4 +302,46 @@ public class Simulateur extends JFrame implements Runnable {
 		// TODO Auto-generated method stub
 
 	}
+
+	// ////////////////////////////////////////////////// LISTENERS
+	// ////////////////////////////////////////////////////////////////
+
+	class ChargerMenuListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			new MenuSimulateur();
+		}
+	}
+
+	class SelectedPersoListener extends MouseInputAdapter {
+		public void mouseClicked(MouseEvent e) {
+			persoSelected = listPerso.getSelectedValue();
+		}
+	}
+
+	// ////////////////////////////////////////////////// GETTERS
+	// ////////////////////////////////////////////////////////////////
+	// Ces m�thodes �tant explicites, elles ne seront pas comment�es
+	// individuellement
+
+	public Labyrinthe getLaby() {
+		return laby;
+	}
+
+	// ////////////////////////////////////////////////// INNER CLASS
+	// ////////////////////////////////////////////////////
+	private class MyDispatcher implements KeyEventDispatcher {
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getID() == KeyEvent.KEY_PRESSED) {
+				deplacement(Character.toString(e.getKeyChar()));
+				getContentPane().revalidate();
+				getContentPane().repaint();
+			} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+			} else if (e.getID() == KeyEvent.KEY_TYPED) {
+			}
+			return false;
+		}
+	}
+
 }

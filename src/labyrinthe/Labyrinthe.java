@@ -110,11 +110,9 @@ public class Labyrinthe implements Serializable {
 					for (int j = 0; j <  y+1; j++) {
 						tab[i][j] = listSalle.get(cpt);
 						cpt++;
-						System.out.print(tab[i][j].objet+ " ");
+						//System.out.print(tab[i][j].etat + " ");
 					}
-					System.out.println("");
-					
-					
+					System.out.println();
 				}
 				tab_cases = tab;
 				br.close();

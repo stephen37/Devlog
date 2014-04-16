@@ -163,6 +163,7 @@ public class MenuEditeur extends JFrame {
 		@SuppressWarnings("static-access")
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
+				
 				Labyrinthe selectedSerie = liste_labyrinthe.getSelectedValue();
 				if (selectedSerie != null) {
 					InterfaceEditeur ie = new InterfaceEditeur();

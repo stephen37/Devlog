@@ -4,7 +4,6 @@ import gestionnaire.Gestionnaire;
 import gestionnaire.run.EntreesSorties;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,10 +73,10 @@ public class AddPersonnageDialogUI extends JDialog {
 		JPanel leftJpanel;
 		ArrayList<Personnage> list = gestionnaire.getPersonnages();
 		String[] tabArmure = { "Cuir", "Maille", "Or" };
-		String[] tabArme = { "epee", "Arc", "Hache" };
+		String[] tabArme = { "Epee", "Arc", "Hache" };
 		JComboBox<String> arme;
 		JComboBox<String> armure;
-		String armeChoisie = "epee";
+		String armeChoisie = "Epee";
 		String armureChoisie = "Cuir";
 		String inclinaisonChoisie = ":)";
 		ButtonGroup bg;
@@ -173,7 +172,7 @@ public class AddPersonnageDialogUI extends JDialog {
 			JPanel buttonValiderPanel = new JPanel();
 			buttonValiderPanel.setLayout(new BoxLayout(buttonValiderPanel,
 					BoxLayout.X_AXIS));
-			
+
 			buttonPanel.setLayout(new BorderLayout());
 			buttonPanel.add(buttonValiderPanel, BorderLayout.EAST);
 			buttonPanel.add(randomButton, BorderLayout.WEST);
@@ -188,24 +187,11 @@ public class AddPersonnageDialogUI extends JDialog {
 					name = persoName.getText().toString();
 					vitesse = vitesseSlider.getValue();
 					force = forceSlider.getValue();
-					
-//					gestionnaire.ajouterPersonnage(name, raceChoosen,
-//							force, vitesse, inclinaisonChoisie,
-//							armeChoisie, armureChoisie);
-					gestionnaire.ajouterPersonnage(new Personnage(name, raceChoosen,force, vitesse, inclinaisonChoisie,armeChoisie, armureChoisie) {
-						
-						@Override
-						public String toBase() {
-							// TODO Auto-generated method stub
-							return null;
-						}
-						
-						@Override
-						public Component setImage() {
-							// TODO Auto-generated method stub
-							return null;
-						}
-					});
+
+					gestionnaire.ajouterPersonnage(name, raceChoosen, force,
+							vitesse, inclinaisonChoisie, armeChoisie,
+							armureChoisie);
+
 					GestionnaireUI.initPersonnageIntoList();
 					mainframe.dispose();
 				}
@@ -313,7 +299,7 @@ public class AddPersonnageDialogUI extends JDialog {
 					JRadioButton radiobutton = (JRadioButton) e.getSource();
 					if (radiobutton.isSelected()) {
 						inclinaisonChoisie = radiobutton.getText();
-						System.out.println("inclinaison " +inclinaisonChoisie);
+						System.out.println("inclinaison " + inclinaisonChoisie);
 					}
 				}
 			}

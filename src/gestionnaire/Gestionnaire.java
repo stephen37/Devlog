@@ -50,24 +50,48 @@ public class Gestionnaire implements Serializable {
 			public Component setImage() {
 				return null;
 			}
+
+			@Override
+			public void definirAttaque() {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void definirDefense() {
+				// TODO Auto-generated method stub
+
+			}
 		});
 	}
 
 	public boolean ajouterPersonnage(final Personnage perso) {
-		return personnages.add(new Personnage(perso.getNom(),perso.getRace(),perso.getForce(), perso.getVitesse(), perso.getInclinaison(),perso.getArme(),perso.getArmure()){
-			
+		return personnages.add(new Personnage(perso.getNom(), perso.getRace(),
+				perso.getForce(), perso.getVitesse(), perso.getInclinaison(),
+				perso.getArme(), perso.getArmure()) {
+
 			@Override
 			public String toBase() {
-				// TODO Auto-generated method stub
-				return perso.getNom() + "\t" +perso.getRace() + "\t" +perso.getForce() + "\t" + perso.getVitesse()+"\t"+perso.getVie()+"\t"+perso.getInclinaison()+ "\t"+perso.getArme() +"\t" +perso.getArmure() + "\t" + perso.getTailleSac();
+				return perso.getNom() + "\t" + perso.getRace() + "\t"
+						+ perso.getForce() + "\t" + perso.getVitesse() + "\t"
+						+ perso.getVie() + "\t" + perso.getInclinaison() + "\t"
+						+ perso.getArme() + "\t" + perso.getArmure() + "\t"
+						+ perso.getTailleSac();
 			}
-			
+
 			@Override
 			public Component setImage() {
-				// TODO Auto-generated method stub
 				return null;
 			}
-		}); 
+
+			@Override
+			public void definirAttaque() {
+			}
+
+			@Override
+			public void definirDefense() {
+			}
+		});
 	}
 
 	@Override

@@ -12,8 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import labyrinthe.MenuEditeur;
+import labyrinthe.Salle;
 import simulateur.MenuSimulateur;
-
 
 @SuppressWarnings("serial")
 public class MenuPrincipal extends JFrame {
@@ -42,26 +42,28 @@ public class MenuPrincipal extends JFrame {
 		content_pane = new JPanel();
 		content_pane.setLayout(new BorderLayout());
 		panel_box.setLayout(new BoxLayout(panel_box, BoxLayout.Y_AXIS));
-		
-			atelier.setPreferredSize(new Dimension(250, 80));
-			panel_atelier.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			panel_atelier.add(atelier);
-			editeur.setPreferredSize(new Dimension(250, 80));
-			panel_editeur.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			panel_editeur.add(editeur);
-			simulateur.setPreferredSize(new Dimension(250, 80));
-			panel_simulateur.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			panel_simulateur.add(simulateur);
-			
+
+		atelier.setPreferredSize(new Dimension(250, 80));
+		panel_atelier
+				.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panel_atelier.add(atelier);
+		editeur.setPreferredSize(new Dimension(250, 80));
+		panel_editeur
+				.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panel_editeur.add(editeur);
+		simulateur.setPreferredSize(new Dimension(250, 80));
+		panel_simulateur.setBorder(BorderFactory.createEmptyBorder(10, 10, 10,
+				10));
+		panel_simulateur.add(simulateur);
+
 		panel_box.add(panel_atelier);
 		panel_box.add(panel_editeur);
 		panel_box.add(panel_simulateur);
 		content_pane.add(panel_box);
-		
+
 		atelier.addActionListener(new AtelierListener());
 		editeur.addActionListener(new EditeurListener());
 		simulateur.addActionListener(new SimulateurListener());
-		
 
 		this.setContentPane(content_pane);
 
@@ -80,10 +82,11 @@ public class MenuPrincipal extends JFrame {
 
 		}
 	}
-	
+
 	class SimulateurListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			new MenuSimulateur();
+
 		}
 	}
 

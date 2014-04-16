@@ -180,8 +180,9 @@ public class GestionnaireUI extends JFrame {
 			}
 		}
 		menuSave.addActionListener(new SaveAsListener());
+		
+		}
 
-	}
 
 	/**
 	 * Charge les personnages dans la Jmodel (liste d'affichage).

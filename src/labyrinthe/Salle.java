@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -20,7 +21,7 @@ import personnages.Personnage;
 import simulateur.Simulateur;
 
 @SuppressWarnings("serial")
-public class Salle extends JPanel {
+public class Salle extends JPanel implements Runnable {
 
 	JPanel panel_case = new JPanel();
 	String etat = "normal";
@@ -31,6 +32,7 @@ public class Salle extends JPanel {
 	double time = 0;
 	int proba = 0;
 	Personnage perso;
+	public ArrayList<Personnage> perso_dans_salle = new ArrayList<Personnage>();
 	boolean isaccessible;
 	private JPopupMenu mouseMenu = new JPopupMenu();
 	private JMenu mouseMenuObjets = new JMenu("Deposer un objet...");
@@ -60,11 +62,11 @@ public class Salle extends JPanel {
 		this.objet = objet;
 		init();
 		verifierAccessible();
-		// definirEtat(etat);
 		this.setVisible(true);
 	}
-	
-//////////////////////////////////////////////////// INIT ////////////////////////////////////////////////////
+
+	// ////////////////////////////////////////////////// INIT
+	// ////////////////////////////////////////////////////
 
 	/**
 	 * Initialise la JPanel et ajoute une image à la case.
@@ -85,13 +87,13 @@ public class Salle extends JPanel {
 
 		panel_case.setPreferredSize(new Dimension(90, 90));
 		panel_case.setMinimumSize(new Dimension(90, 90));
-		
+
 		definirEtat(etat);
 		definirObjet(objet);
 		verifierVide();
-		//panel_case.repaint();
-		//InterfaceEditeur.tab[this.x][this.y] = this;
-		//panel_case.add(label);
+		// panel_case.repaint();
+		// InterfaceEditeur.tab[this.x][this.y] = this;
+		// panel_case.add(label);
 		panel_case.addMouseListener(new CaseListener());
 		sortie.addActionListener(new SortieListener());
 		bloquee.addActionListener(new BloqueListener());
@@ -99,26 +101,46 @@ public class Salle extends JPanel {
 		dark.addActionListener(new DarkListener());
 		raz.addActionListener(new RazListener());
 		ajouterPerso.addActionListener(new PersoListener());
-		
+
 		key.addActionListener(new ObjectKeyListener());
 		light.addActionListener(new LightListener());
 		potion.addActionListener(new PotionListener());
 		spyglass.addActionListener(new SpyglassListener());
 	}
-	
-//////////////////////////////////////////////////// METHODES ////////////////////////////////////////////////////
-	
-	public void verifierAccessible() {
-		if (this.etat.equalsIgnoreCase("locked")) {
-			isaccessible = false;
-		} else {
-			isaccessible = true;
+
+	@Override
+	public void run() {
+		while (!verifierSortie()) {
+			System.out.println("lancement run");
+			entreePerso(perso);
 		}
 	}
-	
-	public void verifierVide() {
-		if (this.etat.equalsIgnoreCase("normal") && this.objet.equalsIgnoreCase("empty")) {
+
+	// ////////////////////////////////////////////////// METHODES
+	// ////////////////////////////////////////////////////
+
+	public boolean verifierAccessible() {
+		if (this.etat.equalsIgnoreCase("locked")) {
+			return isaccessible = false;
+		} else {
+			return isaccessible = true;
+		}
+	}
+
+	public boolean verifierVide() {
+		if (this.etat.equalsIgnoreCase("normal")
+				&& this.objet.equalsIgnoreCase("empty")) {
 			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+			return true;
+		}
+		return false;
+	}
+
+	public boolean verifierSortie() {
+		if (this.etat.equalsIgnoreCase("exit")) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -141,42 +163,42 @@ public class Salle extends JPanel {
 		definirEtat("exit");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirSubmerged() {
 		raz();
 		panel_case.removeAll();
 		definirEtat("submerged");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirDark() {
 		raz();
 		panel_case.removeAll();
 		definirEtat("dark");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirKey() {
 		raz();
 		panel_case.removeAll();
 		definirObjet("key");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirLight() {
 		raz();
 		panel_case.removeAll();
 		definirObjet("light");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirPotion() {
 		raz();
 		panel_case.removeAll();
 		definirObjet("potion");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirSpyglass() {
 		raz();
 		panel_case.removeAll();
@@ -201,7 +223,6 @@ public class Salle extends JPanel {
 		}
 		panel_case.validate();
 		panel_case.repaint();
-		//InterfaceEditeur.tab[this.x][this.y].etat = race;
 		InterfaceEditeur.tab[this.x][this.y] = this;
 		System.out.println("X : " + InterfaceEditeur.tab[this.x][this.y].x
 				+ " Y : " + InterfaceEditeur.tab[this.x][this.y].y);
@@ -214,9 +235,6 @@ public class Salle extends JPanel {
 	 */
 	protected void definirEtat(String e) {
 		this.etat = e;
-//		if (this.etat.equalsIgnoreCase("normal")) {
-//			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
-//		}
 		if (this.etat.equalsIgnoreCase("locked")) {
 			label = new JLabel(new ImageIcon("./images/s-locked.png"));
 			panel_case.add(label);
@@ -233,29 +251,18 @@ public class Salle extends JPanel {
 			label = new JLabel(new ImageIcon("./images/s-dark.png"));
 			panel_case.add(label);
 		}
-//		if (this.etat.equalsIgnoreCase("humain")) {
-//			label = new JLabel(new ImageIcon("./images/p-human.png"));
-//			panel_case.add(label);
-//		}
-//		if (this.etat.equalsIgnoreCase("elf")) {
-//			label = new JLabel(new ImageIcon("./images/p-elf.png"));
-//			panel_case.add(label);
-//		}
-//		if (this.etat.equalsIgnoreCase("ogre")) {
-//			label = new JLabel(new ImageIcon("./images/p-ogre.png"));
-//			panel_case.add(label);
-//		}
-		panel_case.revalidate();
+
+		panel_case.validate();
 		panel_case.repaint();
-		//InterfaceEditeur.tab[this.x][this.y] = this;
+		// InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirObjet(String e) {
 		this.objet = e;
-//		if (this.objet.equalsIgnoreCase("empty")) {
-//			label = new JLabel(new ImageIcon("./images/s-normal.png"));
-//			panel_case.add(label);
-//		}
+		// if (this.objet.equalsIgnoreCase("empty")) {
+		// label = new JLabel(new ImageIcon("./images/s-normal.png"));
+		// panel_case.add(label);
+		// }
 		if (this.objet.equalsIgnoreCase("key")) {
 			label = new JLabel(new ImageIcon("./images/o-key.png"));
 			panel_case.add(label);
@@ -272,7 +279,8 @@ public class Salle extends JPanel {
 			label = new JLabel(new ImageIcon("./images/o-spyglass.png"));
 			panel_case.add(label);
 		}
-		panel_case.revalidate();
+
+		panel_case.validate();
 		panel_case.repaint();
 		// InterfaceEditeur.tab[this.x][this.y] = this;
 	}
@@ -286,23 +294,34 @@ public class Salle extends JPanel {
 		proba = 0;
 		panel_case.removeAll();
 		definirEtat("normal");
-		//definirObjet("empty");
+		// definirObjet("empty");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
+	/**
+	 * @param p
+	 * 
+	 *            G�re le comportement de la case quand un personnage y entre
+	 */
 	public void entreePerso(Personnage p) {
 		if (this.isaccessible == true) {
 			this.perso = p;
-			definirPerso(perso.getRace());	
+			definirPerso(perso.getRace());
+			perso_dans_salle.add(p);
 		} else {
 			System.out.println("Salle Inaccessible");
 		}
-			
 	}
-	
-	public void sortiePerso() {
+
+	/**
+	 * @param p
+	 * 
+	 *            G�re le comportement de la case quand un personnage la quitte
+	 */
+	public void sortiePerso(Personnage p) {
 		if (this.perso != null) {
 			this.perso = null;
+			perso_dans_salle.remove(p);
 			definirEtat(this.etat);
 			definirObjet(this.objet);
 			panel_case.repaint();
@@ -340,8 +359,45 @@ public class Salle extends JPanel {
 		proba = (int) FenetreBloquee.slider_prob.getValue();
 		return proba;
 	}
-	
-//////////////////////////////////////////////////// GETTERS ////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param p1
+	 * @param p2
+	 * 
+	 *            Cette m�thode execute un combat entre deux personnages dans la
+	 *            salle
+	 */
+	public Personnage combat(Personnage p1, Personnage p2) {
+		double Resultat;
+		int attaque_chance_p1 = (int) (Math.random() * (5 - 0) + 0);
+		int attaque_chance_p2 = (int) (Math.random() * (5 - 0) + 0);
+		int defense_chance_p1 = (int) (Math.random() * (5 - 0) + 0);
+		int defense_chance_p2 = (int) (Math.random() * (5 - 0) + 0);
+		Resultat = ((p1.getAttaque() + attaque_chance_p1) - p2.getDefense() + defense_chance_p2)
+				- ((p2.getAttaque() + attaque_chance_p2) - p1.getDefense() + defense_chance_p1);
+		if (Resultat > 0) {
+			p2.combatPerdu();
+			System.out.println(p1.getNom() + " a remporte le combat !");
+			return p1;
+		}
+		if (Resultat < 0) {
+			p1.combatPerdu();
+			System.out.println(p2.getNom() + " a remporte le combat !");
+			return p2;
+		} else {
+			System.out
+					.println(p1.getNom()
+							+ " et "
+							+ p2.getNom()
+							+ " sont de meme niveau ! Incroyable, ils sont tous deux vainqueurs");
+			return null;
+		}
+	}
+
+	// ////////////////////////////////////////////////// GETTERS
+	// ////////////////////////////////////////////////////////////////
+	// Ces m�thodes �tant explicites, elles ne seront pas comment�es
+	// individuellement
 
 	public int GetX() {
 		return x;
@@ -355,12 +411,16 @@ public class Salle extends JPanel {
 		return etat;
 	}
 
+	public String getObjet() {
+		return objet;
+	}
+
 	public JPanel getPanel() {
 		return panel_case;
 	}
-	
-	
-//////////////////////////////////////////////////// LISTENERS ////////////////////////////////////////////////////////////////
+
+	// ////////////////////////////////////////////////// LISTENERS
+	// ////////////////////////////////////////////////////////////////
 
 	/**
 	 * Ecoute la souris pour savoir si on clique sur une case.
@@ -371,6 +431,8 @@ public class Salle extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			System.out.println(GetX());
 			System.out.println(GetY());
+			System.out.println(getObjet());
+			System.out.println(getEtat());
 			mouseMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
 
@@ -403,7 +465,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	class SubmergedListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -412,7 +474,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	class DarkListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -446,6 +508,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
+
 	class ObjectKeyListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -454,7 +517,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	class LightListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -463,7 +526,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	class PotionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -472,7 +535,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	class SpyglassListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -483,13 +546,13 @@ public class Salle extends JPanel {
 	}
 
 	class PersoListener implements ActionListener {
-		  @Override
-		  public void actionPerformed(ActionEvent e) {
-		   panel_case.validate();
-		   panel_case.repaint();
-		   definirPerso(Simulateur.getJlist().getSelectedValue().getRace());
-		  }
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			panel_case.validate();
+			panel_case.repaint();
+			definirPerso(Simulateur.getJlist().getSelectedValue().getRace());
+		}
 
-		 }
+	}
 
 }
