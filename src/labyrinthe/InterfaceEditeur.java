@@ -47,7 +47,7 @@ public class InterfaceEditeur extends JFrame {
 	public static Salle[][] tab;
 	File fileSelected;
 	static ArrayList<Labyrinthe> labyrinthes;
-	JTextField text_nom = new JTextField("Donnez un nom à votre labyrinthe");
+	JTextField text_nom = new JTextField("Donnez un nom Ã  votre labyrinthe");
 	File file;
 	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
 	Labyrinthe laby = new Labyrinthe(tab);
@@ -57,6 +57,7 @@ public class InterfaceEditeur extends JFrame {
 			.getHeight());
 	static int gameHeightLaby = (int) (Math.round(ySize * 1));
 	static int gameWidthLaby = (int) (Math.round(xSize * 0.85));
+	static boolean sortie_presente = false;
 
 	public InterfaceEditeur() {
 		init();
@@ -65,6 +66,9 @@ public class InterfaceEditeur extends JFrame {
 
 		// this.setResizable(false);
 	}
+
+	// ////////////////////////////////////////////////////// INIT
+	// ////////////////////////////////////////////////////////
 
 	/**
 	 * Initialise la Jframe, y ajoute ses boutons et ses Listeners.
@@ -113,11 +117,13 @@ public class InterfaceEditeur extends JFrame {
 		load.addActionListener(new ChargerListener());
 		randomButton.addActionListener(new RandomListener());
 
+		// ////////////////////////////////////////////////////// METHODES
+		// ////////////////////////////////////////////////////////
+
 	}
-	
+
 	/**
-	 * Permet de d'ajouter les cases de notre labyrinthe à la fenêtre contenant
-	 * notre labyrinthe.
+	 * Dessine un labyrinthe vierge de la taille indiquée
 	 * 
 	 * @param x
 	 * @param y
@@ -163,6 +169,13 @@ public class InterfaceEditeur extends JFrame {
 
 	}
 
+	/**
+	 * @param laby
+	 * @param content_pane
+	 * 
+	 *            Dessine le labyrinthe selon celui indiqué dans le panel
+	 *            indiqué
+	 */
 	public void EtablirLabyrinthe(Labyrinthe laby, JPanel content_pane) {
 
 		// JPanel panel_labyrinthe = new JPanel();
@@ -186,80 +199,88 @@ public class InterfaceEditeur extends JFrame {
 				gbc.gridy = j;
 				gx = i * 98;
 				gy = j * 98;
+				// panel_case.setBorder(door);
+				// Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
+				// tab[i][j] = case_labyrinthe;
+				// panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
+				// System.out.println("taille y" + laby.tab_cases[i].length);
+				// System.out.println("taille x" + laby.tab_cases.length);
 				panel_labyrinthe.add(laby.tab_cases[i][j].panel_case, gbc);
+				if (laby.tab_cases[i][j].getEtat().equalsIgnoreCase("exit")) {
+					sortie_presente = true;
+				}
+				System.out.print(laby.tab_cases[i][j].objet + " ");
 
 			}
+			System.out.println();
 		}
 		tab = laby.tab_cases;
 		scrollPane.setViewportView(panel_labyrinthe);
+		// scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		panel_labyrinthe.setPreferredSize(new Dimension(gbc.gridx * 98,
 				gbc.gridy * 98));
 		content_pane.add(scrollPane, BorderLayout.CENTER);
+		// content_pane.setPreferredSize(new Dimension(gbc.gridx * 98, gbc.gridy
+		// * 98));
 	}
 
-	/**
-	 * Renvoie le tableau contenant les cases.
-	 * 
-	 * @return Case[][]
-	 */
-	public static Salle[][] getTabSalle() {
-		return tab;
+	// TODO : A complÃ©ter
+	public void initRandomLaby() { // A COMPLETER
+		String[] etatTab = { "normal", "locked", "exit" };
+		int ranX = (int) (Math.random() * (9 - 1) + 1);
+		int ranY = (int) (Math.random() * (9 - 1) + 1);
+		taille_x.setSelectedItem(ranX);
+		taille_y.setSelectedIndex(ranY);
+
+		for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
+
+			int ran_caseX = (int) (Math.random() * (ranX));
+			int ran_caseY = (int) (Math.random() * (ranY));
+			int ranEtat = (int) (Math.random() * etatTab.length);
+			String etat = etatTab[ranEtat];
+			tab[ran_caseX][ran_caseY].definirEtat(etat);
+			;
+		}
+		laby = new Labyrinthe(tab);
+		panel_labyrinthe.removeAll();
+		EtablirLabyrinthe(laby, content_pane);
+		panel_labyrinthe.revalidate();
+		panel_labyrinthe.repaint();
+
 	}
 
+	// ////////////////////////////////////////////////////// LISTENERS
+	// ////////////////////////////////////////////////////////
 
-	public int getGridx() {
-		return gx;
-	}
-
-	public int getGridy() {
-		return gy;
-	}
-
-	public int getX() {
-		return tailleChoisieX;
-	}
-
-	public int getY() {
-		return tailleChoisieY;
-	}
-
-	/**
-	 * Ecoute le changement de valeur pour X
-	 */
-	class TailleXListener implements ItemListener {
+	public class RandomListener implements ActionListener {
 		@Override
-		public void itemStateChanged(ItemEvent e) {
-			getContentPane().revalidate();
-			if (e.getStateChange() == 1) {
-				tailleChoisieX = (int) e.getItem();
-				EtablirLabyrinthe(tailleChoisieX, tailleChoisieY);
-			}
+		public void actionPerformed(ActionEvent e) {
+			initRandomLaby();
+		}
+	}
+
+	class ChargerListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			laby.charger();
+			laby = new Labyrinthe(laby.tab_cases);
+			EtablirLabyrinthe(laby, content_pane);
+			panel_labyrinthe.revalidate();
+			panel_labyrinthe.repaint();
+			// initLabyrintheIntoList();
+			// MenuEditeur me = new MenuEditeur();
+			// me.initLabyrintheIntoList(labyrinthes);
 		}
 	}
 
 	/**
-	 * Ecoute le changement de valeur pour Y
-	 */
-	class TailleYlistener implements ItemListener {
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			getContentPane().revalidate();
-			if (e.getStateChange() == 1) {
-				tailleChoisieY = (int) e.getItem();
-				EtablirLabyrinthe(tailleChoisieX, tailleChoisieY);
-			}
-		}
-	}
-
-	/**
-	 * Ecoute le bouton Save afin de lancer la fenêtre de sauvegarde quand on
+	 * Ecoute le bouton Save afin de lancer la fenÃªtre de sauvegarde quand on
 	 * clique sur le bouton.
 	 */
 	public class SaveAsListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// String name = JOptionPane
-			// .showInputDialog("Donnez un nom à votre labyrinthe");
+			// .showInputDialog("Donnez un nom Ã  votre labyrinthe");
 			Labyrinthe laby = new Labyrinthe(tab);
 			// laby.nom = name;
 
@@ -312,48 +333,69 @@ public class InterfaceEditeur extends JFrame {
 		}
 	}
 
-	class ChargerListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			laby.charger();
-			laby = new Labyrinthe(laby.tab_cases);
-			EtablirLabyrinthe(laby, content_pane);
-			panel_labyrinthe.revalidate();
-			panel_labyrinthe.repaint();
-			// initLabyrintheIntoList();
-			// MenuEditeur me = new MenuEditeur();
-			// me.initLabyrintheIntoList(labyrinthes);
-		}
-	}
-
-	// TODO : A compléter
-	public void initRandomLaby() { // A COMPLETER
-		String[] etatTab = { "normal", "locked", "exit" };
-		int ranX = (int) (Math.random() * (9 - 1) + 1);
-		int ranY = (int) (Math.random() * (9 - 1) + 1);
-		taille_x.setSelectedItem(ranX);
-		taille_y.setSelectedIndex(ranY);
-
-		for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
-
-			int ran_caseX = (int) (Math.random() * (ranX));
-			int ran_caseY = (int) (Math.random() * (ranY));
-			int ranEtat = (int) (Math.random() * etatTab.length);
-			String etat = etatTab[ranEtat];
-			tab[ran_caseX][ran_caseY].definirEtat(etat);
-			;
-		}
-		laby = new Labyrinthe(tab);
-		panel_labyrinthe.removeAll();
-		EtablirLabyrinthe(laby, content_pane);
-		panel_labyrinthe.revalidate();
-		panel_labyrinthe.repaint();
-
-	}
-
-	public class RandomListener implements ActionListener {
+	/**
+	 * Ecoute le changement de valeur pour X
+	 */
+	class TailleXListener implements ItemListener {
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			initRandomLaby();
+		public void itemStateChanged(ItemEvent e) {
+			getContentPane().revalidate();
+			if (e.getStateChange() == 1) {
+				tailleChoisieX = (int) e.getItem();
+				EtablirLabyrinthe(tailleChoisieX, tailleChoisieY);
+			}
 		}
+	}
+
+	/**
+	 * Ecoute le changement de valeur pour Y
+	 */
+	class TailleYlistener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			getContentPane().revalidate();
+			if (e.getStateChange() == 1) {
+				tailleChoisieY = (int) e.getItem();
+				EtablirLabyrinthe(tailleChoisieX, tailleChoisieY);
+			}
+		}
+	}
+
+	// ////////////////////////////////////////////////////// GETTERS et SETTERS
+	// ////////////////////////////////////////////////////////
+	// Ces méthodes étant explicites, elles ne seront pas commentées
+	// individuellement
+
+	public static boolean getSortiePresente() {
+		return sortie_presente;
+	}
+
+	public static boolean setSortiePresente(boolean b) {
+		return sortie_presente = b;
+	}
+
+	/**
+	 * Renvoie le tableau contenant les cases.
+	 * 
+	 * @return Case[][]
+	 */
+	public static Salle[][] getTabSalle() {
+		return tab;
+	}
+
+	public int getGridx() {
+		return gbc.gridx;
+	}
+
+	public int getGridy() {
+		return gbc.gridy;
+	}
+
+	public int getX() {
+		return tailleChoisieX;
+	}
+
+	public int getY() {
+		return tailleChoisieY;
 	}
 }

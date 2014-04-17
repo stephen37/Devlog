@@ -10,7 +10,7 @@ import labyrinthe.Salle;
  * @author stephen BATIFOL L2 MI
  */
 
-public abstract class Personnage  {
+public abstract class Personnage {
 	protected int vie;
 	protected int force;
 	protected String nom;
@@ -26,7 +26,8 @@ public abstract class Personnage  {
 	String[] tabMouvements = { "haut", "bas", "gauche", "droite" };
 	int tailleSac;
 	int tempsMouvement = 11 - vitesseMouvement;
-	Salle salle;
+	boolean present;
+	String[] sac;
 
 	/**
 	 * @param nom
@@ -45,8 +46,8 @@ public abstract class Personnage  {
 		this.inclinaison = inclinaison;
 		this.arme = arme;
 		this.armure = armure;
-		tailleSac = 2 + (int)(Math.random() * ((4 - 2) + 1));
-		salle = null;
+		tailleSac = 2 + (int) (Math.random() * ((4 - 2) + 1));
+		boolean present = false;
 	}
 
 	/*
@@ -54,44 +55,68 @@ public abstract class Personnage  {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	
-/////////////////////////////////////////////////////// METHODES ///////////////////////////////////////////////////////
-	
+
+	// ///////////////////////////////////////////////////// METHODES
+	// ///////////////////////////////////////////////////////
+
 	public abstract void definirAttaque();
-	
+
 	public abstract void definirDefense();
-	
-	
+
 	public boolean equals(Object o) {
 		Personnage p = (Personnage) o;
 		return ((this.nom.equals(p.getNom())));
 	}
-	
-	/**
-	 * A la suite d'un combat perdu, cette m�thode bloque le personnage dans la salle o� il a �t� vaincu
-	 */
-	public void combatPerdu() {
-		try {
-			Thread.sleep(1000 * tempsMouvement * 3);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+
+	public boolean verifierObjet(String s) {
+		for (String objet : sac) {
+			if (s.equalsIgnoreCase(objet)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public void retirerObjetSac(String s) {
+		for (int i = 0; i < sac.length; i++) {
+			if (s.equalsIgnoreCase(sac[i])) {
+				sac[i] = "empty";
+			}
 		}
 	}
 
+	/**
+	 * A la suite d'un combat perdu, cette m�thode bloque le personnage dans la
+	 * salle o� il a �t� vaincu
+	 */
+	public void combatPerdu() {
+		if (verifierObjet("potion") == false) {
+			try {
+				Thread.sleep(1000 * tempsMouvement * 3);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} else {
+			retirerObjetSac("potion");
+		}
+
+	}
+
 	public String toString() {
-		  return "Nom : " + nom + " race : " + race + " force : " + force
-		    + " vitesse : " + vitesseMouvement + " inclinaison : "
-		    + inclinaison + " arme : " + arme + " armure : " + armure
-		    + " sac : " + tailleSac;
-		 }
-	
+		return "Nom : " + nom + " race : " + race + " force : " + force
+				+ " vitesse : " + vitesseMouvement + " inclinaison : "
+				+ inclinaison + " arme : " + arme + " armure : " + armure
+				+ " sac : " + tailleSac;
+	}
+
 	public abstract String toBase();
 
 	public abstract Component setImage();
 
 	// TODO : Faire un random sur les positions et faire avancer le personnage
-	// en fonction.	
-	
+	// en fonction.
 
 	// Permet de comparer deux personnages.
 	public boolean contains(Personnage selected) {
@@ -115,7 +140,7 @@ public abstract class Personnage  {
 
 			@Override
 			public void definirDefense() {
-				
+
 			}
 		};
 		if (perso2.nom.equals(selected.nom)
@@ -126,11 +151,11 @@ public abstract class Personnage  {
 		}
 		return false;
 	}
-	
-/////////////////////////////////////////////////////// GETTERS ///////////////////////////////////////////////////////
-	// Ces m�thodes �tant explicites, elles ne seront pas comment�es individuellement
-	
-	
+
+	// ///////////////////////////////////////////////////// GETTERS & SETTER
+	// ///////////////////////////////////////////////////////
+	// Ces m�thodes �tant explicites, elles ne seront pas comment�es
+	// individuellement
 
 	public int getVie() {
 		return vie;
@@ -163,11 +188,11 @@ public abstract class Personnage  {
 	public String getArme() {
 		return arme;
 	}
-	
+
 	public double getAttaque() {
 		return attaque;
 	}
-	
+
 	public double getDefense() {
 		return defense;
 	}
@@ -176,5 +201,16 @@ public abstract class Personnage  {
 		return tailleSac;
 	}
 
-	
+	public boolean getPresent() {
+		return present;
+	}
+
+	public int getTempsMouvement() {
+		return tempsMouvement;
+	}
+
+	public void setPresent(boolean p) {
+		present = p;
+	}
+
 }
