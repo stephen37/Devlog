@@ -1,21 +1,27 @@
 package personnages;
+
 import java.awt.Component;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+/**
+ * @author Loesch & Batifol 
+ *
+ */
+public class Ogre extends Personnage {
 
-
-public class Ogre extends Personnage{
-
-	protected int vitesseMouvement; 
+	protected int vitesseMouvement;
 	protected Image image;
-	
-	public Ogre(String nom, String race, int force, int vitesseMouvement, String inclinaison, String arme, String armure) {
+
+	public Ogre(String nom, String race, int force, int vitesseMouvement,
+			String inclinaison, String arme, String armure) {
 		super(nom, "Ogre", force, vitesseMouvement, inclinaison, arme, armure);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see personnages.Personnage#toBase()
 	 */
 	@Override
@@ -24,41 +30,47 @@ public class Ogre extends Personnage{
 				+ vitesseMouvement + "\t" + inclinaison + "\t" + arme + "\t"
 				+ armure;
 	}
-	
+
 	@Override
 	public Component setImage() {
 		return new JLabel(new ImageIcon("./images/p-ogre.png"));
 	}
-	
+
 	public int GetVItesseMouvement() {
 		return vitesseMouvement;
 	}
-	
+
 	@Override
 	public void definirAttaque() {
 		if (this.arme.equalsIgnoreCase("Arc")) {
-			attaque = force*1.1;
+			attaque = force * 1.1;
 		}
 		if (this.arme.equalsIgnoreCase("Epee")) {
-			attaque = force*1.2;
+			attaque = force * 1.2;
 		}
 		if (this.arme.equalsIgnoreCase("Hache")) {
-			attaque = force*1.3;
+			attaque = force * 1.3;
 		}
-		
+
 	}
 
 	@Override
 	public void definirDefense() {
 		if (this.armure.equalsIgnoreCase("Cuir")) {
-			defense = vitesseMouvement*1.1;
+			defense = vitesseMouvement * 1.1;
 		}
 		if (this.armure.equalsIgnoreCase("Maille")) {
-			defense = vitesseMouvement*1.2;
+			defense = vitesseMouvement * 1.2;
 		}
 		if (this.armure.equalsIgnoreCase("Or")) {
-			defense = vitesseMouvement*1.5;
+			defense = vitesseMouvement * 1.5;
 		}
-		
+
+	}
+
+	@Override
+	public JLabel getLabel() {
+		JLabel label = new JLabel(new ImageIcon("./images/p-ogre.png"));
+		return label;
 	}
 }

@@ -20,6 +20,10 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class FenetreBloquee extends JDialog {
 
@@ -42,7 +46,7 @@ public class FenetreBloquee extends JDialog {
 	static JSpinner spinner_duree = new JSpinner(modelspin_duree);
 	static JSpinner spinner_periode = new JSpinner(modelspin_periode);
 	Salle salle;
-	
+
 	public FenetreBloquee(Salle salle) {
 		init();
 		this.salle = salle;
@@ -51,7 +55,8 @@ public class FenetreBloquee extends JDialog {
 	}
 
 	/**
-	 * Initialise les valeurs pour la JFrame, y ajoute les boutons et les listeners correspondants aux boutons.
+	 * Initialise les valeurs pour la JFrame, y ajoute les boutons et les
+	 * listeners correspondants aux boutons.
 	 */
 	public void init() {
 
@@ -124,21 +129,21 @@ public class FenetreBloquee extends JDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			salle.definirEtat("locked");
-			if (jr1.isSelected()) {	
-			}else if (jr2.isSelected()) {
+			if (jr1.isSelected()) {
+			} else if (jr2.isSelected()) {
 				salle.blockPeriod();
 				salle.label.setForeground(Color.red);
 				salle.label.setFont(new Font("Arial", Font.BOLD, 16));
-				salle.label.setText(""+salle.blockPeriod());
+				salle.label.setText("" + salle.blockPeriod());
 				salle.label.setHorizontalTextPosition(JLabel.CENTER);
 				salle.label.setVerticalTextPosition(JLabel.CENTER);
-			}else if (jr3.isSelected()) {
+			} else if (jr3.isSelected()) {
 				salle.blockProb();
-			}else {
+			} else {
 				salle.blockTime();
 				salle.label.setForeground(Color.red);
 				salle.label.setFont(new Font("Arial", Font.BOLD, 16));
-				salle.label.setText(""+salle.blockTime());
+				salle.label.setText("" + salle.blockTime());
 				salle.label.setHorizontalTextPosition(JLabel.CENTER);
 				salle.label.setVerticalTextPosition(JLabel.CENTER);
 			}

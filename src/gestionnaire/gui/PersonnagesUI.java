@@ -15,6 +15,10 @@ import javax.swing.table.TableRowSorter;
 
 import personnages.Personnage;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class PersonnagesUI extends JDialog {
 	Personnage personnage;

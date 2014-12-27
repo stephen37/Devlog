@@ -9,11 +9,17 @@ import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.JLabel;
+
 import personnages.Elf;
 import personnages.Humain;
 import personnages.Ogre;
 import personnages.Personnage;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class Gestionnaire implements Serializable {
 
@@ -62,6 +68,12 @@ public class Gestionnaire implements Serializable {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public JLabel getLabel() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		});
 	}
 
@@ -90,6 +102,11 @@ public class Gestionnaire implements Serializable {
 
 			@Override
 			public void definirDefense() {
+			}
+
+			@Override
+			public JLabel getLabel() {
+				return null;
 			}
 		});
 	}

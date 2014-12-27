@@ -13,7 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
-
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class Labyrinthe implements Serializable {
 
@@ -142,14 +145,7 @@ public class Labyrinthe implements Serializable {
 		
 		return res;
 	}
-//	public String toBase() {
-//		String res = "";
-//		for (int i = 0; i < 1; i++) {
-//			for (int j = 0; j < 1; j++) {
-//				res += " " + tab_cases.length + "x" + tab_cases[i].length;
-//			}
-//		}
-//		return res;
-//	}
+
+	
 
 }

@@ -21,8 +21,12 @@ import javax.swing.JPopupMenu;
 import personnages.Personnage;
 import simulateur.Simulateur;
 
+/**
+ * @author Loesch & Batifol
+ * 
+ */
 @SuppressWarnings("serial")
-public class Salle extends JPanel {
+public class Salle extends JPanel implements Runnable {
 
 	JPanel panel_case = new JPanel();
 	String etat = "normal";
@@ -50,6 +54,7 @@ public class Salle extends JPanel {
 	File fileSelected;
 	GestionnaireUI gui;
 	Personnage selectedSerie;
+
 	JLabel label = new JLabel();
 
 	public Salle(int x, int y, String etat, double period, int proba,
@@ -62,6 +67,7 @@ public class Salle extends JPanel {
 		this.objet = objet;
 		init();
 		verifierAccessible();
+		// definirEtat(etat);
 		this.setVisible(true);
 	}
 
@@ -95,12 +101,12 @@ public class Salle extends JPanel {
 		dark.addActionListener(new DarkListener());
 		raz.addActionListener(new RazListener());
 		ajouterPerso.addActionListener(new PersoListener());
-		jacket.addActionListener(new JacketListener());
 
 		key.addActionListener(new ObjectKeyListener());
 		light.addActionListener(new LightListener());
 		potion.addActionListener(new PotionListener());
 		spyglass.addActionListener(new SpyglassListener());
+		jacket.addActionListener(new JacketListener());
 	}
 
 	protected void initMouseMenu() {
@@ -117,20 +123,14 @@ public class Salle extends JPanel {
 		mouseMenu.add(raz);
 		mouseMenu.add(ajouterPerso);
 		mouseMenu.add(mouseMenuObjets);
-		
 	}
 
+	@Override
+	public void run() {
+	}
 
 	// ////////////////////////////////////////////////// METHODES
 	// ////////////////////////////////////////////////////
-
-	private void pause() {
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public boolean verifierAccessible() {
 		if (this.etat.equalsIgnoreCase("locked")) {
@@ -219,7 +219,7 @@ public class Salle extends JPanel {
 		definirObjet("spyglass");
 		InterfaceEditeur.tab[this.x][this.y] = this;
 	}
-	
+
 	protected void definirJacket() {
 		raz();
 		panel_case.removeAll();
@@ -229,7 +229,6 @@ public class Salle extends JPanel {
 
 	protected void definirPerso(Personnage p) {
 		panel_case.removeAll();
-		System.out.println("Race perso" +p.getRace());
 		switch (p.getRace()) {
 		case "Elf":
 			panel_case.add(new JLabel(new ImageIcon("./images/p-elf.png")));
@@ -241,10 +240,14 @@ public class Salle extends JPanel {
 			panel_case.add(new JLabel(new ImageIcon("./images/p-human.png")));
 			break;
 		default:
+			// panel_case.add(new JLabel(new
+			// ImageIcon("./images/s-normal.png")));
 			break;
 		}
+
 		panel_case.validate();
 		panel_case.repaint();
+		// InterfaceEditeur.tab[this.x][this.y].etat = race;
 		InterfaceEditeur.tab[this.x][this.y] = this;
 		System.out.println("X : " + InterfaceEditeur.tab[this.x][this.y].x
 				+ " Y : " + InterfaceEditeur.tab[this.x][this.y].y);
@@ -257,6 +260,9 @@ public class Salle extends JPanel {
 	 */
 	protected void definirEtat(String e) {
 		this.etat = e;
+		// if (this.etat.equalsIgnoreCase("normal")) {
+		// panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+		// }
 		if (this.etat.equalsIgnoreCase("locked")) {
 			label = new JLabel(new ImageIcon("./images/s-locked.png"));
 			panel_case.add(label);
@@ -273,7 +279,18 @@ public class Salle extends JPanel {
 			label = new JLabel(new ImageIcon("./images/s-dark.png"));
 			panel_case.add(label);
 		}
-
+		// if (this.etat.equalsIgnoreCase("humain")) {
+		// label = new JLabel(new ImageIcon("./images/p-human.png"));
+		// panel_case.add(label);
+		// }
+		// if (this.etat.equalsIgnoreCase("elf")) {
+		// label = new JLabel(new ImageIcon("./images/p-elf.png"));
+		// panel_case.add(label);
+		// }
+		// if (this.etat.equalsIgnoreCase("ogre")) {
+		// label = new JLabel(new ImageIcon("./images/p-ogre.png"));
+		// panel_case.add(label);
+		// }
 		panel_case.validate();
 		panel_case.repaint();
 		// InterfaceEditeur.tab[this.x][this.y] = this;
@@ -305,8 +322,10 @@ public class Salle extends JPanel {
 			label = new JLabel(new ImageIcon("./images/o-jacket.jpg"));
 			panel_case.add(label);
 		}
+
 		panel_case.validate();
 		panel_case.repaint();
+		// InterfaceEditeur.tab[this.x][this.y] = this;
 	}
 
 	/**
@@ -340,12 +359,16 @@ public class Salle extends JPanel {
 	 *            G�re le comportement de la case quand un personnage y entre
 	 */
 	public void entreePerso(Personnage p) {
-		if (verifierAccessible()) {
+		if (verifierAccessible() == true) {
+			this.perso = p;
 			definirPerso(p);
 			perso_dans_salle.add(p);
+			p.setPresent(true);
+
 		} else {
 			System.out.println("Salle Inaccessible");
 		}
+
 	}
 
 	/**
@@ -354,14 +377,41 @@ public class Salle extends JPanel {
 	 *            G�re le comportement de la case quand un personnage la quitte
 	 */
 	public void sortiePerso(Personnage p) {
-		if (this.perso != null) {
-			this.perso = null;
-			perso_dans_salle.remove(p);
+		this.perso = null;
+		p.setTempsMouvement(11 - p.getVitesse());
+		perso_dans_salle.remove(p);
+		panel_case.removeAll();
+		if (!this.etat.equalsIgnoreCase("normal")) {
 			definirEtat(this.etat);
-			definirObjet(this.objet);
-			panel_case.repaint();
 		} else {
-			System.out.println("ERREUR, SORTIE DE PERSO SUR UNE CASE VIDE");
+			panel_case.add(new JLabel(new ImageIcon("./images/s-normal.png")));
+		}
+		if (!this.objet.equalsIgnoreCase("empty")) {
+			panel_case.removeAll();
+			definirObjet(this.objet);
+		}
+		if (!perso_dans_salle.isEmpty()) {
+			panel_case.removeAll();
+			panel_case.add(perso_dans_salle.get(0).getLabel());
+		}
+		panel_case.validate();
+		panel_case.repaint();
+		InterfaceEditeur.tab[this.x][this.y] = this;
+	}
+
+	public void entreeObjet(String s) {
+		if (this.objet != "empty") {
+			this.objet = s;
+		} else {
+			System.out.println("La case est pleine, impossible de d�poser ici");
+		}
+	}
+
+	public void sortieObjet(String s) {
+		if (this.objet != "empty") {
+			this.objet = "empty";
+		} else {
+			System.out.println("Rien � ramasser ici");
 		}
 	}
 
@@ -454,6 +504,18 @@ public class Salle extends JPanel {
 		return panel_case;
 	}
 
+	public void setEtat(String e) {
+		etat = e;
+	}
+
+	public void setObjet(String o) {
+		objet = o;
+	}
+
+	public Personnage getPerso() {
+		return perso;
+	}
+
 	// ////////////////////////////////////////////////// LISTENERS
 	// ////////////////////////////////////////////////////////////////
 
@@ -468,7 +530,6 @@ public class Salle extends JPanel {
 			System.out.println(GetY());
 			System.out.println(getObjet());
 			System.out.println(getEtat());
-
 			mouseMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
 
@@ -490,7 +551,7 @@ public class Salle extends JPanel {
 	}
 
 	/**
-	 * Ecoute la souris afin de savoir si le JMenuItem "Sortie" a été
+	 * Ecoute la souris afin de savoir si le JMenuItem "Sortie" a �t�
 	 * selectionné
 	 */
 	class SortieListener implements ActionListener {
@@ -502,7 +563,7 @@ public class Salle extends JPanel {
 				panel_case.repaint();
 			} else {
 				JOptionPane.showMessageDialog(null,
-						"Une sortie est déjà présente", "ERREUR",
+						"Une sortie est d�j� pr�sente", "ERREUR",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -586,7 +647,7 @@ public class Salle extends JPanel {
 			panel_case.repaint();
 		}
 	}
-	
+
 	class JacketListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -606,9 +667,8 @@ public class Salle extends JPanel {
 				Simulateur.getJlist().getSelectedValue().setPresent(true);
 			} else {
 				JOptionPane.showMessageDialog(null,
-						"Ce personnage est déjà présent", "Perso déjà présent",
+						"Ce personnage est d�j� pr�sent", "ERREUR",
 						JOptionPane.ERROR_MESSAGE);
-				System.out.println("ERREUR : Ce personnage est déjà présent !");
 			}
 		}
 

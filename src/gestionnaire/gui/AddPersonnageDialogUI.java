@@ -32,6 +32,10 @@ import javax.swing.JTextField;
 
 import personnages.Personnage;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class AddPersonnageDialogUI extends JDialog {
 
@@ -80,8 +84,8 @@ public class AddPersonnageDialogUI extends JDialog {
 		String armureChoisie = "Cuir";
 		String inclinaisonChoisie = ":)";
 		ButtonGroup bg;
-		JRadioButton gentil;
-		JRadioButton mechant;
+		static JRadioButton gentil;
+		static JRadioButton mechant;
 
 		public AddPersonnagePanelUI() {
 

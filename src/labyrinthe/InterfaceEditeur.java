@@ -23,7 +23,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class InterfaceEditeur extends JFrame {
 
@@ -47,7 +50,7 @@ public class InterfaceEditeur extends JFrame {
 	public static Salle[][] tab;
 	File fileSelected;
 	static ArrayList<Labyrinthe> labyrinthes;
-	JTextField text_nom = new JTextField("Donnez un nom Ã  votre labyrinthe");
+	JTextField text_nom = new JTextField("Donnez un nom à votre labyrinthe");
 	File file;
 	ListeLabyrinthes listeLabyrinthes = new ListeLabyrinthes();
 	Labyrinthe laby = new Labyrinthe(tab);
@@ -123,7 +126,7 @@ public class InterfaceEditeur extends JFrame {
 	}
 
 	/**
-	 * Dessine un labyrinthe vierge de la taille indiquée
+	 * Dessine un labyrinthe vierge de la taille indiqu�e
 	 * 
 	 * @param x
 	 * @param y
@@ -173,8 +176,8 @@ public class InterfaceEditeur extends JFrame {
 	 * @param laby
 	 * @param content_pane
 	 * 
-	 *            Dessine le labyrinthe selon celui indiqué dans le panel
-	 *            indiqué
+	 *            Dessine le labyrinthe selon celui indiqu� dans le panel
+	 *            indiqu�
 	 */
 	public void EtablirLabyrinthe(Labyrinthe laby, JPanel content_pane) {
 
@@ -199,12 +202,6 @@ public class InterfaceEditeur extends JFrame {
 				gbc.gridy = j;
 				gx = i * 98;
 				gy = j * 98;
-				// panel_case.setBorder(door);
-				// Salle case_labyrinthe = new Salle(i, j, "normal", 0, 0, 0);
-				// tab[i][j] = case_labyrinthe;
-				// panel_labyrinthe.add(case_labyrinthe.panel_case, gbc);
-				// System.out.println("taille y" + laby.tab_cases[i].length);
-				// System.out.println("taille x" + laby.tab_cases.length);
 				panel_labyrinthe.add(laby.tab_cases[i][j].panel_case, gbc);
 				if (laby.tab_cases[i][j].getEtat().equalsIgnoreCase("exit")) {
 					sortie_presente = true;
@@ -224,25 +221,40 @@ public class InterfaceEditeur extends JFrame {
 		// * 98));
 	}
 
-	// TODO : A complÃ©ter
-	public void initRandomLaby() { // A COMPLETER
-		String[] etatTab = { "normal", "locked", "exit" };
-		int ranX = (int) (Math.random() * (9 - 1) + 1);
-		int ranY = (int) (Math.random() * (9 - 1) + 1);
+	/**
+	 * Cr�er un labyrinthe al�atoire
+	 */
+	public void initRandomLaby() {
+		String[] etatTab = { "locked", "submerged", "dark" };
+		int ranX = (int) (Math.random() * (29 - 1) + 1);
+		int ranY = (int) (Math.random() * (29 - 1) + 1);
 		taille_x.setSelectedItem(ranX);
 		taille_y.setSelectedIndex(ranY);
-
+		String[] objetTab = { "key", "empty", "light", "potion", "spyglass",
+				"jacket" };
 		for (int i = 0; i < (Math.random() * (ranX * ranY - 1) + 1); i++) {
-
+			revalidate();
+			repaint();
 			int ran_caseX = (int) (Math.random() * (ranX));
 			int ran_caseY = (int) (Math.random() * (ranY));
 			int ranEtat = (int) (Math.random() * etatTab.length);
+			int ranObjet = (int) (Math.random() * objetTab.length);
 			String etat = etatTab[ranEtat];
-			tab[ran_caseX][ran_caseY].definirEtat(etat);
-			;
+			String objet = objetTab[ranObjet];
+			int random = (int) (Math.random() * (2 - 0));
+			if (random == 1) {
+				tab[ran_caseX][ran_caseY].setEtat(etat);
+			} else {
+				tab[ran_caseX][ran_caseY].setObjet(objet);
+			}
+
 		}
+		int ran_caseX = (int) (Math.random() * (ranX));
+		int ran_caseY = (int) (Math.random() * (ranY));
+		tab[ran_caseX][ran_caseY].definirEtat("exit");
+		// panel_labyrinthe.removeAll();
 		laby = new Labyrinthe(tab);
-		panel_labyrinthe.removeAll();
+
 		EtablirLabyrinthe(laby, content_pane);
 		panel_labyrinthe.revalidate();
 		panel_labyrinthe.repaint();
@@ -266,21 +278,18 @@ public class InterfaceEditeur extends JFrame {
 			EtablirLabyrinthe(laby, content_pane);
 			panel_labyrinthe.revalidate();
 			panel_labyrinthe.repaint();
-			// initLabyrintheIntoList();
-			// MenuEditeur me = new MenuEditeur();
-			// me.initLabyrintheIntoList(labyrinthes);
 		}
 	}
 
 	/**
-	 * Ecoute le bouton Save afin de lancer la fenÃªtre de sauvegarde quand on
+	 * Ecoute le bouton Save afin de lancer la fenêtre de sauvegarde quand on
 	 * clique sur le bouton.
 	 */
 	public class SaveAsListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// String name = JOptionPane
-			// .showInputDialog("Donnez un nom Ã  votre labyrinthe");
+			// .showInputDialog("Donnez un nom à votre labyrinthe");
 			Labyrinthe laby = new Labyrinthe(tab);
 			// laby.nom = name;
 
@@ -363,7 +372,7 @@ public class InterfaceEditeur extends JFrame {
 
 	// ////////////////////////////////////////////////////// GETTERS et SETTERS
 	// ////////////////////////////////////////////////////////
-	// Ces méthodes étant explicites, elles ne seront pas commentées
+	// Ces m�thodes �tant explicites, elles ne seront pas comment�es
 	// individuellement
 
 	public static boolean getSortiePresente() {
@@ -384,11 +393,11 @@ public class InterfaceEditeur extends JFrame {
 	}
 
 	public int getGridx() {
-		return gbc.gridx;
+		return gx;
 	}
 
 	public int getGridy() {
-		return gbc.gridy;
+		return gy;
 	}
 
 	public int getX() {

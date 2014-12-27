@@ -1,6 +1,8 @@
 package simulateur;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -11,6 +13,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import labyrinthe.InterfaceEditeur;
+import labyrinthe.Salle;
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class Objet extends JPanel {
 
@@ -20,7 +28,8 @@ public class Objet extends JPanel {
 	private JPopupMenu mouseMenu = new JPopupMenu();
 	private JMenuItem utiliser = new JMenuItem("Utiliser");
 	private JMenuItem deposer = new JMenuItem("Deposer");
-	
+	int index = 0;
+	Salle salle;
 
 	public Objet(String objet) {
 		this.objet = objet;
@@ -48,6 +57,7 @@ public class Objet extends JPanel {
 	protected void initMouseMenu() {
 		mouseMenu.add(utiliser);
 		mouseMenu.add(deposer);
+		// deposer.addActionListener(new DeposerListener());
 
 	}
 
@@ -81,10 +91,29 @@ public class Objet extends JPanel {
 			panel_objet.add(label);
 		}
 
-		this.revalidate();
-		this.repaint();
-		// panel_case.validate();
-		// panel_case.repaint();
+		panel_objet.validate();
+		panel_objet.repaint();
+	}
+	
+	/**
+	 * @param s
+	 * 
+	 * Méthode qui dépose l'objet. N'est pas complète. Son listener associé est donc mis en commentaire.
+	 */
+	public void deposerObjet(Salle s) {
+		s.setObjet(this.objet);
+		s.getPanel().validate();
+		s.getPanel().repaint();
+		InterfaceEditeur.tab[s.GetX()][s.GetY()] = s;
+		definirObjet("empty");
+		s.getPerso().setObjetdansSac(index, "empty");
+	}
+
+	// /////////////////////////////////////////////////////// GETTERS ET
+	// SETTERS /////////////////////////////////////////////////////////
+
+	public void setIndex(int i) {
+		index = i;
 	}
 
 	// /////////////////////////////////////////////////////// LISTENERS
@@ -115,5 +144,15 @@ public class Objet extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 		}
+	}
+
+	class DeposerListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			deposerObjet(salle);
+
+		}
+
 	}
 }

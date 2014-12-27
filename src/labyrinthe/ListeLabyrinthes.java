@@ -8,6 +8,10 @@ import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class ListeLabyrinthes implements Serializable {
 
@@ -27,6 +31,7 @@ public class ListeLabyrinthes implements Serializable {
 		buffer.close();
 	}
 
+	@SuppressWarnings("static-access")
 	public void chargerLabyrinthe(String file_name) throws Exception {
 		InterfaceEditeur ie = new InterfaceEditeur();
 		FileReader file = new FileReader(file_name);
@@ -40,7 +45,6 @@ public class ListeLabyrinthes implements Serializable {
 		}
 		bf.close();
 	}
-
 
 	public void addToFile(Labyrinthe laby, File file) throws Exception {
 		BufferedWriter buffer = new BufferedWriter(new FileWriter(file));

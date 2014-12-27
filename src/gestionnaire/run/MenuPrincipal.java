@@ -1,3 +1,5 @@
+package gestionnaire.run;
+
 import gestionnaire.gui.GestionnaireUI;
 
 import java.awt.BorderLayout;
@@ -12,9 +14,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import labyrinthe.MenuEditeur;
-import labyrinthe.Salle;
 import simulateur.MenuSimulateur;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class MenuPrincipal extends JFrame {
 

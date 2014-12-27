@@ -2,15 +2,16 @@ package personnages;
 
 import java.awt.Component;
 
+import javax.swing.JLabel;
+
 import labyrinthe.InterfaceEditeur;
 import labyrinthe.Labyrinthe;
 import labyrinthe.Salle;
-
 /**
- * @author stephen BATIFOL L2 MI
+ * @author Loesch & Batifol 
+ *
  */
-
-public abstract class Personnage {
+public abstract class Personnage implements Runnable {
 	protected int vie;
 	protected int force;
 	protected String nom;
@@ -24,10 +25,13 @@ public abstract class Personnage {
 	Salle[][] tabSalles = InterfaceEditeur.getTabSalle();
 	Labyrinthe laby = new Labyrinthe(tabSalles);
 	String[] tabMouvements = { "haut", "bas", "gauche", "droite" };
-	int tailleSac;
-	int tempsMouvement = 11 - vitesseMouvement;
-	boolean present;
 	String[] sac;
+	int tailleSac;
+	int tempsMouvement;
+	int protectionEau = 0;
+	int protectionSombre = 0;
+	boolean present; // Indique si le personnage est pr�sent dans le labyrinthe
+						// ou non
 
 	/**
 	 * @param nom
@@ -46,8 +50,13 @@ public abstract class Personnage {
 		this.inclinaison = inclinaison;
 		this.arme = arme;
 		this.armure = armure;
+		this.tempsMouvement = 11 - vitesseMouvement;
 		tailleSac = 2 + (int) (Math.random() * ((4 - 2) + 1));
-		boolean present = false;
+		sac = new String[tailleSac];
+		for (int i = 0; i < tailleSac; i++) {
+			sac[i] = "empty";
+		}
+		present = false;
 	}
 
 	/*
@@ -59,15 +68,18 @@ public abstract class Personnage {
 	// ///////////////////////////////////////////////////// METHODES
 	// ///////////////////////////////////////////////////////
 
+	public abstract JLabel getLabel();
+
 	public abstract void definirAttaque();
 
 	public abstract void definirDefense();
 
-	public boolean equals(Object o) {
-		Personnage p = (Personnage) o;
-		return ((this.nom.equals(p.getNom())));
-	}
-
+	/**
+	 * @param s
+	 * @return
+	 * 
+	 *         V�rifie que l'objet en param�tre est pr�sent dans le sac
+	 */
 	public boolean verifierObjet(String s) {
 		for (String objet : sac) {
 			if (s.equalsIgnoreCase(objet)) {
@@ -79,12 +91,28 @@ public abstract class Personnage {
 		return false;
 	}
 
+	public int emplacementLibreduSac() {
+		int i = 0;
+		for (String objet : sac) {
+			if (objet.equalsIgnoreCase("empty")) {
+				return i;
+			}
+			i++;
+		}
+		return 10;
+	}
+
 	public void retirerObjetSac(String s) {
 		for (int i = 0; i < sac.length; i++) {
 			if (s.equalsIgnoreCase(sac[i])) {
 				sac[i] = "empty";
 			}
 		}
+	}
+
+	public boolean equals(Object o) {
+		Personnage p = (Personnage) o;
+		return ((this.nom.equals(p.getNom())));
 	}
 
 	/**
@@ -117,6 +145,10 @@ public abstract class Personnage {
 
 	// TODO : Faire un random sur les positions et faire avancer le personnage
 	// en fonction.
+	@Override
+	public void run() {
+
+	}
 
 	// Permet de comparer deux personnages.
 	public boolean contains(Personnage selected) {
@@ -142,6 +174,12 @@ public abstract class Personnage {
 			public void definirDefense() {
 
 			}
+
+			@Override
+			public JLabel getLabel() {
+				return null;
+
+			}
 		};
 		if (perso2.nom.equals(selected.nom)
 				&& perso2.race.equals(selected.race)
@@ -152,7 +190,7 @@ public abstract class Personnage {
 		return false;
 	}
 
-	// ///////////////////////////////////////////////////// GETTERS & SETTER
+	// ///////////////////////////////////////////////////// GETTERS ET SETTERS
 	// ///////////////////////////////////////////////////////
 	// Ces m�thodes �tant explicites, elles ne seront pas comment�es
 	// individuellement
@@ -171,6 +209,14 @@ public abstract class Personnage {
 
 	public int getVitesse() {
 		return vitesseMouvement;
+	}
+
+	public int getTempsMouvement() {
+		return tempsMouvement;
+	}
+
+	public void setTempsMouvement(int i) {
+		this.tempsMouvement = i;
 	}
 
 	public String getRace() {
@@ -197,6 +243,14 @@ public abstract class Personnage {
 		return defense;
 	}
 
+	public String[] getSac() {
+		return sac;
+	}
+
+	public void setObjetdansSac(int i, String s) {
+		sac[i] = s;
+	}
+
 	public int getTailleSac() {
 		return tailleSac;
 	}
@@ -205,8 +259,20 @@ public abstract class Personnage {
 		return present;
 	}
 
-	public int getTempsMouvement() {
-		return tempsMouvement;
+	public int getProtectionEau() {
+		return protectionEau;
+	}
+
+	public void setProtectionEau(int i) {
+		protectionEau = i;
+	}
+
+	public void setProtectionSombre(int i) {
+		protectionSombre = i;
+	}
+
+	public int getProtectionSombre() {
+		return protectionSombre;
 	}
 
 	public void setPresent(boolean p) {

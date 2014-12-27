@@ -32,7 +32,10 @@ import labyrinthe.ListeLabyrinthes;
 import labyrinthe.MenuEditeur;
 import labyrinthe.Salle;
 import personnages.Personnage;
-
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class MenuSimulateur extends JDialog {
 
@@ -75,6 +78,9 @@ public class MenuSimulateur extends JDialog {
 		initListener();
 		this.setVisible(true);
 	}
+
+	// ///////////////////////////////////////////// INIT
+	// ///////////////////////////////////////////////
 
 	public void init() {
 		classListLabyrinthes = new ListeLabyrinthes();
@@ -145,8 +151,57 @@ public class MenuSimulateur extends JDialog {
 		persoButton.addActionListener(new ChargerPersoListener());
 		labyButton.addActionListener(new ChargerLabyListener());
 		validerButton.addActionListener(new ValiderListener());
-		liste_labyrinthe.addMouseListener(new LabyrintheListener());
-		listPerso.addMouseListener(new PersoListener());
+		// liste_labyrinthe.addMouseListener(new LabyrintheListener());
+		// listPerso.addMouseListener(new PersoListener());
+	}
+
+	public void initPersonnageIntoList() {
+		if (this.arraylistPersos != null) {
+			listeModelPerso.clear();
+			for (Personnage personnage : arraylistPersos) {
+				listeModelPerso.addElement(personnage);
+			}
+			System.out.println(listPersoSelected);
+		}
+	}
+
+	/*
+	 * class PersoListener extends MouseAdapter { public void
+	 * mouseClicked(MouseEvent e) {
+	 * listPersoSelected.add(listPerso.getSelectedValue()); int index =
+	 * listPerso.locationToIndex(e.getPoint());
+	 * System.out.println("clicked on Item " + index); } }
+	 */
+
+	/**
+	 * Ajoute les Labyrinthes à la Jlist.
+	 */
+	public void initLabyrintheIntoList(Labyrinthe laby) {
+		if (laby != null) {
+			listeModelLaby.clear();
+			listeModelLaby.addElement(laby);
+		}
+	}
+
+	// ///////////////////////////////////////////// LISTENERS
+	// ///////////////////////////////////////////////
+
+	class ValiderListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			selectedLabyrinthe = liste_labyrinthe.getModel().getElementAt(0);
+			for (int i = 0; i < listPerso.getModel().getSize(); i++) {
+				listPersoSelected.add(listPerso.getModel().getElementAt(i));
+			}
+			dispose();
+			if (selectedLabyrinthe != null) {
+				new Simulateur(selectedLabyrinthe, listPersoSelected);
+			} else {
+				JOptionPane.showMessageDialog(MenuSimulateur.this,
+						"veuillez selectionner un labyrinthe valide", "Erreur",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	class ChargerPersoListener implements ActionListener {
@@ -174,16 +229,6 @@ public class MenuSimulateur extends JDialog {
 		}
 	}
 
-	public void initPersonnageIntoList() {
-		if (this.arraylistPersos != null) {
-			listeModelPerso.clear();
-			for (Personnage personnage : arraylistPersos) {
-				listeModelPerso.addElement(personnage);
-			}
-			System.out.println(listPersoSelected);
-		}
-	}
-
 	class ChargerLabyListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			laby.charger();
@@ -198,46 +243,10 @@ public class MenuSimulateur extends JDialog {
 		}
 	}
 
-	class PersoListener extends MouseInputAdapter {
-		public void mouseClicked(MouseEvent e) {
-			listPersoSelected.add(listPerso.getSelectedValue());
-			System.out.println(listPerso.getSelectedValue());
-		}
-	} 
-	 /*class PersoListener extends MouseAdapter {
-		 public void mouseClicked(MouseEvent e) {
-			 listPersoSelected.add(listPerso.getSelectedValue());
-			 int index = listPerso.locationToIndex(e.getPoint());
-             System.out.println("clicked on Item " + index);  
-		 }
-	 }*/
-	
-
-	/**
-	 * Ajoute les Labyrinthes à la Jlist.
-	 */
-	public void initLabyrintheIntoList(Labyrinthe laby) {
-		if (laby != null) {
-			listeModelLaby.clear();
-			listeModelLaby.addElement(laby);
-		}
-	}
-
-	class ValiderListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			dispose();
-			if (selectedLabyrinthe != null) {
-				new Simulateur(selectedLabyrinthe, listPersoSelected);
-			} else {
-				JOptionPane.showMessageDialog(MenuSimulateur.this,
-						"veuillez selectionner un labyrinthe valide", "Erreur",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-
-	public static void main(String[] args) {
-		new MenuSimulateur();
-	}
+	// class PersoListener extends MouseInputAdapter {
+	// public void mouseClicked(MouseEvent e) {
+	// listPersoSelected.add(listPerso.getSelectedValue());
+	// System.out.println(listPerso.getSelectedValue());
+	// }
+	// }
 }

@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +30,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import personnages.Personnage;
 
+/**
+ * @author Loesch & Batifol 
+ *
+ */
 @SuppressWarnings("serial")
 public class GestionnaireUI extends JFrame {
 	static Gestionnaire gestionnaire;
@@ -40,6 +43,7 @@ public class GestionnaireUI extends JFrame {
 	File file;
 	AddPersonnageDialogUI persoDialog;
 	File fileSelected;
+	DefaultListModel<Personnage> listeModelPerso;
 
 	public GestionnaireUI() {
 		init();
@@ -180,9 +184,8 @@ public class GestionnaireUI extends JFrame {
 			}
 		}
 		menuSave.addActionListener(new SaveAsListener());
-		
-		}
 
+	}
 
 	/**
 	 * Charge les personnages dans la Jmodel (liste d'affichage).
@@ -237,29 +240,15 @@ public class GestionnaireUI extends JFrame {
 		});
 		contentPane.add(closeButton);
 
-		// TODO : Supprimer un personnage dans l'arraylist.
 		/**
 		 * Supprime un personnage de la liste.
 		 */
 		class RemovePersonnage implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 
-				Personnage selected = listPerso.getSelectedValue();
-				if (selected != null) {
-					Iterator<Personnage> itr = gestionnaire.getPersonnages()
-							.iterator();
-					while (itr.hasNext()) {
-						Personnage nextItem = itr.next();
-						System.out.println(nextItem);
-						System.out.println("sd" + selected);
-						if (nextItem.contains(selected)) {
-							itr.remove();
-						}
-						gestionnaire.getPersonnages().removeAll(
-								gestionnaire.getPersonnages());
-					}
-					System.out.println(gestionnaire.getPersonnages());
-				}
+				int selected = listPerso.getSelectedIndex();
+				lmodel.remove(selected);
+
 			}
 		}
 		class ButtonAddPersoAL implements ActionListener {
@@ -297,6 +286,13 @@ public class GestionnaireUI extends JFrame {
 							.getVitesse());
 					AddPersonnagePanelUI.forceSlider.setValue(selectedSerie
 							.getForce());
+					if (selectedSerie.getInclinaison().equals(":)")) {
+						AddPersonnagePanelUI.gentil.setSelected(true);
+						AddPersonnagePanelUI.mechant.setSelected(false);
+					} else {
+						AddPersonnagePanelUI.gentil.setSelected(false);
+						AddPersonnagePanelUI.mechant.setSelected(true);
+					}
 
 					System.out.println("Nom " + selectedSerie.getNom()
 							+ " Race " + selectedSerie.getRace() + " Force "
